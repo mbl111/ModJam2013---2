@@ -6,10 +6,7 @@
 *.lck
 *.bin
 
-/.classpath
-/.project
 /.gradle/
-/.settings/
 /bin/
 /build/
 /config/
