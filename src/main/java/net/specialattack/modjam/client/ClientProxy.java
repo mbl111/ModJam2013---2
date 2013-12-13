@@ -11,14 +11,14 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
 
-        //Init block renderers
+        //Init blocks
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
 
-        //Init item renderers
+        //Init renderers
     }
 
 }

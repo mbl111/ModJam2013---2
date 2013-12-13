@@ -2,9 +2,9 @@ package net.specialattack.modjam.creativetab;
 
 import net.minecraft.creativetab.CreativeTabs;
 
-public class ModJamCreativeTab extends CreativeTabs{
+public class CreativeTabModjam extends CreativeTabs{
 
-	public ModJamCreativeTab(String label) {
+	public CreativeTabModjam(String label) {
 		super(label);
 	}
 
