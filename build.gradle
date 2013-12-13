@@ -1,0 +1,111 @@
+// Reference: https://github.com/SlimeKnights/TinkersConstruct/blob/master/build.gradle
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "ForgeFS"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    // read config.  it shall from now on be referenced as simply config or as project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+version = config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
+group= "net.specialattack.modjam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "Modjam"
+
+minecraft {
+    version = config.minecraft_version + "-" + config.forge_version
+    assetDir = 'run/assets'
+}
+
+processResources
+{
+    // replace stuff in text files, not binary ones.
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        include 'version.properties'
+                
+        // replace version and mcversion
+        expand 'version': config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+        exclude 'version.properties'
+    }
+}
+
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'me.heldplayer.util.HeldCore.asm.HeldCorePlugin'
+        attributes 'AccessTransformer': 'heldcore_at.cfg'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
+}
+
+task("incrementBuild")
+{
+    // increment build number
+    doFirst {
+        // increment
+        config.build_number = (config.build_number.toString().toInteger()) + 1
+        
+        // write back to the file
+        configFile.withWriter {
+            config.toProperties().store(it, "")
+        }
+    }
+}
+
+task("incrementMinor")
+{
+    // increment build number
+    doFirst {
+        // increment
+        config.build_number = 0
+        config.minor_number = (config.minor_number.toString().toInteger()) + 1
+        
+        // write back to the file
+        configFile.withWriter {
+            config.toProperties().store(it, "")
+        }
+    }
+}
+
+task("incrementMajor")
+{
+    // increment build number
+    doFirst {
+        // increment
+        config.build_number = 0
+        config.minor_number = 0
+        config.major_number = (config.major_number.toString().toInteger()) + 1
+        
+        // write back to the file
+        configFile.withWriter {
+            config.toProperties().store(it, "")
+        }
+    }
+}
+
+task("buildWrapper")
+{
+    dependsOn "incrementBuild"
+    dependsOn "build"
+}
