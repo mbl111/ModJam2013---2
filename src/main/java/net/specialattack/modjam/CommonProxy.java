@@ -3,6 +3,7 @@ package net.specialattack.modjam;
 
 import net.minecraft.item.ItemStack;
 import net.specialattack.modjam.blocks.BlockTower;
+import net.specialattack.modjam.creativetab.CreativeTabModjam;
 import net.specialattack.modjam.creativetab.ModJamCreativeTab;
 import net.specialattack.modjam.items.ItemBlockTower;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -14,7 +15,7 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
-        Objects.blockTower = new BlockTower(ModJam.blockTowerId.getInt());
+        Objects.blockTower = new BlockTower(Config.blockTowerId);
         GameRegistry.registerBlock(Objects.blockTower, ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
     }
 
