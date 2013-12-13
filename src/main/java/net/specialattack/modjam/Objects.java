@@ -3,6 +3,7 @@ package net.specialattack.modjam;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.specialattack.modjam.blocks.BlockTower;
+import net.specialattack.modjam.creativetab.ModJamCreativeTab;
 
 public class Objects {
 
@@ -14,7 +15,7 @@ public class Objects {
     public static final String CLIENT_PROXY = "net.specialattack.modjam.CommonProxy";
     public static final String SERVER_PROXY = "net.specialattack.modjam.client.ClientProxy";
 
-    public static CreativeTabs creativeTab;
+    public static ModJamCreativeTab creativeTab;
     
     public static BlockTower blockTower;
 
