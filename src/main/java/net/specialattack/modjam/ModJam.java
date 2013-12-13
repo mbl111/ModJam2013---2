@@ -2,6 +2,7 @@
 package net.specialattack.modjam;
 
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -21,15 +22,19 @@ public class ModJam {
     @SidedProxy(clientSide = Objects.PROXY_CLIENT, serverSide = Objects.PROXY_COMMON)
     public static CommonProxy proxy;
 
+    public static Property blockTowerId;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        proxy.preInit(event);
         this.config = new Configuration(event.getSuggestedConfigurationFile());
+        blockTowerId = this.config.get("ids", "BlockTowerid", 1337);
 
+        proxy.preInit(event);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+
         proxy.init(event);
     }
 
