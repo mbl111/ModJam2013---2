@@ -1,11 +1,17 @@
 
 package net.specialattack.modjam.client;
 
+import net.specialattack.modjam.CommonProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import net.specialattack.modjam.CommonProxy;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ClientProxy extends CommonProxy {
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        super.preInit(event);
+    }
 
     @Override
     public void init(FMLInitializationEvent event) {

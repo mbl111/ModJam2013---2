@@ -3,9 +3,9 @@ package net.specialattack.modjam.items;
 
 import net.minecraft.item.ItemBlock;
 
-public class ItemBlockTower extends ItemBlock {
+public class ItemBlockSpawner extends ItemBlock {
 
-    public ItemBlockTower(int blockId) {
+    public ItemBlockSpawner(int blockId) {
         super(blockId);
     }
 

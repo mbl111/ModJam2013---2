@@ -1,5 +1,5 @@
 
-package net.specialattack.modjam;
+package net.specialattack.modjam.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
