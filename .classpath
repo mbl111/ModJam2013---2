@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><classpath>
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
   <classpathentry kind="src" path="src/main/java"/>
   <classpathentry kind="src" path="src/main/resources"/>
   <classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer">
     <attributes>
-      <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="D:/DesktopJunk/Forge Editing/Eclipse/git/Modjam/build/natives"/>
+      <attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Matt/Documents/Workspaces/MinecraftDevelopment/git/ModJam2013-2/build/natives"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="output" path="bin"/>
