@@ -34,8 +34,8 @@ public class TileEntitySpawner extends TileEntity {
     public static final Random rand = new Random();
 
     // TODO: find a way to make this one save
-    private List<Entity> spawnedEntities;
-    private int spawnQueue;
+    public List<Entity> spawnedEntities;
+    public int spawnQueue;
     private String playername;
 
     public boolean waveActive;
@@ -50,7 +50,7 @@ public class TileEntitySpawner extends TileEntity {
     public List<Booster> boosters;
     public Monster currentMonster;
 
-    protected ChunkCoordinates target;
+    public ChunkCoordinates target;
 
     public TileEntitySpawner() {
         this.spawnedEntities = new ArrayList<Entity>();
@@ -119,12 +119,31 @@ public class TileEntitySpawner extends TileEntity {
         this.onInventoryChanged();
     }
 
+    public void updateScore() {
+        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.scoreTDCriteria);
+        Iterator iterator = collection.iterator();
+
+        while (iterator.hasNext()) {
+            ScoreObjective scoreobjective = (ScoreObjective) iterator.next();
+            Score score = this.worldObj.getScoreboard().func_96529_a(this.playername, scoreobjective);
+            score.func_96647_c(this.score);
+        }
+
+        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+        if (player != null) {
+            if (player instanceof EntityPlayerMP) {
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 1));
+            }
+        }
+    }
+
     public void targetDamaged(TileEntityTarget target) {
         EntityPlayer player = CommonProxy.getPlayer(this.playername);
-        if (target.health == 0) {
-            this.setActiveUser(null);
-        }
         if (player != null) {
+            if (player instanceof EntityPlayerMP) {
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 3));
+            }
+
             if (target.health == 0) {
                 player.sendChatToPlayer(ChatMessageComponent.createFromText("This is the end, sadfully :("));
             }
@@ -133,13 +152,11 @@ public class TileEntitySpawner extends TileEntity {
             }
         }
 
-        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.scoreTDCriteria);
-        Iterator iterator = collection.iterator();
+        this.score--;
+        this.updateScore();
 
-        while (iterator.hasNext()) {
-            ScoreObjective scoreobjective = (ScoreObjective) iterator.next();
-            Score score = this.worldObj.getScoreboard().func_96529_a(this.playername, scoreobjective);
-            score.func_96647_c(--this.score);
+        if (target.health == 0) {
+            this.setActiveUser(null);
         }
     }
 
@@ -248,6 +265,12 @@ public class TileEntitySpawner extends TileEntity {
                     this.waveActive = false;
 
                     EntityPlayer player = CommonProxy.getPlayer(this.playername);
+                    if (player != null) {
+                        if (player instanceof EntityPlayerMP) {
+                            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 2));
+                        }
+                    }
+
                     this.timer = 0;
                     this.spawnQueue = 0;
 
@@ -259,31 +282,49 @@ public class TileEntitySpawner extends TileEntity {
                 }
                 else {
                     Iterator<Entity> i = this.spawnedEntities.iterator();
+                    boolean removed = false;
                     while (i.hasNext()) {
                         Entity entity = i.next();
                         if (entity.isDead) {
                             i.remove();
 
-                            Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.scoreTDCriteria);
-                            Iterator iterator = collection.iterator();
+                            this.score++;
+                            this.updateScore();
 
-                            while (iterator.hasNext()) {
-                                ScoreObjective scoreobjective = (ScoreObjective) iterator.next();
-                                Score score = this.worldObj.getScoreboard().func_96529_a(this.playername, scoreobjective);
-                                score.func_96647_c(++this.score);
+                            removed = true;
+                        }
+                    }
+                    if (removed) {
+                        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+                        if (player != null) {
+                            if (player instanceof EntityPlayerMP) {
+                                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 0));
                             }
                         }
                     }
                 }
             }
             else {
-                if (this.timer >= 100) {
+                if (this.timer % 20 == 0) {
+                    EntityPlayer player = CommonProxy.getPlayer(this.playername);
+                    if (player != null) {
+                        if (player instanceof EntityPlayerMP) {
+                            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 2));
+                        }
+                    }
+                }
+                if (this.timer >= 1200) {
                     this.waveActive = true;
                     this.timer = 0;
 
-                    TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-
                     EntityPlayer player = CommonProxy.getPlayer(this.playername);
+                    if (player != null) {
+                        if (player instanceof EntityPlayerMP) {
+                            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 2));
+                        }
+                    }
+
+                    TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
 
                     if (tile != null && tile instanceof TileEntityTarget) {
                         this.spawning = true;

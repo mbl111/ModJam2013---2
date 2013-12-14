@@ -4,12 +4,14 @@ package net.specialattack.modjam.tileentity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.specialattack.modjam.towers.ITowerInstance;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityTower extends TileEntity {
 
     public boolean active = false;
+    public ITowerInstance towerInstance;
 
     public boolean getActive() {
         return this.active;

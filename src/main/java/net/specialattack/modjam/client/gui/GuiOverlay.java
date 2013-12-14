@@ -36,11 +36,21 @@ public class GuiOverlay extends Gui {
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
 
-        this.font.drawStringWithShadow("Wave: " + WaveInfo.wave, 2, 2, 0xFFFFFF);
-        this.font.drawStringWithShadow("Monsters: " + WaveInfo.monsterCount, 2, 12, 0xFFFFFF);
-
         int x = 2;
-        int y = 24;
+        int y = 2;
+
+        this.font.drawStringWithShadow("Wave: " + WaveInfo.wave, x, y, 0xFFFFFF);
+        y += 10;
+        this.font.drawStringWithShadow("Health: " + WaveInfo.health + "/100", x, y, 0xFFFFFF);
+        y += 10;
+        if (WaveInfo.timer > 0) {
+            int time = (1200 - WaveInfo.timer) / 20;
+            this.font.drawStringWithShadow("Next wave: " + time, x, y, 0xFFFFFF);
+        }
+        else {
+            this.font.drawStringWithShadow("Remaining Monsters: " + WaveInfo.monstersAlive, x, y, 0xFFFFFF);
+        }
+        y += 10;
 
         Tessellator tess = Tessellator.instance;
 
@@ -53,7 +63,11 @@ public class GuiOverlay extends Gui {
             tess.addVertexWithUV(x + WaveInfo.currentMonster.iconWidth, y, 0.0D, WaveInfo.currentMonster.maxU, WaveInfo.currentMonster.minV);
             tess.addVertexWithUV(x, y, 0.0D, WaveInfo.currentMonster.minU, WaveInfo.currentMonster.minV);
             tess.draw();
-            y += WaveInfo.currentMonster.iconHeight + 2;
+
+            this.font.drawStringWithShadow("" + WaveInfo.monsterCount, x, y + 10, 0xFFFF00);
+            GL11.glColor3f(1.0F, 1.0F, 1.0F);
+
+            x += WaveInfo.currentMonster.iconWidth + 4;
         }
 
         for (Booster booster : WaveInfo.boosters) {

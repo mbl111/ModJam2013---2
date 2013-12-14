@@ -7,7 +7,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class TileEntityTarget extends TileEntity {
 
-    protected int health;
+    public int health;
     protected ChunkCoordinates spawner;
 
     public TileEntityTarget() {
@@ -20,12 +20,14 @@ public class TileEntityTarget extends TileEntity {
             this.health = 0;
         }
 
-        TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
-        if (tile != null && tile instanceof TileEntitySpawner) {
-            ((TileEntitySpawner) tile).targetDamaged(this);
-        }
-        else {
-            this.spawner = null;
+        if (this.spawner != null) {
+            TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
+            if (tile != null && tile instanceof TileEntitySpawner) {
+                ((TileEntitySpawner) tile).targetDamaged(this);
+            }
+            else {
+                this.spawner = null;
+            }
         }
     }
 
@@ -50,7 +52,7 @@ public class TileEntityTarget extends TileEntity {
 
         if (compound.hasKey("spawner")) {
             NBTTagCompound spawner = compound.getCompoundTag("spawner");
-            this.spawner = new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posXZ"));
+            this.spawner = new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ"));
         }
     }
 

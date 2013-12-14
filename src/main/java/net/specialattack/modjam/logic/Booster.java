@@ -12,10 +12,10 @@ public abstract class Booster extends WeightedRandomItem {
     public int iconIndex;
     public int minLevel;
     public int maxLevel;
-    public float minU;
-    public float maxU;
-    public float minV;
-    public float maxV;
+    public double minU;
+    public double maxU;
+    public double minV;
+    public double maxV;
 
     public Booster(int id, int weight, int minLevel, int maxLevel, int iconIndex) {
         super(weight);
@@ -27,14 +27,14 @@ public abstract class Booster extends WeightedRandomItem {
         int u = iconIndex % 14;
         int v = (iconIndex - u) / 14;
 
-        this.minU = u * 18.0F / 255.0F;
-        this.maxU = (u + 1) * 18.0F / 255.0F;
-        this.minV = v * 18.0F / 255.0F;
-        this.maxV = (v + 1) * 18.0F / 255.0F;
+        this.minU = u * 18.0D / 255.0D;
+        this.maxU = (u + 1) * 18.0D / 255.0D;
+        this.minV = v * 18.0D / 255.0D;
+        this.maxV = (v + 1) * 18.0D / 255.0D;
     }
 
     public ResourceLocation getResourceLocation() {
-        return Assets.GUI_OVERLAY;
+        return Assets.SHEET_OVERLAY;
     }
 
     public abstract void applyBooster(EntityLiving entity);

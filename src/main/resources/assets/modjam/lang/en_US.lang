@@ -49,3 +49,9 @@ container.modjam-spawner.bind=Bind to Spawner
 container.modjam-spawner.unbind=Unbind from Spawner
 container.modjam-spawner.nobind=Another player is bound
 container.modjam-spawner.nowork=Spawner not setup
+
+container.modjam-tower=Tower
+container.modjam-tower.purchase=Purchase A Tower
+
+tower.AoE.name=Area of Effect
+tower.AoE.description=Periodically damages mobs in an area around itself

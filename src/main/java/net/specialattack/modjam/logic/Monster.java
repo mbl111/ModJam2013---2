@@ -17,10 +17,10 @@ public class Monster extends WeightedRandomItem {
     public boolean supportsHat;
 
     public int iconIndex;
-    public float minU;
-    public float maxU;
-    public float minV;
-    public float maxV;
+    public double minU;
+    public double maxU;
+    public double minV;
+    public double maxV;
     public int iconWidth;
     public int iconHeight;
 
@@ -38,16 +38,16 @@ public class Monster extends WeightedRandomItem {
     }
 
     public void setIcon(int left, int top, int width, int height) {
-        this.minU = left / 255.0F;
-        this.minV = top / 255.0F;
-        this.maxU = (left + width) / 255.0F;
-        this.maxV = (top + height) / 255.0F;
+        this.minU = left / 255.0D;
+        this.minV = top / 255.0D;
+        this.maxU = (left + width) / 255.0D;
+        this.maxV = (top + height) / 255.0D;
         this.iconWidth = width;
         this.iconHeight = height;
     }
 
     public ResourceLocation getResourceLocation() {
-        return Assets.GUI_OVERLAY;
+        return Assets.SHEET_OVERLAY;
     }
 
     public EntityLiving createNew(World world) {

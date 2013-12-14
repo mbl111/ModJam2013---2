@@ -10,6 +10,10 @@ import net.specialattack.modjam.tileentity.TileEntitySpawner;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiSpawner extends GuiContainer {
 
     public TileEntitySpawner tile;
