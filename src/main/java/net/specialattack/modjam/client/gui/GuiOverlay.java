@@ -25,6 +25,7 @@ public class GuiOverlay extends Gui {
         this.font = Minecraft.getMinecraft().fontRenderer;
     }
 
+    @SuppressWarnings("unused")
     public void drawScreen(Minecraft mc, ScaledResolution resolution) {
         if (!WaveInfo.shouldRender) {
             return;

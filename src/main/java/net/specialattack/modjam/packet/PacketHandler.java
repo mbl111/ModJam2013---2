@@ -56,6 +56,7 @@ public class PacketHandler implements IPacketHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void sendToAllPlayers(Packet250CustomPayload packet) {
         if (packet == null) {
             return;
@@ -69,7 +70,24 @@ public class PacketHandler implements IPacketHandler {
                 player.playerNetServerHandler.sendPacketToPlayer(packet);
             }
         }
+    }
 
+    @SuppressWarnings("unchecked")
+    public static void sendToAllPlayersInWorld(Packet250CustomPayload packet, World world) {
+        if (packet == null) {
+            return;
+        }
+
+        MinecraftServer server = MinecraftServer.getServer();
+
+        if (server != null) {
+            List<EntityPlayerMP> players = server.getConfigurationManager().playerEntityList;
+            for (EntityPlayerMP player : players) {
+                if (player.worldObj == world) {
+                    player.playerNetServerHandler.sendPacketToPlayer(packet);
+                }
+            }
+        }
     }
 
     public static Packet250CustomPayload createPacketBlank() {

@@ -13,7 +13,7 @@ import net.specialattack.modjam.CommonProxy;
 import net.specialattack.modjam.client.gui.GuiOverlay;
 import net.specialattack.modjam.client.gui.container.GuiSpawner;
 import net.specialattack.modjam.client.gui.container.GuiTower;
-import net.specialattack.modjam.client.render.timeentity.TileEntityTowerRenderer;
+import net.specialattack.modjam.client.render.tileentity.TileEntityTowerRenderer;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.client.registry.ClientRegistry;

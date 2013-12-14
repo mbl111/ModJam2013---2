@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
 import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
+import net.specialattack.modjam.packet.PacketHandler;
 import net.specialattack.modjam.pathfinding.IAvoided;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -108,6 +110,7 @@ public class BlockTower extends Block implements IAvoided {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
         this.setBlockBoundsBasedOnState(world, x, y, z);
@@ -157,11 +160,13 @@ public class BlockTower extends Block implements IAvoided {
             return false;
         }
 
-        player.openGui(ModModjam.instance, 0, world, x, y, z);
+        player.openGui(ModModjam.instance, 1, world, x, y, z);
 
-        //        tower.setActive(true);
-        //        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
-        //        PacketHandler.sendToAllPlayers(packet);
+        TileEntityTower tower = (TileEntityTower) tile;
+
+        tower.setActive(true);
+        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
+        PacketHandler.sendToAllPlayers(packet);
 
         return true;
     }

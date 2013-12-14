@@ -1,5 +1,5 @@
 
-package net.specialattack.modjam.client.render.timeentity;
+package net.specialattack.modjam.client.render.tileentity;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
