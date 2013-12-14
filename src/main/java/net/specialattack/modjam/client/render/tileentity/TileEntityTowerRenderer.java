@@ -28,7 +28,7 @@ public class TileEntityTowerRenderer extends TileEntitySpecialRenderer {
 
         GL11.glTranslatef((float) x, (float) y + 1, (float) z);
 
-        this.towerBase.renderAll();
+        //this.towerBase.renderAll();
 
         GL11.glPopMatrix();
     }

@@ -170,7 +170,6 @@ public class PacketHandler implements IPacketHandler {
     }
 
     public void handlePacketTowerInfo(DataInputStream in, Player iplayer) throws IOException {
-
         EntityPlayer player = (EntityPlayer) iplayer;
 
         World world = player.worldObj;
@@ -183,6 +182,7 @@ public class PacketHandler implements IPacketHandler {
 
         tower.setActive(in.readBoolean());
 
+        world.markBlockForRenderUpdate(x, y, z);
     }
 
 }

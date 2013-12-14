@@ -32,8 +32,7 @@ public class TileEntityTower extends TileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return INFINITE_EXTENT_AABB;
-        //return super.getRenderBoundingBox().offset(0.0D, 1.0D, 0.0D).expand(0.5D, 1.5D, 0.5D);
+        return super.getRenderBoundingBox().offset(0.0D, 1.0D, 0.0D).expand(0.5D, 1.5D, 0.5D);
     }
 
 }

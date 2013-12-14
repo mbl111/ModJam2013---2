@@ -160,7 +160,7 @@ public class BlockTower extends Block implements IAvoided {
             return false;
         }
 
-        player.openGui(ModModjam.instance, 1, world, x, y, z);
+        //player.openGui(ModModjam.instance, 1, world, x, y, z);
 
         TileEntityTower tower = (TileEntityTower) tile;
 
