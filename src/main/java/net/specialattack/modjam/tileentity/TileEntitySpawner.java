@@ -178,9 +178,9 @@ public class TileEntitySpawner extends TileEntity {
             this.monsterCount = 10;
         }
 
-        this.spawnQueue = monsterCount;
+        this.spawnQueue = this.monsterCount;
 
-        this.currentMonster = SpawnerLogic.getRandomMonster(rand);
+        this.currentMonster = SpawnerLogic.getRandomMonster(TileEntitySpawner.rand);
 
         EntityPlayer player = CommonProxy.getPlayer(this.playername);
 
@@ -210,10 +210,10 @@ public class TileEntitySpawner extends TileEntity {
                         TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
 
                         if (tile != null && tile instanceof TileEntityTarget) {
-                            EntityLiving entity = this.currentMonster.createNew(worldObj);
+                            EntityLiving entity = this.currentMonster.createNew(this.worldObj);
                             entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
-                            entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
+                            entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(TileEntitySpawner.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
                             entity.setEquipmentDropChance(4, 0.0F);
                             entity.func_110163_bv();
 
@@ -222,7 +222,7 @@ public class TileEntitySpawner extends TileEntity {
                             Vec3 target = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
                             entity.tasks.addTask(0, new EntityTargetLocation(entity, target, (TileEntityTarget) tile, 1.0D));
 
-                            for (Booster booster : boosters) {
+                            for (Booster booster : this.boosters) {
                                 booster.applyBooster(entity);
                             }
 

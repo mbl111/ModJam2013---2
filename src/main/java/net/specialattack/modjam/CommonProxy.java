@@ -29,6 +29,7 @@ import net.specialattack.modjam.items.ItemGameLogic;
 import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
+import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -76,6 +77,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
         TileEntity.addMapping(TileEntitySpawner.class, "Modjam3-Spawner");
         TileEntity.addMapping(TileEntityTarget.class, "Modjam3-Target");
+        TileEntity.addMapping(TileEntityTower.class, "Modjam3-Tower");
     }
 
     public void postInit(FMLPostInitializationEvent event) {

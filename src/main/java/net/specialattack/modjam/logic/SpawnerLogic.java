@@ -63,7 +63,7 @@ public final class SpawnerLogic {
     }
 
     public static Monster getMonster(int id) {
-        for (Monster monster : monsters) {
+        for (Monster monster : SpawnerLogic.monsters) {
             if (monster.id == id) {
                 return monster;
             }
@@ -76,7 +76,7 @@ public final class SpawnerLogic {
     }
 
     public static Booster getBooster(int id) {
-        for (Booster booster : boosters) {
+        for (Booster booster : SpawnerLogic.boosters) {
             if (booster.id == id) {
                 return booster;
             }
