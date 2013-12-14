@@ -1,6 +1,7 @@
 
 package net.specialattack.modjam;
 
+import net.specialattack.modjam.blocks.BlockColoredAvoiding;
 import net.specialattack.modjam.blocks.BlockSpawner;
 import net.specialattack.modjam.blocks.BlockTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
@@ -19,5 +20,6 @@ public class Objects {
 
     public static BlockTower blockTower;
     public static BlockSpawner blockSpawner;
+    public static BlockColoredAvoiding blockClayAvoiding;
 
 }

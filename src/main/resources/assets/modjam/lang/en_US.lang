@@ -1,4 +1,24 @@
 tile.modjam-spawner.name=Spawner
 tile.modjam-tower.name=Tower
+tile.modjam-avoiding-clay.name=Stained avoiding clay
+
+tile.modjam-avoiding-clay.black.name=Black Stained Avoiding Clay
+tile.modjam-avoiding-clay.red.name=Red Stained Avoiding Clay
+tile.modjam-avoiding-clay.green.name=Green Stained Avoiding Clay
+tile.modjam-avoiding-clay.brown.name=Brown Stained Avoiding Clay
+tile.modjam-avoiding-clay.blue.name=Blue Stained Avoiding Clay
+tile.modjam-avoiding-clay.purple.name=Purple Stained Avoiding Clay
+tile.modjam-avoiding-clay.cyan.name=Cyan Stained Avoiding Clay
+tile.modjam-avoiding-clay.silver.name=Light Gray Stained Avoiding Clay
+tile.modjam-avoiding-clay.gray.name=Gray Stained Avoiding Clay
+tile.modjam-avoiding-clay.pink.name=Pink Stained Avoiding Clay
+tile.modjam-avoiding-clay.lime.name=Lime Stained Avoiding Clay
+tile.modjam-avoiding-clay.yellow.name=Yellow Stained Avoiding Clay
+tile.modjam-avoiding-clay.lightBlue.name=Light Blue Stained Avoiding Clay
+tile.modjam-avoiding-clay.magenta.name=Magenta Stained Avoiding Clay
+tile.modjam-avoiding-clay.orange.name=Orange Stained Avoiding Clay
+tile.modjam-avoiding-clay.white.name=White Stained Avoiding Clay
 
 itemGroup.modjam-bleigh=Modjam
+
+item.avoiding.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!

@@ -9,6 +9,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
 
 @Mod(modid = Objects.MOD_ID, name = Objects.MOD_NAME)
 public class ModJam {
@@ -34,6 +35,11 @@ public class ModJam {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+    }
+
+    @EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        CommonProxy.players.clear();
     }
 
 }
