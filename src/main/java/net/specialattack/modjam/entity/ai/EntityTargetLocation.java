@@ -8,6 +8,7 @@ import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.specialattack.modjam.pathfinding.PathFinderCustom;
+import net.specialattack.modjam.tileentity.TileEntityTarget;
 
 public class EntityTargetLocation extends EntityAIBase {
 
@@ -17,8 +18,9 @@ public class EntityTargetLocation extends EntityAIBase {
     private double posZ;
     private double speed;
     private boolean running;
+    private TileEntityTarget tile;
 
-    public EntityTargetLocation(EntityLiving entity, Vec3 target, double speed) {
+    public EntityTargetLocation(EntityLiving entity, Vec3 target, TileEntityTarget tile, double speed) {
         this.entity = entity;
         this.speed = speed;
         this.setMutexBits(1);
@@ -26,6 +28,8 @@ public class EntityTargetLocation extends EntityAIBase {
         this.posX = target.xCoord;
         this.posY = target.yCoord;
         this.posZ = target.zCoord;
+
+        this.tile = tile;
     }
 
     @Override
@@ -56,7 +60,19 @@ public class EntityTargetLocation extends EntityAIBase {
     public void resetTask() {
         super.resetTask();
 
-        //running = false;
+        double distanceX = this.entity.posX - this.posX;
+        double distanceZ = this.entity.posZ - this.posZ;
+        double distance = distanceX * distanceX + distanceZ * distanceZ;
+
+        if (distance < 2.0D * 2.0D) {
+            tile.damage(1);
+            entity.worldObj.removeEntity(entity);
+            entity = null;
+            tile = null;
+        }
+        else {
+            this.running = false;
+        }
     }
 
     @Override

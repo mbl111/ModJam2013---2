@@ -15,52 +15,67 @@ import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.specialattack.modjam.blocks.BlockColoredAvoiding;
-import net.specialattack.modjam.blocks.BlockSpawner;
+import net.specialattack.modjam.blocks.BlockGameLogic;
 import net.specialattack.modjam.blocks.BlockTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
+import net.specialattack.modjam.inventory.ContainerSpawner;
 import net.specialattack.modjam.items.ItemBlockColoredAvoiding;
-import net.specialattack.modjam.items.ItemBlockSpawner;
+import net.specialattack.modjam.items.ItemBlockGameLogic;
 import net.specialattack.modjam.items.ItemBlockTower;
+import net.specialattack.modjam.items.ItemGameLogic;
+import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
+import net.specialattack.modjam.tileentity.TileEntityTarget;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.IConnectionHandler;
+import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class CommonProxy implements IConnectionHandler {
+public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
         Objects.blockTower = new BlockTower(Config.blockTowerId);
         GameRegistry.registerBlock(Objects.blockTower, ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
 
-        Objects.blockSpawner = new BlockSpawner(Config.blockSpawnerId);
-        GameRegistry.registerBlock(Objects.blockSpawner, ItemBlockSpawner.class, Objects.MOD_ID + ".blockSpawner");
+        Objects.blockGameLogic = new BlockGameLogic(Config.blockGameLogicId);
+        GameRegistry.registerBlock(Objects.blockGameLogic, ItemBlockGameLogic.class, Objects.MOD_ID + ".blockGameLogic");
 
         Objects.blockClayAvoiding = new BlockColoredAvoiding(Config.blockClayAvoidingId, Material.rock);
         GameRegistry.registerBlock(Objects.blockClayAvoiding, ItemBlockColoredAvoiding.class, Objects.MOD_ID + ".blockClayAvoiding");
 
+        Objects.itemGameLogic = new ItemGameLogic(Config.itemGameLogicId);
+        GameRegistry.registerItem(Objects.itemGameLogic, Objects.MOD_ID + ".itemGameLogic");
+
+        Objects.creativeTab = new CreativeTabModjam(Assets.DOMAIN + "-bleigh");
+        Objects.creativeTab.setIconItemStack(new ItemStack(Objects.blockTower));
+
+        Objects.blockTower.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-tower").setTextureName(Assets.DOMAIN + ":tower").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundAnvilFootstep);
+        Objects.blockGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-game-logic").setTextureName(Assets.DOMAIN + ":game-logic").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundPowderFootstep);
+        Objects.blockClayAvoiding.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-avoiding-clay").setTextureName(Assets.DOMAIN + ":avoiding-clay").setHardness(1.25F).setResistance(100.0F).setStepSound(Block.soundStoneFootstep);
+
+        Objects.itemGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-game-logic").setTextureName(Assets.DOMAIN + ":game-logic");
+
         NetworkRegistry.instance().registerConnectionHandler(this);
+        NetworkRegistry.instance().registerGuiHandler(ModModjam.instance, this);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void init(FMLInitializationEvent event) {
         //Set block features, creative tabs, tile entity mappings
 
-        Objects.creativeTab = new CreativeTabModjam(Assets.PREFIX + "-bleigh");
-        Objects.creativeTab.setIconItemStack(new ItemStack(Objects.blockTower));
-
-        Objects.blockTower.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-tower").setTextureName(Assets.PREFIX + ":tower").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundAnvilFootstep);
-        Objects.blockSpawner.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-spawner").setTextureName(Assets.PREFIX + ":spawner").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundPowderFootstep);
-        Objects.blockClayAvoiding.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-avoiding-clay").setTextureName(Assets.PREFIX + ":avoiding-clay").setHardness(1.25F).setResistance(100.0F).setStepSound(Block.soundStoneFootstep);
+        Objects.scoreTDCriteria = new ScoreTDCriteria("towerDefence");
 
         TileEntity.addMapping(TileEntitySpawner.class, "Modjam3-Spawner");
+        TileEntity.addMapping(TileEntityTarget.class, "Modjam3-Target");
     }
 
     public void postInit(FMLPostInitializationEvent event) {
@@ -154,5 +169,27 @@ public class CommonProxy implements IConnectionHandler {
 
     @Override
     public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {}
+
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        try {
+            TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+            if (ID == 0) {
+                if (tile != null && tile instanceof TileEntitySpawner) {
+                    return new ContainerSpawner((TileEntitySpawner) tile);
+                }
+            }
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
 
 }

@@ -4,22 +4,20 @@ package net.specialattack.modjam.items;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.util.StatCollector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemBlockColoredAvoiding extends ItemBlock {
+public class ItemBlockGameLogic extends ItemBlock {
 
     private Block block;
 
-    public ItemBlockColoredAvoiding(int itemId) {
+    public ItemBlockGameLogic(int itemId) {
         super(itemId);
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
@@ -29,7 +27,7 @@ public class ItemBlockColoredAvoiding extends ItemBlock {
     @Override
     @SideOnly(Side.CLIENT)
     public Icon getIconFromDamage(int meta) {
-        return this.block.getIcon(2, BlockColored.getBlockFromDye(meta));
+        return this.block.getIcon(2, meta);
     }
 
     @Override
@@ -39,7 +37,7 @@ public class ItemBlockColoredAvoiding extends ItemBlock {
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        return super.getUnlocalizedName() + "." + ItemDye.dyeColorNames[BlockColored.getBlockFromDye(stack.getItemDamage())];
+        return super.getUnlocalizedName() + stack.getItemDamage();
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
