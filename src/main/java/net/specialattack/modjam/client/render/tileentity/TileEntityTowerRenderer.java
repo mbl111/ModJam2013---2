@@ -3,14 +3,13 @@ package net.specialattack.modjam.client.render.tileentity;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.specialattack.modjam.client.render.models.ModelTowerBase;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 
 import org.lwjgl.opengl.GL11;
 
 public class TileEntityTowerRenderer extends TileEntitySpecialRenderer {
 
-    private ModelTowerBase towerBase = new ModelTowerBase();
+    //private ModelTowerBase towerBase = new ModelTowerBase();
 
     @Override
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float partialTicks) {

@@ -10,7 +10,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
@@ -22,7 +21,6 @@ import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
 import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
-import net.specialattack.modjam.packet.PacketHandler;
 import net.specialattack.modjam.pathfinding.IAvoided;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -66,6 +64,15 @@ public class BlockTower extends Block implements IAvoided {
     @SideOnly(Side.CLIENT)
     public Icon getIcon(int side, int meta) {
         return this.base;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+        if (world.getBlockMetadata(x, y, z) == 0) {
+            return super.getBlockTexture(world, x, y, z, side);
+        }
+        return super.getBlockTexture(world, x, y, z, side);
     }
 
     @Override
@@ -144,29 +151,22 @@ public class BlockTower extends Block implements IAvoided {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ) {
-
         if (world.isRemote) {
-            return false;
+            return true;
         }
 
         TileEntity tile = world.getBlockTileEntity(x, y, z);
         if (tile == null) {
             player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
-            return false;
+            return true;
         }
 
         if (!(tile instanceof TileEntityTower)) {
             player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
-            return false;
+            return true;
         }
 
-        //player.openGui(ModModjam.instance, 1, world, x, y, z);
-
-        TileEntityTower tower = (TileEntityTower) tile;
-
-        tower.setActive(true);
-        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
-        PacketHandler.sendToAllPlayers(packet);
+        player.openGui(ModModjam.instance, 1, world, x, y, z);
 
         return true;
     }

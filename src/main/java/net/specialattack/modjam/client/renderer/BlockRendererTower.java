@@ -36,37 +36,34 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         else if (metadata == 1) {
             TileEntity tile = world.getBlockTileEntity(x, y - 1, z);
 
-            if (tile instanceof TileEntityTower && ((TileEntityTower) tile).active) {
-                float pixel = 0.0625F;
-
-                block.setBlockBounds(pixel * 2F, pixel * 4F, pixel * 2F, pixel * 6F, pixel * 15F, pixel * 12F);
-                this.renderBox(block, x, y, z, renderer);
-                //this.towerBase.addBox(2, 4, 2, 4, 11, 12);
-                //this.towerBase.addBox(10, 4, 2, 4, 11, 12);
-                //this.towerBase.addBox(6, 4, 2, 4, 11, 4);
-                //this.towerBase.addBox(6, 4, 10, 4, 11, 4);
+            if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).active) {
+                // Base
+                this.renderBox(block, x, y, z, 2, 4, 2, 12, 11, 12, renderer);
 
                 //Legs
-                //this.towerBase.addBox(.5f, 0, .5f, 4, 8, 4);
-                //this.towerBase.addBox(11.5f, 0, .5f, 4, 8, 4);
-                //this.towerBase.addBox(11.5f, 0, 11.5f, 4, 8, 4);
-                //this.towerBase.addBox(.5f, 0, 11.5f, 4, 8, 4);
+                this.renderBox(block, x, y, z, 0.5F, 0, 0.5F, 4, 8, 4, renderer);
+                this.renderBox(block, x, y, z, 11.5F, 0, 0.5F, 4, 8, 4, renderer);
+                this.renderBox(block, x, y, z, 11.5F, 0, 11.5F, 4, 8, 4, renderer);
+                this.renderBox(block, x, y, z, 0.5F, 0, 11.5F, 4, 8, 4, renderer);
 
                 //Decoration
-                //this.towerBase.addBox(1, 8, 1, 1, 8, 1);
-                //this.towerBase.addBox(1, 8, 14, 1, 8, 1);
-                //this.towerBase.addBox(14, 8, 14, 1, 8, 1);
-                //this.towerBase.addBox(14, 8, 1, 1, 8, 1);
-
-                //'pole'
-                //this.towerBase.addBox(6, 13, 6, 4, 1, 4);
+                this.renderBox(block, x, y, z, 1, 8, 1, 1, 8, 1, renderer);
+                this.renderBox(block, x, y, z, 1, 8, 14, 1, 8, 1, renderer);
+                this.renderBox(block, x, y, z, 14, 8, 14, 1, 8, 1, renderer);
+                this.renderBox(block, x, y, z, 14, 8, 1, 1, 8, 1, renderer);
 
                 //Decoration
-                //this.towerBase.addBox(2, 15, 1, 12, 1, 1);
-                //this.towerBase.addBox(2, 15, 14, 12, 1, 1);
+                this.renderBox(block, x, y, z, 2, 15, 1, 12, 1, 1, renderer);
+                this.renderBox(block, x, y, z, 2, 15, 14, 12, 1, 1, renderer);
+                this.renderBox(block, x, y, z, 1, 15, 2, 1, 1, 12, renderer);
+                this.renderBox(block, x, y, z, 14, 15, 2, 1, 1, 12, renderer);
+            }
+        }
+        else if (metadata == 2) {
+            TileEntity tile = world.getBlockTileEntity(x, y - 2, z);
 
-                //this.towerBase.addBox(1, 15, 2, 1, 1, 12);
-                //this.towerBase.addBox(14, 15, 2, 1, 1, 12);
+            if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).active) {
+                // TODO: Let the tower render
             }
         }
         else {
@@ -76,8 +73,16 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         return true;
     }
 
+    private void renderBox(Block block, int x, int y, int z, float startX, float startY, float startZ, float sizeX, float sizeY, float sizeZ, RenderBlocks renderer) {
+        float pixel = 0.0625F;
+
+        block.setBlockBounds(pixel * startX, pixel * startY, pixel * startZ, pixel * (startX + sizeX), pixel * (startY + sizeY), pixel * (startZ + sizeZ));
+        this.renderBox(block, x, y, z, renderer);
+    }
+
     private void renderBox(Block block, int x, int y, int z, RenderBlocks renderer) {
-        renderer.renderStandardBlockWithColorMultiplier(block, x, y, z, 1.0F, 1.0F, 1.0F);
+        renderer.setRenderBoundsFromBlock(block);
+        renderer.renderStandardBlock(block, x, y, z);
     }
 
     private void renderBox(Block block, int metadata, RenderBlocks renderer) {

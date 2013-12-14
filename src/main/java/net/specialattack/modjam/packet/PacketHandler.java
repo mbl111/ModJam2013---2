@@ -183,6 +183,8 @@ public class PacketHandler implements IPacketHandler {
         tower.setActive(in.readBoolean());
 
         world.markBlockForRenderUpdate(x, y, z);
+        world.markBlockForRenderUpdate(x, y + 1, z);
+        world.markBlockForRenderUpdate(x, y + 2, z);
     }
 
 }

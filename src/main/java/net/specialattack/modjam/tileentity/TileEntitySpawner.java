@@ -213,8 +213,10 @@ public class TileEntitySpawner extends TileEntity {
                             EntityLiving entity = this.currentMonster.createNew(this.worldObj);
                             entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
-                            entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(TileEntitySpawner.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
-                            entity.setEquipmentDropChance(4, 0.0F);
+                            if (this.currentMonster.supportsHat) {
+                                entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(TileEntitySpawner.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
+                                entity.setEquipmentDropChance(4, 0.0F);
+                            }
                             entity.func_110163_bv();
 
                             entity.targetTasks.taskEntries.clear();
@@ -251,7 +253,6 @@ public class TileEntitySpawner extends TileEntity {
 
                     this.prepareWave();
 
-                    // Transmit data
                     if (player != null) {
                         player.sendChatToPlayer(ChatMessageComponent.createFromText("Wave over!"));
                     }
@@ -279,20 +280,6 @@ public class TileEntitySpawner extends TileEntity {
                 if (this.timer >= 100) {
                     this.waveActive = true;
                     this.timer = 0;
-                    // Prepare wave
-                    //  - Create entities
-                    //    - Zombie
-                    //    - Skeleton
-                    //    - Witch - Likes to pause to heal
-                    //    - Creeper (extra damage)
-                    //    - Spider - Said fuck you
-                    //    - Giant (rare) - Old AI
-                    //    - Ghast (flying) - Nope
-                    //    - Blaze (flying) - Wow, such broke, very annoy
-                    //    - Zombie Pigman - DOESN'T WORK
-                    //    - Big slime - Nope
-                    //  - Set AI for entities
-                    //  - Set spawning interval
 
                     TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
 
@@ -301,7 +288,6 @@ public class TileEntitySpawner extends TileEntity {
                     if (tile != null && tile instanceof TileEntityTarget) {
                         this.spawning = true;
 
-                        // Announce start
                         if (player != null) {
                             CommonProxy.getPlayer(this.playername).sendChatToPlayer(ChatMessageComponent.createFromText("The next wave is starting!"));
                         }
@@ -364,7 +350,7 @@ public class TileEntitySpawner extends TileEntity {
 
         if (compound.hasKey("target")) {
             NBTTagCompound target = compound.getCompoundTag("target");
-            this.target = new ChunkCoordinates(target.getInteger("posX"), target.getInteger("posY"), target.getInteger("posXZ"));
+            this.target = new ChunkCoordinates(target.getInteger("posX"), target.getInteger("posY"), target.getInteger("posZ"));
         }
 
         NBTTagList boosters = compound.getTagList("boosters");
