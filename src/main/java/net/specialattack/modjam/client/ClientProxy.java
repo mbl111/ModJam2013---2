@@ -12,6 +12,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.specialattack.modjam.CommonProxy;
 import net.specialattack.modjam.client.gui.GuiOverlay;
 import net.specialattack.modjam.client.gui.container.GuiSpawner;
+import net.specialattack.modjam.client.gui.container.GuiTower;
 import net.specialattack.modjam.client.render.timeentity.TileEntityTowerRenderer;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTower;
@@ -50,6 +51,11 @@ public class ClientProxy extends CommonProxy {
             if (ID == 0) {
                 if (tile != null && tile instanceof TileEntitySpawner) {
                     return new GuiSpawner((TileEntitySpawner) tile);
+                }
+            }
+            else if (ID == 1) {
+                if (tile != null && tile instanceof TileEntityTower) {
+                    return new GuiTower((TileEntityTower) tile);
                 }
             }
         }
