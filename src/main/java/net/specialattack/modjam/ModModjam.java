@@ -2,6 +2,7 @@
 package net.specialattack.modjam;
 
 import net.minecraftforge.common.Configuration;
+import net.specialattack.modjam.packet.PacketHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -13,7 +14,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = Objects.MOD_ID, name = Objects.MOD_NAME)
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
+@NetworkMod(clientSideRequired = true, serverSideRequired = false, channels = { Objects.MOD_CHANNEL }, packetHandler = PacketHandler.class)
 public class ModModjam {
 
     @Instance

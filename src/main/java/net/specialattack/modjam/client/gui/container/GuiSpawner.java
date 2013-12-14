@@ -17,6 +17,7 @@ public class GuiSpawner extends GuiContainer {
 
     public boolean prevWaveActive;
     public boolean prevActive;
+    public boolean prevCanWork;
 
     private GuiButton activate;
 
@@ -24,6 +25,29 @@ public class GuiSpawner extends GuiContainer {
         super(new ContainerSpawner(tile));
         this.container = (ContainerSpawner) this.inventorySlots;
         this.tile = tile;
+    }
+
+    private void setupButtons() {
+        if (!this.container.canWork) {
+            this.activate.enabled = false;
+            this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nowork");
+        }
+        else {
+            if (!tile.active) {
+                this.activate.enabled = true;
+                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.bind");
+            }
+            else {
+                if (this.container.isMyName) {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.unbind");
+                }
+                else {
+                    this.activate.enabled = false;
+                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nobind");
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -35,26 +59,7 @@ public class GuiSpawner extends GuiContainer {
 
         this.buttonList.add(activate = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, this.xSize - 40, 20, ""));
 
-        if (!this.container.canWork) {
-            this.activate.enabled = false;
-            this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.nowork");
-        }
-        else {
-            if (!tile.active) {
-                this.activate.enabled = true;
-                this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.bind");
-            }
-            else {
-                if (this.container.isMyName) {
-                    this.activate.enabled = true;
-                    this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.unbind");
-                }
-                else {
-                    this.activate.enabled = false;
-                    this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.nobind");
-                }
-            }
-        }
+        setupButtons();
     }
 
     @Override
@@ -68,37 +73,19 @@ public class GuiSpawner extends GuiContainer {
     public void updateScreen() {
         super.updateScreen();
 
-        if (this.prevActive != tile.active) {
-            if (!this.container.canWork) {
-                this.activate.enabled = false;
-                this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.nowork");
-            }
-            else {
-                if (!tile.active) {
-                    this.activate.enabled = true;
-                    this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.bind");
-                }
-                else {
-                    if (this.container.isMyName) {
-                        this.activate.enabled = true;
-                        this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.unbind");
-                    }
-                    else {
-                        this.activate.enabled = false;
-                        this.activate.displayString = I18n.getString("container." + Assets.PREFIX + "-spawner.nobind");
-                    }
-                }
-            }
+        if (this.prevActive != tile.active || this.prevCanWork != container.canWork) {
+            setupButtons();
         }
 
         this.prevActive = tile.active;
         this.prevWaveActive = tile.waveActive;
+        this.prevCanWork = container.canWork;
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        String title = I18n.getString("container." + Assets.PREFIX + "-spawner");
+        String title = I18n.getString("container." + Assets.DOMAIN + "-spawner");
         this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 6, 0x404040);
     }
 

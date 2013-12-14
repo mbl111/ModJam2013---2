@@ -14,7 +14,6 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import cpw.mods.fml.relauncher.Side;
@@ -40,7 +39,6 @@ public class ItemGameLogic extends Item {
 
             if (tile instanceof TileEntitySpawner) {
                 TileEntitySpawner spawner = (TileEntitySpawner) tile;
-                player.openGui(ModModjam.instance, 0, world, x, y, z);
 
                 if (stack.stackTagCompound == null) {
                     player.sendChatToPlayer(ChatMessageComponent.createFromText("No Target yet set"));

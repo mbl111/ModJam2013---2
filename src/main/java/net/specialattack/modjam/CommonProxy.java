@@ -26,6 +26,7 @@ import net.specialattack.modjam.items.ItemBlockColoredAvoiding;
 import net.specialattack.modjam.items.ItemBlockGameLogic;
 import net.specialattack.modjam.items.ItemBlockTower;
 import net.specialattack.modjam.items.ItemGameLogic;
+import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -54,14 +55,14 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         Objects.itemGameLogic = new ItemGameLogic(Config.itemGameLogicId);
         GameRegistry.registerItem(Objects.itemGameLogic, Objects.MOD_ID + ".itemGameLogic");
 
-        Objects.creativeTab = new CreativeTabModjam(Assets.PREFIX + "-bleigh");
+        Objects.creativeTab = new CreativeTabModjam(Assets.DOMAIN + "-bleigh");
         Objects.creativeTab.setIconItemStack(new ItemStack(Objects.blockTower));
 
-        Objects.blockTower.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-tower").setTextureName(Assets.PREFIX + ":tower").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundAnvilFootstep);
-        Objects.blockGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-game-logic").setTextureName(Assets.PREFIX + ":game-logic").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundPowderFootstep);
-        Objects.blockClayAvoiding.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-avoiding-clay").setTextureName(Assets.PREFIX + ":avoiding-clay").setHardness(1.25F).setResistance(100.0F).setStepSound(Block.soundStoneFootstep);
+        Objects.blockTower.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-tower").setTextureName(Assets.DOMAIN + ":tower").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundAnvilFootstep);
+        Objects.blockGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-game-logic").setTextureName(Assets.DOMAIN + ":game-logic").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundPowderFootstep);
+        Objects.blockClayAvoiding.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-avoiding-clay").setTextureName(Assets.DOMAIN + ":avoiding-clay").setHardness(1.25F).setResistance(100.0F).setStepSound(Block.soundStoneFootstep);
 
-        Objects.itemGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.PREFIX + "-game-logic").setTextureName(Assets.PREFIX + ":game-logic");
+        Objects.itemGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-game-logic").setTextureName(Assets.DOMAIN + ":game-logic");
 
         NetworkRegistry.instance().registerConnectionHandler(this);
         NetworkRegistry.instance().registerGuiHandler(ModModjam.instance, this);
@@ -70,6 +71,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
     public void init(FMLInitializationEvent event) {
         //Set block features, creative tabs, tile entity mappings
+
+        Objects.scoreTDCriteria = new ScoreTDCriteria("towerDefence");
 
         TileEntity.addMapping(TileEntitySpawner.class, "Modjam3-Spawner");
         TileEntity.addMapping(TileEntityTarget.class, "Modjam3-Target");
