@@ -28,7 +28,7 @@ public class PathFinderCustom extends PathFinder {
 
     @Override
     public int getVerticalOffset(Entity entity, int posX, int posY, int posZ, PathPoint point) {
-        return calulateVerticalOffset(entity, posX, posY, posZ, point, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoodenDoorAllowed);
+        return PathFinderCustom.calulateVerticalOffset(entity, posX, posY, posZ, point, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoodenDoorAllowed);
     }
 
     public static int calulateVerticalOffset(Entity entity, int posX, int posY, int posZ, PathPoint point, boolean isPathingInWater, boolean isMovementBlockAllowed, boolean isWoodenDoorAllowed) {

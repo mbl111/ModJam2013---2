@@ -65,10 +65,10 @@ public class EntityTargetLocation extends EntityAIBase {
         double distance = distanceX * distanceX + distanceZ * distanceZ;
 
         if (distance < 2.0D * 2.0D) {
-            tile.damage(1);
-            entity.worldObj.removeEntity(entity);
-            entity = null;
-            tile = null;
+            this.tile.damage(1);
+            this.entity.worldObj.removeEntity(this.entity);
+            this.entity = null;
+            this.tile = null;
         }
         else {
             this.running = false;

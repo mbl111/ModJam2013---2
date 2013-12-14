@@ -12,12 +12,11 @@ public class TileEntityTowerRenderer extends TileEntitySpecialRenderer {
         if (!(tile instanceof TileEntityTower)) {
             return;
         }
-        
-        
+
         TileEntityTower tower = (TileEntityTower) tile;
         TileEntityTowerRenderer renderer = tower.getRender();
         //renderer.render(tower);
-        
+
     }
 
 }

@@ -29,7 +29,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
             return false;
         }
 
-        renderBox(block, x, y, z, renderer);
+        this.renderBox(block, x, y, z, renderer);
 
         return true;
     }
@@ -80,7 +80,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
 
     @Override
     public int getRenderId() {
-        return renderId;
+        return this.renderId;
     }
 
 }

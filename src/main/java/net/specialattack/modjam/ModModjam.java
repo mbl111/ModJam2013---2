@@ -25,19 +25,19 @@ public class ModModjam {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        proxy.preInit(event);
+        ModModjam.proxy.preInit(event);
 
         Config.loadConfig(new Configuration(event.getSuggestedConfigurationFile()));
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        proxy.init(event);
+        ModModjam.proxy.init(event);
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit(event);
+        ModModjam.proxy.postInit(event);
     }
 
     @EventHandler

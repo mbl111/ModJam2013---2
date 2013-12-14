@@ -27,11 +27,10 @@ public abstract class Booster extends WeightedRandomItem {
         int u = iconIndex % 14;
         int v = (iconIndex - u) / 14;
 
-        float pixel = 1.0F / 255.0F;
-        minU = (float) u * pixel;
-        maxU = (float) u * pixel;
-        minV = (float) v * pixel;
-        maxV = (float) v * pixel;
+        this.minU = u * 18.0F / 255.0F;
+        this.maxU = (u + 1) * 18.0F / 255.0F;
+        this.minV = v * 18.0F / 255.0F;
+        this.maxV = (v + 1) * 18.0F / 255.0F;
     }
 
     public ResourceLocation getResourceLocation() {

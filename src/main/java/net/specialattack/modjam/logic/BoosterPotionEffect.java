@@ -19,7 +19,7 @@ public class BoosterPotionEffect extends Booster {
 
     @Override
     public void applyBooster(EntityLiving entity) {
-        PotionEffect effect = new PotionEffect(potion.id, 30, level, false);
+        PotionEffect effect = new PotionEffect(this.potion.id, 6000, this.level, true);
         effect.setPotionDurationMax(true);
         entity.addPotionEffect(effect);
     }
@@ -27,14 +27,14 @@ public class BoosterPotionEffect extends Booster {
     @Override
     public boolean conflicts(Booster other) {
         if (other instanceof BoosterPotionEffect) {
-            return ((BoosterPotionEffect) other).potion != this.potion;
+            return ((BoosterPotionEffect) other).potion == this.potion;
         }
         return false;
     }
 
     @Override
     public String getDisplay() {
-        return "" + (level + 1);
+        return "" + (this.level + 1);
     }
 
 }

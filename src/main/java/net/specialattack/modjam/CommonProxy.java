@@ -121,7 +121,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public static ArrayList<String> playernames = new ArrayList<String>();
 
     public static boolean isPlayerLoggedIn(String playername) {
-        return playernames.contains(playername);
+        return CommonProxy.playernames.contains(playername);
     }
 
     @SuppressWarnings("rawtypes")
@@ -142,8 +142,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
         if (player instanceof EntityPlayer) {
             String username = ((EntityPlayer) player).username;
-            players.put(manager, username);
-            playernames.add(username);
+            CommonProxy.players.put(manager, username);
+            CommonProxy.playernames.add(username);
         }
     }
 
@@ -160,11 +160,11 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
     @Override
     public void connectionClosed(INetworkManager manager) {
-        if (!players.containsKey(manager)) {
+        if (!CommonProxy.players.containsKey(manager)) {
             System.err.println("Player changed network manager?!");
             return;
         }
-        playernames.remove(players.remove(manager));
+        CommonProxy.playernames.remove(CommonProxy.players.remove(manager));
     }
 
     @Override

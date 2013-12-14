@@ -41,8 +41,8 @@ public class BlockTower extends Block implements IAvoided {
 
     public BlockTower(int blockId) {
         super(blockId, Material.anvil);
-        renderId = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(renderId, new BlockRendererTower(renderId));
+        this.renderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(this.renderId, new BlockRendererTower(this.renderId));
     }
 
     @Override

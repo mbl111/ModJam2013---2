@@ -22,7 +22,7 @@ public class PacketHandler implements IPacketHandler {
     public static PacketHandler instance;
 
     public PacketHandler() {
-        instance = this;
+        PacketHandler.instance = this;
     }
 
     @Override
@@ -35,9 +35,10 @@ public class PacketHandler implements IPacketHandler {
             id = in.readInt();
             switch (id) {
             case 0:
-                handlePacketBlank(in);
+                this.handlePacketBlank(in);
             break;
             case 1:
+                this.handlePacketWaveInfo(in);
             break;
             }
         }
@@ -78,6 +79,7 @@ public class PacketHandler implements IPacketHandler {
                 for (Booster booster : spawner.boosters) {
                     out.writeInt(booster.id);
                 }
+                out.writeInt(spawner.currentMonster.id);
             }
         }
         catch (IOException e) {
@@ -98,8 +100,9 @@ public class PacketHandler implements IPacketHandler {
             WaveInfo.boosters.clear();
             int count = in.readInt();
             for (int i = 0; i < count; i++) {
-                WaveInfo.boosters.add(SpawnerLogic.boosters.get(in.readInt()));
+                WaveInfo.boosters.add(SpawnerLogic.getBooster(in.readInt()));
             }
+            WaveInfo.currentMonster = SpawnerLogic.getMonster(in.readInt());
         }
     }
 

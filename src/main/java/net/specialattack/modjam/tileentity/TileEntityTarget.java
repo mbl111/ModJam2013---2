@@ -20,7 +20,7 @@ public class TileEntityTarget extends TileEntity {
             this.health = 0;
         }
 
-        TileEntity tile = worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
+        TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
         if (tile != null && tile instanceof TileEntitySpawner) {
             ((TileEntitySpawner) tile).targetDamaged(this);
         }

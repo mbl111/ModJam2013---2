@@ -1,0 +1,63 @@
+
+package net.specialattack.modjam.logic;
+
+import java.lang.reflect.Constructor;
+
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.WeightedRandomItem;
+import net.minecraft.world.World;
+import net.specialattack.modjam.Assets;
+
+public class Monster extends WeightedRandomItem {
+
+    public final int id;
+    public final Class<? extends EntityLiving> clazz;
+    private Constructor<? extends EntityLiving> constructor;
+    public boolean supportsHat;
+
+    public int iconIndex;
+    public float minU;
+    public float maxU;
+    public float minV;
+    public float maxV;
+    public int iconWidth;
+    public int iconHeight;
+
+    public Monster(int id, Class<? extends EntityLiving> clazz, int weight, boolean supportsHat) {
+        super(weight);
+        this.id = id;
+        this.clazz = clazz;
+        this.supportsHat = supportsHat;
+        try {
+            this.constructor = this.clazz.getConstructor(World.class);
+        }
+        catch (Throwable e) {
+            throw new RuntimeException(this.clazz.getSimpleName() + " can't be instantiated with a World object only", e);
+        }
+    }
+
+    public void setIcon(int left, int top, int width, int height) {
+        this.minU = (float) left / 255.0F;
+        this.minV = (float) top / 255.0F;
+        this.maxU = (float) (left + width) / 255.0F;
+        this.maxV = (float) (top + height) / 255.0F;
+        this.iconWidth = width;
+        this.iconHeight = height;
+    }
+
+    public ResourceLocation getResourceLocation() {
+        return Assets.GUI_OVERLAY;
+    }
+
+    public EntityLiving createNew(World world) {
+        try {
+            return this.constructor.newInstance(world);
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+}
