@@ -29,6 +29,7 @@ import net.specialattack.modjam.items.ItemGameLogic;
 import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
+import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -44,7 +45,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
         Objects.blockTower = new BlockTower(Config.blockTowerId);
-        GameRegistry.registerBlock(Objects.blockTower, ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
+        GameRegistry.registerBlock(Objects.blockTower,ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
 
         Objects.blockGameLogic = new BlockGameLogic(Config.blockGameLogicId);
         GameRegistry.registerBlock(Objects.blockGameLogic, ItemBlockGameLogic.class, Objects.MOD_ID + ".blockGameLogic");
@@ -54,6 +55,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
         Objects.itemGameLogic = new ItemGameLogic(Config.itemGameLogicId);
         GameRegistry.registerItem(Objects.itemGameLogic, Objects.MOD_ID + ".itemGameLogic");
+
 
         Objects.creativeTab = new CreativeTabModjam(Assets.DOMAIN + "-bleigh");
         Objects.creativeTab.setIconItemStack(new ItemStack(Objects.blockTower));
@@ -76,6 +78,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
         TileEntity.addMapping(TileEntitySpawner.class, "Modjam3-Spawner");
         TileEntity.addMapping(TileEntityTarget.class, "Modjam3-Target");
+        TileEntity.addMapping(TileEntityTower.class, "Modjam3-Tower");
     }
 
     public void postInit(FMLPostInitializationEvent event) {

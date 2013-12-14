@@ -10,15 +10,21 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
+import net.specialattack.modjam.client.render.timeentity.TileEntityTowerRenderer;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
+import net.specialattack.modjam.packet.PacketHandler;
 import net.specialattack.modjam.pathfinding.IAvoided;
+import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -121,5 +127,51 @@ public class BlockTower extends Block implements IAvoided {
 
         return super.collisionRayTrace(world, x, y, z, start, end);
     }
-
+    
+    @Override
+    public TileEntity createTileEntity(World world, int metadata) {
+        if (metadata == 0){
+            return new TileEntityTower();
+        }
+        return null;
+    }
+    
+    @Override
+    public boolean hasTileEntity(int metadata) {
+        return metadata == 0;
+    }
+    
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ) {
+       
+        if (world.isRemote){
+            return false;
+        }
+        
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
+        if (tile == null){
+            player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
+            return false;
+        }
+        
+        if (!(tile instanceof TileEntityTower)){
+            player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
+            return false;
+        }
+        
+        TileEntityTower tower = (TileEntityTower) tile;
+        
+        if (tower.getActive()){
+            player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower already active!"));
+            return true;
+        }
+        
+        tower.setActive(true);
+        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
+        PacketHandler.sendToAllPlayers(packet);
+        player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower now active!"));
+        
+        
+        return true;
+    }
 }

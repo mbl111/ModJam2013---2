@@ -1,19 +1,29 @@
 
 package net.specialattack.modjam.tileentity;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.specialattack.modjam.client.render.TowerRenderer;
-import net.specialattack.modjam.client.render.timeentity.TileEntityTowerRenderer;
 
 public class TileEntityTower extends TileEntity {
-    
-    private static TowerRenderer renderer;
 
-    public TileEntityTowerRenderer getRender() {
-        if (renderer == null){
-            renderer = new TowerRenderer();
-        }
-        return null;
+    public boolean active = false;
+
+    public boolean getActive() {
+        return this.active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        this.active = compound.getBoolean("active");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound compound) {
+        compound.setBoolean("active", this.active);
     }
 
 }
