@@ -1,6 +1,9 @@
-tile.modjam-spawner.name=Spawner
 tile.modjam-tower.name=Tower
-tile.modjam-avoiding-clay.name=Stained avoiding clay
+
+tile.modjam-game-logic0.name=Spawner
+tile.modjam-game-logic1.name=Target
+tile.modjam-game-logic0.description=This block spawns waves of monsters that target a Target block
+tile.modjam-game-logic1.description=This block is the target of a Spawner, it has hitpoints so don't let the monsters reach it!
 
 tile.modjam-avoiding-clay.black.name=Black Stained Avoiding Clay
 tile.modjam-avoiding-clay.red.name=Red Stained Avoiding Clay
@@ -18,7 +21,31 @@ tile.modjam-avoiding-clay.lightBlue.name=Light Blue Stained Avoiding Clay
 tile.modjam-avoiding-clay.magenta.name=Magenta Stained Avoiding Clay
 tile.modjam-avoiding-clay.orange.name=Orange Stained Avoiding Clay
 tile.modjam-avoiding-clay.white.name=White Stained Avoiding Clay
+tile.modjam-avoiding-clay.black.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.red.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.black.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.green.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.brown.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.blue.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.purple.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.cyan.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.silver.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.gray.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.pink.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.lime.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.yellow.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.lightBlue.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.magenta.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.orange.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+tile.modjam-avoiding-clay.white.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+
+item.modjam-game-logic0.name=Target Linker
+item.modjam-game-logic0.description=Use this item to link a Target to a Spawner
 
 itemGroup.modjam-bleigh=Modjam
 
-item.avoiding.description=Monsters that are spawned through Spawners won't like to cross this block, use it to keep the monsters contained!
+container.modjam-spawner=Spawner
+container.modjam-spawner.bind=Bind to Spawner
+container.modjam-spawner.unbind=Unbind from Spawner
+container.modjam-spawner.nobind=Another player is bound
+container.modjam-spawner.nowork=Spawner not setup

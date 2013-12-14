@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.specialattack.modjam.CommonProxy;
 import net.specialattack.modjam.SpawnerLogic;
@@ -27,16 +28,20 @@ public class TileEntitySpawner extends TileEntity {
     private List<Entity> spawnQueue;
     private String playername;
 
-    private boolean waveActive;
+    public boolean waveActive;
+    public boolean active;
     private boolean spawning;
     private int timer;
     private int interval;
+
+    protected ChunkCoordinates target;
 
     public TileEntitySpawner() {
         this.spawnedEntities = new ArrayList<Entity>();
         this.spawnQueue = new ArrayList<Entity>();
         this.playername = null;
         this.waveActive = false;
+        this.active = false;
         this.spawning = false;
         this.timer = 0;
         this.interval = 30;
@@ -52,6 +57,7 @@ public class TileEntitySpawner extends TileEntity {
         this.spawning = false;
         this.spawnQueue.clear();
         this.timer = 0;
+        this.active = playername != null;
 
         for (Entity entity : this.spawnedEntities) {
             entity.worldObj.removeEntity(entity);
@@ -62,8 +68,27 @@ public class TileEntitySpawner extends TileEntity {
         this.onInventoryChanged();
     }
 
-    public void startWaves() {
+    public void targetDamaged(TileEntityTarget target) {
+        CommonProxy.getPlayer(this.playername).sendChatToPlayer(ChatMessageComponent.createFromText("A monster passed! Remaining health: " + target.health));
+    }
 
+    public void target(TileEntityTarget newTarget) {
+        if (this.target != null) {
+            TileEntity tile = worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
+            if (tile != null && tile instanceof TileEntityTarget) {
+                ((TileEntityTarget) tile).spawner = null;
+            }
+            this.target = null;
+        }
+
+        if (newTarget != null) {
+            this.target = new ChunkCoordinates(newTarget.xCoord, newTarget.yCoord, newTarget.zCoord);
+            newTarget.spawner = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
+        }
+    }
+
+    public boolean canWork() {
+        return this.target != null;
     }
 
     @Override
@@ -151,6 +176,7 @@ public class TileEntitySpawner extends TileEntity {
             compound.setString("playername", this.playername);
         }
         compound.setBoolean("waveActive", this.waveActive);
+        compound.setBoolean("active", this.active);
         compound.setBoolean("spawning", this.spawning);
         compound.setInteger("timer", this.timer);
         compound.setInteger("interval", this.interval);
@@ -162,6 +188,14 @@ public class TileEntitySpawner extends TileEntity {
             spawnQueue.appendTag(entityCompound);
         }
         compound.setTag("spawnQueue", spawnQueue);
+
+        if (this.target != null) {
+            NBTTagCompound target = new NBTTagCompound();
+            target.setInteger("posX", this.target.posX);
+            target.setInteger("posY", this.target.posY);
+            target.setInteger("posZ", this.target.posZ);
+            compound.setCompoundTag("spawner", target);
+        }
     }
 
     @Override
@@ -172,6 +206,7 @@ public class TileEntitySpawner extends TileEntity {
             this.playername = null;
         }
         this.waveActive = compound.getBoolean("waveActive");
+        this.active = compound.getBoolean("active");
         this.spawning = compound.getBoolean("spawning");
         this.timer = compound.getInteger("timer");
         this.interval = compound.getInteger("interval");
@@ -181,6 +216,11 @@ public class TileEntitySpawner extends TileEntity {
             NBTTagCompound entityCompound = (NBTTagCompound) spawnQueue.tagAt(i);
             Entity entity = EntityList.createEntityFromNBT(entityCompound, this.worldObj);
             this.spawnQueue.add(entity);
+        }
+
+        if (compound.hasKey("target")) {
+            NBTTagCompound target = compound.getCompoundTag("target");
+            this.target = new ChunkCoordinates(target.getInteger("posX"), target.getInteger("posY"), target.getInteger("posXZ"));
         }
     }
 

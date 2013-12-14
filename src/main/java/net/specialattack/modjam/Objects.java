@@ -2,9 +2,10 @@
 package net.specialattack.modjam;
 
 import net.specialattack.modjam.blocks.BlockColoredAvoiding;
-import net.specialattack.modjam.blocks.BlockSpawner;
+import net.specialattack.modjam.blocks.BlockGameLogic;
 import net.specialattack.modjam.blocks.BlockTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
+import net.specialattack.modjam.items.ItemGameLogic;
 
 public class Objects {
 
@@ -19,7 +20,9 @@ public class Objects {
     public static CreativeTabModjam creativeTab;
 
     public static BlockTower blockTower;
-    public static BlockSpawner blockSpawner;
+    public static BlockGameLogic blockGameLogic;
     public static BlockColoredAvoiding blockClayAvoiding;
+
+    public static ItemGameLogic itemGameLogic;
 
 }

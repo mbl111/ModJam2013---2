@@ -10,12 +10,14 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = Objects.MOD_ID, name = Objects.MOD_NAME)
-public class ModJam {
+@NetworkMod(clientSideRequired = true, serverSideRequired = false)
+public class ModModjam {
 
     @Instance
-    public static ModJam instance;
+    public static ModModjam instance;
 
     @SidedProxy(clientSide = Objects.CLIENT_PROXY, serverSide = Objects.SERVER_PROXY)
     public static CommonProxy proxy;

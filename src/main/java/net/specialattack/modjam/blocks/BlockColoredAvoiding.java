@@ -21,7 +21,6 @@ public class BlockColoredAvoiding extends Block implements IAvoided {
 
     public BlockColoredAvoiding(int blockId, Material material) {
         super(blockId, material);
-        this.setCreativeTab(CreativeTabs.tabBlock);
     }
 
     @Override
