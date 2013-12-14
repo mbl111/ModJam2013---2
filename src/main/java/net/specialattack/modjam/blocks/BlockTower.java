@@ -20,6 +20,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
+import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.client.render.timeentity.TileEntityTowerRenderer;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
 import net.specialattack.modjam.packet.PacketHandler;
@@ -159,17 +160,11 @@ public class BlockTower extends Block implements IAvoided {
             return false;
         }
         
-        TileEntityTower tower = (TileEntityTower) tile;
+        player.openGui(ModModjam.instance, 0, world, x, y, z);
         
-        if (tower.getActive()){
-            player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower already active!"));
-            return true;
-        }
-        
-        tower.setActive(true);
-        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
-        PacketHandler.sendToAllPlayers(packet);
-        player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower now active!"));
+//        tower.setActive(true);
+//        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
+//        PacketHandler.sendToAllPlayers(packet);
         
         
         return true;

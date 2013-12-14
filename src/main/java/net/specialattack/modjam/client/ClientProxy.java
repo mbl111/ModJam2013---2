@@ -16,6 +16,7 @@ import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import net.specialattack.modjam.client.gui.GuiOverlay;
 import net.specialattack.modjam.client.gui.container.GuiSpawner;
+import net.specialattack.modjam.client.gui.container.GuiTower;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -51,6 +52,10 @@ public class ClientProxy extends CommonProxy {
             if (ID == 0) {
                 if (tile != null && tile instanceof TileEntitySpawner) {
                     return new GuiSpawner((TileEntitySpawner) tile);
+                }
+            }else if (ID == 1){
+                if (tile != null && tile instanceof TileEntityTower) {
+                    return new GuiTower((TileEntityTower) tile);
                 }
             }
         }

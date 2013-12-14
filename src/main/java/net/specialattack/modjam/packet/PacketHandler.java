@@ -155,7 +155,7 @@ public class PacketHandler implements IPacketHandler {
         int x = in.readInt();
         int y = in.readInt();
         int z = in.readInt();
-
+        
         TileEntityTower tower = (TileEntityTower) world.getBlockTileEntity(x, y, z);
 
         tower.setActive(in.readBoolean());

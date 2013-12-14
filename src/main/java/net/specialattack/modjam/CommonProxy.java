@@ -20,6 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.specialattack.modjam.blocks.BlockColoredAvoiding;
 import net.specialattack.modjam.blocks.BlockGameLogic;
 import net.specialattack.modjam.blocks.BlockTower;
+import net.specialattack.modjam.client.gui.container.GuiTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
 import net.specialattack.modjam.inventory.ContainerSpawner;
 import net.specialattack.modjam.items.ItemBlockColoredAvoiding;
@@ -181,6 +182,10 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
             if (ID == 0) {
                 if (tile != null && tile instanceof TileEntitySpawner) {
                     return new ContainerSpawner((TileEntitySpawner) tile);
+                }
+            }else if (ID == 1){
+                if (tile != null && tile instanceof TileEntityTower) {
+                    return new GuiTower((TileEntityTower) tile);
                 }
             }
         }
