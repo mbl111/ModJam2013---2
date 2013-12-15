@@ -1,4 +1,3 @@
-
 package net.specialattack.modjam.client.gui.container;
 
 import java.util.ArrayList;

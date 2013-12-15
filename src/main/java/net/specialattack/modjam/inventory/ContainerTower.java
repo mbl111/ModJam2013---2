@@ -1,4 +1,3 @@
-
 package net.specialattack.modjam.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;

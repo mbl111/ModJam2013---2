@@ -232,7 +232,6 @@ public class BlockTower extends Block implements IAvoided {
             player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
             return true;
         }
-
         player.openGui(ModModjam.instance, 1, world, x, y, z);
 
         return true;
