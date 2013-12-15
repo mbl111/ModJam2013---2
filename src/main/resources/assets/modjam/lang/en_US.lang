@@ -5,8 +5,10 @@ tile.modjam-tower.unlinked=Not linked
 
 tile.modjam-game-logic0.name=Spawner
 tile.modjam-game-logic1.name=Target
+tile.modjam-game-logic2.name=Multiplayer Controller
 tile.modjam-game-logic0.description=This block spawns waves of monsters that target a Target block
 tile.modjam-game-logic1.description=This block is the target of a Spawner, it has hitpoints so don't let the monsters reach it!
+tile.modjam-game-logic2.description=This block can controll a range of Spawners, it is not required for a Spawner to work, but it allows for synced games
 
 tile.modjam-avoiding-clay.black.name=Black Stained Avoiding Clay
 tile.modjam-avoiding-clay.red.name=Red Stained Avoiding Clay
@@ -54,13 +56,28 @@ container.modjam-spawner.nobind=Another player is bound
 container.modjam-spawner.nowork=Spawner not setup
 container.modjam-spawner.startnow=Start Wave Now
 
+container.modjam-multiplayerController=Multiplayer Controller
+container.modjam-multiplayerController.nowork=No Spawners connected
+container.modjam-multiplayerController.start=Start game
+container.modjam-multiplayerController.stop=Stop game
+
 container.modjam-tower=Tower
 container.modjam-tower.purchase=Buy a Tower
 container.modjam-tower.cost=Buy price: %1$s coins
+container.modjam-tower.nocost=Can't upgrade right now
 container.modjam-tower.level=Level: %1$s
-container.modjam-tower.speed=Attacks every %1$s seconds
-container.modjam-tower.range=Range: %1$s
-container.modjam-tower.damage=Attack damage: %1$s
+container.modjam-tower.speed=Speed: %1$s seconds/shot (Lvl %2$s)
+container.modjam-tower.range=Range: %1$s (Lvl %2$s)
+container.modjam-tower.damage=Damage: %1$s (Lvl %2$s)
+
+container.modjam-tower.upgrade.level.name=Upgrade Level
+container.modjam-tower.upgrade.level.description=Upgrades the level of this tower
+container.modjam-tower.upgrade.speed.name=Upgrade Speed
+container.modjam-tower.upgrade.speed.description=Upgrades the attack speed of this tower
+container.modjam-tower.upgrade.range.name=Upgrade Range
+container.modjam-tower.upgrade.range.description=Upgrades the range of this tower
+container.modjam-tower.upgrade.damage.name=Upgrade Damage
+container.modjam-tower.upgrade.damage.description=Upgrades the damage dealt by this tower
 
 tower.AoE.name=Area of Effect Tower
 tower.AoE.description=Periodically damages mobs in an area around itself

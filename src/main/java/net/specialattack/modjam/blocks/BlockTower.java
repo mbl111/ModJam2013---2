@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -183,10 +184,15 @@ public class BlockTower extends Block implements IAvoided {
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
         this.setBlockBoundsBasedOnState(world, x, y, z);
-        if (entity instanceof EntityPlayer && world.getBlockMetadata(x, y, z) != 0) {
-            return;
+        if (entity instanceof EntityPlayer) {
+            if (world.getBlockMetadata(x, y, z) != 0) {
+                return;
+            }
+            super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
         }
-        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        if (entity instanceof EntityLiving) {
+            super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        }
     }
 
     @Override

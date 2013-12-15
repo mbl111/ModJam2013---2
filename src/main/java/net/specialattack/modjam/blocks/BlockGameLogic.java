@@ -16,6 +16,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.items.IPassClick;
+import net.specialattack.modjam.tileentity.TileEntityMultiplayerController;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import net.specialattack.modjam.tileentity.TileEntityTower;
@@ -49,7 +50,7 @@ public class BlockGameLogic extends Block {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IconRegister register) {
-        this.icons = new Icon[2];
+        this.icons = new Icon[3];
 
         for (int i = 0; i < this.icons.length; ++i) {
             this.icons[i] = register.registerIcon(this.getTextureName() + i);
@@ -65,14 +66,13 @@ public class BlockGameLogic extends Block {
                 spawner.setActiveUser(null);
                 spawner.setTarget(null);
 
-                for (ChunkCoordinates coords : spawner.towers) {
-                    TileEntity otherTile = world.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
-                    if (otherTile != null && otherTile instanceof TileEntityTower) {
-                        int tempBlockId = world.getBlockId(coords.posX, coords.posY, coords.posZ);
-                        int tempMeta = world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
-                        world.setBlockToAir(coords.posX, coords.posY, coords.posZ);
-                        Block.blocksList[tempBlockId].breakBlock(world, coords.posX, coords.posY, coords.posZ, tempBlockId, tempMeta);
-                    }
+                List<TileEntityTower> towers = spawner.getAllTowers();
+
+                for (TileEntityTower tower : towers) {
+                    int tempBlockId = world.getBlockId(tower.xCoord, tower.yCoord, tower.zCoord);
+                    int tempMeta = world.getBlockMetadata(tower.xCoord, tower.yCoord, tower.zCoord);
+                    world.setBlockToAir(tower.xCoord, tower.yCoord, tower.zCoord);
+                    Block.blocksList[tempBlockId].breakBlock(world, tower.xCoord, tower.yCoord, tower.zCoord, tempBlockId, tempMeta);
                 }
             }
             else if (tile instanceof TileEntityTarget) {
@@ -85,13 +85,16 @@ public class BlockGameLogic extends Block {
                     }
                 }
             }
+            else if (tile instanceof TileEntityMultiplayerController) {
+
+            }
         }
         super.breakBlock(world, x, y, z, blockId, meta);
     }
 
     @Override
     public boolean hasTileEntity(int metadata) {
-        return metadata < 2;
+        return metadata < 3;
     }
 
     @Override
@@ -101,6 +104,9 @@ public class BlockGameLogic extends Block {
         }
         else if (metadata == 1) {
             return new TileEntityTarget();
+        }
+        else if (metadata == 2) {
+            return new TileEntityMultiplayerController();
         }
         return null;
     }
@@ -124,6 +130,9 @@ public class BlockGameLogic extends Block {
             }
             else if (tile instanceof TileEntityTarget) {
                 player.sendChatToPlayer(ChatMessageComponent.createFromText("Whack me with a Target Linker"));
+            }
+            else if (tile instanceof TileEntityMultiplayerController) {
+                player.openGui(ModModjam.instance, 2, world, x, y, z);
             }
         }
         else {

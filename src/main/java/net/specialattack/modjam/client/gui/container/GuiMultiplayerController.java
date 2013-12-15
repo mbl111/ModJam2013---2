@@ -5,8 +5,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.specialattack.modjam.Assets;
-import net.specialattack.modjam.inventory.ContainerSpawner;
-import net.specialattack.modjam.tileentity.TileEntitySpawner;
+import net.specialattack.modjam.inventory.ContainerMultiplayerController;
+import net.specialattack.modjam.tileentity.TileEntityMultiplayerController;
 
 import org.lwjgl.opengl.GL11;
 
@@ -14,47 +14,32 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiSpawner extends GuiContainer {
+public class GuiMultiplayerController extends GuiContainer {
 
-    public TileEntitySpawner tile;
-    private ContainerSpawner container;
+    public TileEntityMultiplayerController tile;
+    private ContainerMultiplayerController container;
 
     private GuiButton activate;
-    private GuiButton startnow;
 
-    public GuiSpawner(TileEntitySpawner tile) {
-        super(new ContainerSpawner(tile));
-        this.container = (ContainerSpawner) this.inventorySlots;
+    public GuiMultiplayerController(TileEntityMultiplayerController tile) {
+        super(new ContainerMultiplayerController(tile));
+        this.container = (ContainerMultiplayerController) this.inventorySlots;
         this.tile = tile;
     }
 
     private void setupButtons() {
-        if (!this.container.canWork) {
+        if (this.container.connections <= 0) {
             this.activate.enabled = false;
-            this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nowork");
-
-            this.startnow.enabled = false;
+            this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.nowork");
         }
         else {
-            if (!this.container.active) {
+            if (!this.tile.active) {
                 this.activate.enabled = true;
-                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.bind");
-
-                this.startnow.enabled = false;
+                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.start");
             }
             else {
-                if (this.container.isMyName) {
-                    this.activate.enabled = true;
-                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.unbind");
-
-                    this.startnow.enabled = true;
-                }
-                else {
-                    this.activate.enabled = false;
-                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nobind");
-
-                    this.startnow.enabled = false;
-                }
+                this.activate.enabled = true;
+                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.stop");
             }
         }
     }
@@ -67,7 +52,6 @@ public class GuiSpawner extends GuiContainer {
         this.buttonList.clear();
 
         this.buttonList.add(this.activate = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, this.xSize - 40, 20, ""));
-        this.buttonList.add(this.startnow = new GuiButton(1, this.guiLeft + 20, this.guiTop + 45, this.xSize - 40, 20, I18n.getString("container." + Assets.DOMAIN + "-spawner.startnow")));
 
         this.setupButtons();
     }
@@ -92,7 +76,7 @@ public class GuiSpawner extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        String title = I18n.getString("container." + Assets.DOMAIN + "-spawner");
+        String title = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController");
         this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 6, 0x404040);
     }
 

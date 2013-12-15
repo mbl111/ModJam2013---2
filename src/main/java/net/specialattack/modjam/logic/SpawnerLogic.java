@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.WeightedRandom;
@@ -46,9 +48,22 @@ public final class SpawnerLogic {
         monster.setIcon(80, 36, 16, 16);
         SpawnerLogic.monsters.add(monster);
 
+        monster = new MonsterBaby(7, EntityZombie.class, 50, true) {
+            @Override
+            public void makeBaby(EntityLiving entity) {
+                ((EntityZombie) entity).setChild(true);
+            }
+        };
+        monster.setIcon(112, 36, 16, 16);
+        SpawnerLogic.monsters.add(monster);
+
         // Bosses
         monster = new Monster(6, EntityIronGolem.class, 100, false);
         monster.setIcon(64, 36, 16, 16);
+        SpawnerLogic.bosses.add(monster);
+
+        monster = new Monster(8, EntityHorse.class, 70, false);
+        monster.setIcon(96, 36, 16, 16);
         SpawnerLogic.bosses.add(monster);
 
         SpawnerLogic.monsterAccessoires.add(new ItemStack(Block.anvil));

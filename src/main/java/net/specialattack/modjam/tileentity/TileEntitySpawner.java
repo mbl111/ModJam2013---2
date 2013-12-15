@@ -33,26 +33,28 @@ public class TileEntitySpawner extends TileEntity {
 
     public static final Random rand = new Random();
 
-    // TODO: find a way to make this one save
     public List<Entity> spawnedEntities;
     public int spawnQueue;
-    private String playername;
 
     public boolean waveActive;
     public boolean active;
-    private boolean spawning;
-    public int timer;
-    public int monsterCount;
-    private int interval;
+    public boolean spawning;
 
+    public int interval;
+    public int timer;
     public int score;
+    public int coins;
     public int wave;
-    public List<Booster> boosters;
+
+    public int monsterCount;
     public Monster currentMonster;
+    public List<Booster> boosters;
     public Monster currentBoss;
 
-    public ChunkCoordinates target;
-    public List<ChunkCoordinates> towers;
+    private String playername;
+    private ChunkCoordinates multiplayerController;
+    private ChunkCoordinates target;
+    private List<ChunkCoordinates> towers;
 
     public TileEntitySpawner() {
         this.spawnedEntities = new ArrayList<Entity>();
@@ -65,6 +67,7 @@ public class TileEntitySpawner extends TileEntity {
         this.timer = 0;
         this.interval = 30;
         this.score = 0;
+        this.coins = 200;
         this.wave = 0;
         this.monsterCount = 10;
         this.currentMonster = null;
@@ -90,14 +93,15 @@ public class TileEntitySpawner extends TileEntity {
         this.boosters.clear();
         this.timer = 0;
         this.score = 0;
+        this.coins = 200;
         this.wave = 0;
         this.monsterCount = 10;
         this.currentMonster = null;
         this.currentBoss = null;
-        this.active = playername != null;
+        this.active = playername != null && this.multiplayerController == null;
 
         if (playername != null) {
-            Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.scoreTDCriteria);
+            Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaScore);
             Iterator iterator = collection.iterator();
 
             while (iterator.hasNext()) {
@@ -126,18 +130,23 @@ public class TileEntitySpawner extends TileEntity {
             }
         }
 
-        if (this.target != null) {
-            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-            if (tile instanceof TileEntityTarget) {
-                ((TileEntityTarget) tile).health = 100;
-            }
+        TileEntityTarget target = this.getTarget();
+        if (target != null) {
+            target.health = 100;
         }
 
         this.onInventoryChanged();
     }
 
+    public void sendChatToPlayer(String message) {
+        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+        if (player != null) {
+            player.sendChatToPlayer(ChatMessageComponent.createFromText(message));
+        }
+    }
+
     public void updateScore() {
-        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.scoreTDCriteria);
+        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaScore);
         Iterator iterator = collection.iterator();
 
         while (iterator.hasNext()) {
@@ -146,43 +155,51 @@ public class TileEntitySpawner extends TileEntity {
             score.func_96647_c(this.score);
         }
 
+        this.updateStat(1);
+    }
+
+    public void updateStat(int stat) {
         EntityPlayer player = CommonProxy.getPlayer(this.playername);
         if (player != null) {
             if (player instanceof EntityPlayerMP) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 1));
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, stat));
             }
         }
+        this.onInventoryChanged();
     }
 
     public void onTargetDamaged(TileEntityTarget target) {
-        EntityPlayer player = CommonProxy.getPlayer(this.playername);
-        if (player != null) {
-            if (player instanceof EntityPlayerMP) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 3));
-            }
+        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaHealth);
+        Iterator iterator = collection.iterator();
 
-            if (target.health == 0) {
-                player.sendChatToPlayer(ChatMessageComponent.createFromText("This is the end, sadfully :("));
-            }
-            else {
-                player.sendChatToPlayer(ChatMessageComponent.createFromText("A monster passed! Remaining health: " + target.health));
-            }
+        while (iterator.hasNext()) {
+            ScoreObjective scoreobjective = (ScoreObjective) iterator.next();
+            Score score = this.worldObj.getScoreboard().func_96529_a(this.playername, scoreobjective);
+            score.func_96647_c(this.score);
+        }
+
+        this.updateStat(3);
+
+        if (target.health == 0) {
+            this.sendChatToPlayer("This is the end, sadfully :(");
+        }
+        else {
+            this.sendChatToPlayer("A monster passed! Remaining health: " + target.health);
         }
 
         this.score--;
         this.updateScore();
 
         if (target.health == 0) {
-            this.setActiveUser(null);
+            //this.setActiveUser(null);
+            this.active = false;
         }
     }
 
     public void setTarget(TileEntityTarget newTarget) {
-        if (this.target != null) {
-            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-            if (tile != null && tile instanceof TileEntityTarget) {
-                ((TileEntityTarget) tile).spawner = null;
-            }
+        TileEntityTarget target = this.getTarget();
+        if (target != null) {
+            target.spawner = null;
             this.target = null;
         }
 
@@ -195,9 +212,51 @@ public class TileEntitySpawner extends TileEntity {
         }
     }
 
+    public TileEntityTarget getTarget() {
+        if (this.target != null) {
+            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
+            if (tile instanceof TileEntityTarget) {
+                return ((TileEntityTarget) tile);
+            }
+        }
+        return null;
+    }
+
     public void addTower(TileEntityTower tile) {
         this.towers.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
         this.onInventoryChanged();
+    }
+
+    public List<TileEntityTower> getAllTowers() {
+        List<TileEntityTower> towers = new ArrayList<TileEntityTower>();
+
+        Iterator<ChunkCoordinates> i = this.towers.iterator();
+        while (i.hasNext()) {
+            ChunkCoordinates coords = i.next();
+            TileEntity tile = this.worldObj.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
+            if (tile != null && tile instanceof TileEntityTower) {
+                towers.add((TileEntityTower) tile);
+            }
+            else {
+                i.remove();
+            }
+        }
+
+        return towers;
+    }
+
+    public void addCoins(int amount) {
+        this.coins += amount;
+        this.updateStat(4);
+    }
+
+    public boolean removeCoins(int amount) {
+        if (this.coins < amount) {
+            return false;
+        }
+        this.coins -= amount;
+        this.updateStat(4);
+        return true;
     }
 
     public boolean canWork() {
@@ -205,17 +264,14 @@ public class TileEntitySpawner extends TileEntity {
     }
 
     private void prepareWave() {
+        this.interval = 600;
         this.wave++;
         this.boosters = SpawnerLogic.getRandomBoosters(TileEntitySpawner.rand, this.worldObj, this.wave);
         if (TileEntitySpawner.rand.nextInt(2) == 1) {
             this.monsterCount += 5;
         }
-        if (TileEntitySpawner.rand.nextInt(3) == 1) {
-            this.monsterCount -= 10;
-        }
-        if (this.monsterCount <= 10) {
-            this.monsterCount = 10;
-        }
+
+        this.addCoins(this.monsterCount * 10);
 
         this.spawnQueue = this.monsterCount;
 
@@ -223,6 +279,7 @@ public class TileEntitySpawner extends TileEntity {
 
         if (this.wave % 5 == 0) {
             this.currentBoss = SpawnerLogic.getRandomBoss(TileEntitySpawner.rand);
+            this.addCoins(this.wave * 10);
         }
         else {
             this.currentBoss = null;
@@ -242,7 +299,7 @@ public class TileEntitySpawner extends TileEntity {
         }
 
         if (this.playername != null) {
-            if (CommonProxy.isPlayerLoggedIn(this.playername)) {
+            if (this.active && CommonProxy.isPlayerLoggedIn(this.playername)) {
                 this.timer++;
                 this.onInventoryChanged();
             }
@@ -251,11 +308,9 @@ public class TileEntitySpawner extends TileEntity {
                 if (this.spawning && this.timer >= this.interval) {
                     this.timer = 0;
                     if (this.spawnQueue > 0) {
-                        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+                        TileEntityTarget target = this.getTarget();
 
-                        TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-
-                        if (tile != null && tile instanceof TileEntityTarget) {
+                        if (target != null) {
                             EntityLiving entity = this.currentMonster.createNew(this.worldObj);
                             entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
@@ -267,8 +322,8 @@ public class TileEntitySpawner extends TileEntity {
 
                             entity.targetTasks.taskEntries.clear();
                             entity.tasks.taskEntries.clear();
-                            Vec3 target = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
-                            entity.tasks.addTask(0, new EntityTargetLocation(entity, target, (TileEntityTarget) tile, 1.0D));
+                            Vec3 targetPos = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
+                            entity.tasks.addTask(0, new EntityTargetLocation(entity, targetPos, target, 1.0D));
 
                             for (Booster booster : this.boosters) {
                                 booster.applyBooster(entity);
@@ -278,20 +333,17 @@ public class TileEntitySpawner extends TileEntity {
                             this.spawnedEntities.add(entity);
                         }
                         else {
-                            if (player != null) {
-                                CommonProxy.getPlayer(this.playername).sendChatToPlayer(ChatMessageComponent.createFromText("Whoops! Something went wrong :<"));
-                            }
-                            this.setActiveUser(null);
+                            this.sendChatToPlayer("Whoops! Something went wrong :<");
+                            // this.setActiveUser(null);
+                            this.active = false;
                         }
                         this.spawnQueue--;
                     }
                     else {
                         if (this.currentBoss != null) {
-                            EntityPlayer player = CommonProxy.getPlayer(this.playername);
+                            TileEntityTarget target = this.getTarget();
 
-                            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-
-                            if (tile != null && tile instanceof TileEntityTarget) {
+                            if (target != null) {
                                 EntityLiving entity = this.currentBoss.createNew(this.worldObj);
                                 entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
@@ -303,17 +355,16 @@ public class TileEntitySpawner extends TileEntity {
 
                                 entity.targetTasks.taskEntries.clear();
                                 entity.tasks.taskEntries.clear();
-                                Vec3 target = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
-                                entity.tasks.addTask(0, new EntityTargetLocation(entity, target, (TileEntityTarget) tile, 1.0D));
+                                Vec3 targetPos = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
+                                entity.tasks.addTask(0, new EntityTargetLocation(entity, targetPos, target, 1.0D));
 
                                 this.worldObj.spawnEntityInWorld(entity);
                                 this.spawnedEntities.add(entity);
                             }
                             else {
-                                if (player != null) {
-                                    CommonProxy.getPlayer(this.playername).sendChatToPlayer(ChatMessageComponent.createFromText("Whoops! Something went wrong :<"));
-                                }
-                                this.setActiveUser(null);
+                                this.sendChatToPlayer("Whoops! Something went wrong :<");
+                                // this.setActiveUser(null);
+                                this.active = false;
                             }
                         }
                         this.spawning = false;
@@ -323,21 +374,16 @@ public class TileEntitySpawner extends TileEntity {
                 if (this.spawnedEntities.isEmpty() && !this.spawning) {
                     this.waveActive = false;
 
-                    EntityPlayer player = CommonProxy.getPlayer(this.playername);
-                    if (player != null) {
-                        if (player instanceof EntityPlayerMP) {
-                            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 2));
-                        }
-                    }
+                    this.updateStat(2);
 
                     this.timer = 0;
                     this.spawnQueue = 0;
 
-                    this.prepareWave();
-
-                    if (player != null) {
-                        player.sendChatToPlayer(ChatMessageComponent.createFromText("Wave over!"));
+                    if (this.multiplayerController != null) {
+                        this.prepareWave();
                     }
+
+                    this.sendChatToPlayer("Wave complete!");
                 }
                 else {
                     Iterator<Entity> i = this.spawnedEntities.iterator();
@@ -354,49 +400,32 @@ public class TileEntitySpawner extends TileEntity {
                         }
                     }
                     if (removed) {
-                        EntityPlayer player = CommonProxy.getPlayer(this.playername);
-                        if (player != null) {
-                            if (player instanceof EntityPlayerMP) {
-                                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 0));
-                            }
-                        }
+                        this.updateStat(0);
                     }
                 }
             }
             else {
-                if (this.timer % 20 == 0) {
-                    EntityPlayer player = CommonProxy.getPlayer(this.playername);
-                    if (player != null) {
-                        if (player instanceof EntityPlayerMP) {
-                            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 2));
-                        }
-                    }
+                if ((this.interval - this.timer) % 20 == 0) {
+                    this.updateStat(2);
                 }
-                if (this.timer >= 600) {
-                    this.waveActive = true;
-                    this.timer = 0;
+                if (this.multiplayerController != null) {
+                    if (this.timer >= this.interval) {
+                        this.waveActive = true;
+                        this.timer = 0;
+                        this.interval = 30;
 
-                    EntityPlayer player = CommonProxy.getPlayer(this.playername);
-                    if (player != null) {
-                        if (player instanceof EntityPlayerMP) {
-                            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 2));
+                        this.updateStat(2);
+
+                        if (this.getTarget() != null) {
+                            this.spawning = true;
+
+                            this.sendChatToPlayer("The next wave is starting!");
                         }
-                    }
-
-                    TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-
-                    if (tile != null && tile instanceof TileEntityTarget) {
-                        this.spawning = true;
-
-                        if (player != null) {
-                            CommonProxy.getPlayer(this.playername).sendChatToPlayer(ChatMessageComponent.createFromText("The next wave is starting!"));
+                        else {
+                            this.sendChatToPlayer("Whoops! Something went wrong :<");
+                            //this.setActiveUser(null);
+                            this.active = false;
                         }
-                    }
-                    else {
-                        if (player != null) {
-                            CommonProxy.getPlayer(this.playername).sendChatToPlayer(ChatMessageComponent.createFromText("Whoops! Something went wrong :<"));
-                        }
-                        this.setActiveUser(null);
                     }
                 }
             }
@@ -415,6 +444,8 @@ public class TileEntitySpawner extends TileEntity {
         compound.setInteger("timer", this.timer);
         compound.setInteger("interval", this.interval);
         compound.setInteger("spawnQueue", this.spawnQueue);
+        compound.setInteger("score", this.score);
+        compound.setInteger("coins", this.coins);
 
         if (this.target != null) {
             NBTTagCompound target = new NBTTagCompound();
@@ -422,6 +453,14 @@ public class TileEntitySpawner extends TileEntity {
             target.setInteger("posY", this.target.posY);
             target.setInteger("posZ", this.target.posZ);
             compound.setCompoundTag("target", target);
+        }
+
+        if (this.multiplayerController != null) {
+            NBTTagCompound multiplayerController = new NBTTagCompound();
+            multiplayerController.setInteger("posX", this.target.posX);
+            multiplayerController.setInteger("posY", this.target.posY);
+            multiplayerController.setInteger("posZ", this.target.posZ);
+            compound.setCompoundTag("multiplayerController", multiplayerController);
         }
 
         NBTTagList boosters = new NBTTagList();
@@ -462,10 +501,17 @@ public class TileEntitySpawner extends TileEntity {
         this.timer = compound.getInteger("timer");
         this.interval = compound.getInteger("interval");
         this.spawnQueue = compound.getInteger("spawnQueue");
+        this.score = compound.getInteger("score");
+        this.coins = compound.getInteger("coins");
 
         if (compound.hasKey("target")) {
             NBTTagCompound target = compound.getCompoundTag("target");
             this.target = new ChunkCoordinates(target.getInteger("posX"), target.getInteger("posY"), target.getInteger("posZ"));
+        }
+
+        if (compound.hasKey("multiplayerController")) {
+            NBTTagCompound multiplayerController = compound.getCompoundTag("multiplayerController");
+            this.multiplayerController = new ChunkCoordinates(multiplayerController.getInteger("posX"), multiplayerController.getInteger("posY"), multiplayerController.getInteger("posZ"));
         }
 
         NBTTagList boosters = compound.getTagList("boosters");

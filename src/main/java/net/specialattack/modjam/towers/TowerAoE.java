@@ -44,23 +44,64 @@ public class TowerAoE extends TowerBase {
 
         public Instance(TileEntityTower tower, ITower type) {
             super(tower, type);
-            this.level = 1;
-            this.speed = 50;
-            this.range = 2;
-            this.damage = 3;
+        }
+
+        @Override
+        public int getPriceUpgrade(int id) {
+            switch (id) {
+            case 0:
+                if (this.level >= 5) {
+                    return -1;
+                }
+                return 50 + 30 * this.level * this.level;
+            case 1:
+                if (this.level <= this.damage || this.damage >= 5) {
+                    return -1;
+                }
+                return 70 + 70 * this.damage * this.damage - 20 * (this.level - this.damage);
+            case 2:
+                if (this.level <= this.speed || this.speed >= 3) {
+                    return -1;
+                }
+                return 60 + 60 * this.speed * this.speed - 20 * (this.level - this.speed);
+            case 3:
+                return -1;
+            }
+            return -1;
+        }
+
+        @Override
+        public int getSpeed() {
+            return (int) (60.0F - (40.0F / (4 - this.speed)));
+        }
+
+        @Override
+        public int getRange() {
+            return this.range * 2;
+        }
+
+        @Override
+        public int getDamage() {
+            return (int) (1.5F * this.damage);
         }
 
         @Override
         public boolean tick() {
             List<EntityLiving> list = this.getTargetableEntities();
 
+            if (list.isEmpty()) {
+                return false;
+            }
+
             boolean attacked = false;
+
+            int damage = this.getDamage();
 
             for (Object obj : list) {
                 if (obj instanceof EntityLiving) {
                     EntityLiving entity = (EntityLiving) obj;
 
-                    if (entity.attackEntityFrom(Objects.damageSourceTower, this.damage)) {
+                    if (entity.attackEntityFrom(Objects.damageSourceTower, damage)) {
                         attacked = true;
                     }
                 }
@@ -91,10 +132,7 @@ public class TowerAoE extends TowerBase {
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void renderDynamic(TileEntity tile, double x, double y, double z, float partialTicks) {
-            // TODO Auto-generated method stub
-
-        }
+        public void renderDynamic(TileEntity tile, double x, double y, double z, float partialTicks) {}
 
         @Override
         @SideOnly(Side.CLIENT)

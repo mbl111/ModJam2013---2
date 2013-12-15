@@ -11,16 +11,21 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.specialattack.modjam.CommonProxy;
 import net.specialattack.modjam.client.gui.GuiOverlay;
+import net.specialattack.modjam.client.gui.container.GuiMultiplayerController;
 import net.specialattack.modjam.client.gui.container.GuiSpawner;
 import net.specialattack.modjam.client.gui.container.GuiTower;
 import net.specialattack.modjam.client.render.tileentity.TileEntityTowerRenderer;
+import net.specialattack.modjam.tileentity.TileEntityMultiplayerController;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
     @Override
@@ -56,6 +61,11 @@ public class ClientProxy extends CommonProxy {
             else if (ID == 1) {
                 if (tile != null && tile instanceof TileEntityTower) {
                     return new GuiTower((TileEntityTower) tile);
+                }
+            }
+            else if (ID == 2) {
+                if (tile != null && tile instanceof TileEntityMultiplayerController) {
+                    return new GuiMultiplayerController((TileEntityMultiplayerController) tile);
                 }
             }
         }

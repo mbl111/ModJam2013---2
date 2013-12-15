@@ -10,12 +10,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerSpawner extends Container {
 
+    // Client + Server side
     public TileEntitySpawner tile;
+    // Server Side
     public boolean prevWaveActive;
     public boolean prevActive;
     public boolean prevCanWork;
-    public boolean isMyName;
+    // Client side
+    public boolean waveActive;
+    public boolean active;
     public boolean canWork;
+    public boolean isMyName;
+    public boolean updated;
 
     public ContainerSpawner(TileEntitySpawner tile) {
         this.tile = tile;
@@ -76,10 +82,10 @@ public class ContainerSpawner extends Container {
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int id, int value) {
         if (id == 0) {
-            this.tile.waveActive = value == 1;
+            this.waveActive = value == 1;
         }
         else if (id == 1) {
-            this.tile.active = value == 1;
+            this.active = value == 1;
         }
         else if (id == 2) {
             this.isMyName = value == 1;
@@ -87,6 +93,7 @@ public class ContainerSpawner extends Container {
         else if (id == 3) {
             this.canWork = value == 1;
         }
+        this.updated = true;
     }
 
     @Override

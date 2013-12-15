@@ -31,7 +31,7 @@ public abstract class TowerBase implements ITower {
 
     @Override
     public String getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
 
     @Override
@@ -70,13 +70,13 @@ public abstract class TowerBase implements ITower {
     @Override
     @SideOnly(Side.CLIENT)
     public int getIconU() {
-        return u;
+        return this.u;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public int getIconV() {
-        return v;
+        return this.v;
     }
 
     public abstract static class Instance implements ITowerInstance {
@@ -91,6 +91,48 @@ public abstract class TowerBase implements ITower {
         public Instance(TileEntityTower tower, ITower type) {
             this.tower = tower;
             this.type = type;
+            this.level = 1;
+            this.speed = 1;
+            this.range = 1;
+            this.damage = 1;
+        }
+
+        @Override
+        public void upgrade(int id) {
+            switch (id) {
+            case 0:
+                this.level++;
+            break;
+            case 1:
+                this.damage++;
+            break;
+            case 2:
+                this.speed++;
+            break;
+            case 3:
+                this.range++;
+            break;
+            }
+        }
+
+        @Override
+        public int getLevel() {
+            return this.level;
+        }
+
+        @Override
+        public int getSpeedLevel() {
+            return this.speed;
+        }
+
+        @Override
+        public int getRangeLevel() {
+            return this.range;
+        }
+
+        @Override
+        public int getDamageLevel() {
+            return this.damage;
         }
 
         @SuppressWarnings("unchecked")
@@ -98,7 +140,7 @@ public abstract class TowerBase implements ITower {
             double posX = this.tower.xCoord;
             double posY = this.tower.yCoord;
             double posZ = this.tower.zCoord;
-            List<EntityLiving> list = this.tower.worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX + 1.0D, posY + 1.0D, posZ + 1.0D).expand(2.0D, 2.0D, 2.0D), IEntitySelector.selectAnything);
+            List<EntityLiving> list = this.tower.worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX + 1.0D, posY + 1.0D, posZ + 1.0D).expand(this.getRange(), this.getRange(), this.getRange()), IEntitySelector.selectAnything);
 
             return list;
         }
@@ -119,27 +161,7 @@ public abstract class TowerBase implements ITower {
 
         @Override
         public ITower getTowerType() {
-            return type;
-        }
-
-        @Override
-        public int getLevel() {
-            return this.level;
-        }
-
-        @Override
-        public int getSpeed() {
-            return this.speed;
-        }
-
-        @Override
-        public int getRange() {
-            return this.range;
-        }
-
-        @Override
-        public int getDamage() {
-            return this.damage;
+            return this.type;
         }
 
     }

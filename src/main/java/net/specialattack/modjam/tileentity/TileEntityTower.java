@@ -43,6 +43,34 @@ public class TileEntityTower extends TileEntity {
         this.cooldown = 0;
     }
 
+    public boolean tryBuy(String playername, int cost) {
+        TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
+
+        if (tile != null && tile instanceof TileEntitySpawner) {
+            TileEntitySpawner spawner = (TileEntitySpawner) tile;
+
+            if (spawner.getActiveUser() != null && spawner.getActiveUser().equalsIgnoreCase(playername)) {
+                return spawner.removeCoins(cost);
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isUserPermitted(String playername) {
+        TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
+
+        if (tile != null && tile instanceof TileEntitySpawner) {
+            TileEntitySpawner spawner = (TileEntitySpawner) tile;
+
+            if (spawner.getActiveUser() != null && spawner.getActiveUser().equalsIgnoreCase(playername)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public void updateEntity() {
         if (this.worldObj.isRemote) {

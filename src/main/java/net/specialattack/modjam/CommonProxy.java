@@ -21,6 +21,7 @@ import net.specialattack.modjam.blocks.BlockColoredAvoiding;
 import net.specialattack.modjam.blocks.BlockGameLogic;
 import net.specialattack.modjam.blocks.BlockTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
+import net.specialattack.modjam.inventory.ContainerMultiplayerController;
 import net.specialattack.modjam.inventory.ContainerSpawner;
 import net.specialattack.modjam.inventory.ContainerTower;
 import net.specialattack.modjam.items.ItemBlockColoredAvoiding;
@@ -28,6 +29,7 @@ import net.specialattack.modjam.items.ItemBlockGameLogic;
 import net.specialattack.modjam.items.ItemBlockTower;
 import net.specialattack.modjam.items.ItemGameLogic;
 import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
+import net.specialattack.modjam.tileentity.TileEntityMultiplayerController;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import net.specialattack.modjam.tileentity.TileEntityTower;
@@ -77,14 +79,16 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void init(FMLInitializationEvent event) {
         //Set block features, creative tabs, tile entity mappings
 
-        Objects.scoreTDCriteria = new ScoreTDCriteria("towerDefence");
+        Objects.criteriaScore = new ScoreTDCriteria("towerDefenceScore");
+        Objects.criteriaHealth = new ScoreTDCriteria("towerDefenceHealth");
 
         TileEntity.addMapping(TileEntitySpawner.class, Assets.DOMAIN + "-Spawner");
         TileEntity.addMapping(TileEntityTarget.class, Assets.DOMAIN + "-Target");
         TileEntity.addMapping(TileEntityTower.class, Assets.DOMAIN + "-Tower");
+        TileEntity.addMapping(TileEntityMultiplayerController.class, Assets.DOMAIN + "-MultiplayerController");
 
-        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE("AoE", 20, 0, 0));
-        Objects.blockTower.registerTower(Objects.towerArrow = new TowerArrow("arrow", 20, 20, 0));
+        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE("AoE", 70, 0, 0));
+        Objects.blockTower.registerTower(Objects.towerArrow = new TowerArrow("arrow", 50, 20, 0));
 
         Objects.damageSourceTower = new CustomDamageSource(Assets.DOMAIN + "-tower");
     }
@@ -194,6 +198,11 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
             else if (ID == 1) {
                 if (tile != null && tile instanceof TileEntityTower) {
                     return new ContainerTower((TileEntityTower) tile);
+                }
+            }
+            else if (ID == 2) {
+                if (tile != null && tile instanceof TileEntityMultiplayerController) {
+                    return new ContainerMultiplayerController((TileEntityMultiplayerController) tile);
                 }
             }
         }

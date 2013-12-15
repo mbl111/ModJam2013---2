@@ -17,13 +17,23 @@ public interface ITowerInstance {
 
     int getSpeed();
 
+    int getSpeedLevel();
+
     int getRange();
 
+    int getRangeLevel();
+
     int getDamage();
+
+    int getDamageLevel();
 
     boolean tick();
 
     @SideOnly(Side.CLIENT)
     void spawnParticles(int type);
+
+    int getPriceUpgrade(int id);
+
+    void upgrade(int id);
 
 }

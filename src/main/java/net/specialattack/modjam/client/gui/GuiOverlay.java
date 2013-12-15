@@ -44,11 +44,12 @@ public class GuiOverlay extends Gui {
         y += 10;
         this.font.drawStringWithShadow("Score: " + WaveInfo.score, x, y, 0xFFFFFF);
         y += 10;
+        this.font.drawStringWithShadow("Coins: " + WaveInfo.coins, x, y, 0xFFFFFF);
+        y += 10;
         this.font.drawStringWithShadow("Health: " + WaveInfo.health + "/100", x, y, 0xFFFFFF);
         y += 10;
         if (WaveInfo.timer >= 0) {
-            int time = (600 - WaveInfo.timer) / 20;
-            this.font.drawStringWithShadow("Next wave: " + time, x, y, 0xFFFFFF);
+            this.font.drawStringWithShadow("Next wave: " + WaveInfo.timer, x, y, 0xFFFFFF);
         }
         else {
             this.font.drawStringWithShadow("Remaining Monsters: " + WaveInfo.monstersAlive, x, y, 0xFFFFFF);

@@ -13,7 +13,7 @@ public class Monster extends WeightedRandomItem {
 
     public final int id;
     public final Class<? extends EntityLiving> clazz;
-    private Constructor<? extends EntityLiving> constructor;
+    public Constructor<? extends EntityLiving> constructor;
     public boolean supportsHat;
 
     public int iconIndex;

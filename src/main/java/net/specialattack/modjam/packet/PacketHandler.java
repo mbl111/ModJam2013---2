@@ -152,19 +152,12 @@ public class PacketHandler implements IPacketHandler {
             out.writeBoolean(spawner != null);
             if (spawner != null) {
                 out.writeInt(spawner.wave);
+                out.writeInt(spawner.coins);
                 out.writeInt(spawner.monsterCount);
                 out.writeInt(spawner.spawnQueue + spawner.spawnedEntities.size());
-                if (spawner.target != null) {
-                    int x = spawner.target.posX;
-                    int y = spawner.target.posY;
-                    int z = spawner.target.posZ;
-                    TileEntity tile = spawner.worldObj.getBlockTileEntity(x, y, z);
-                    if (tile instanceof TileEntityTarget) {
-                        out.writeInt(((TileEntityTarget) tile).health);
-                    }
-                    else {
-                        out.writeInt(0);
-                    }
+                TileEntityTarget target = spawner.getTarget();
+                if (target != null) {
+                    out.writeInt(target.health);
                 }
                 else {
                     out.writeInt(0);
@@ -201,6 +194,7 @@ public class PacketHandler implements IPacketHandler {
         WaveInfo.shouldRender = show;
         if (show) {
             WaveInfo.wave = in.readInt();
+            WaveInfo.coins = in.readInt();
             WaveInfo.monsterCount = in.readInt();
             WaveInfo.monstersAlive = in.readInt();
             WaveInfo.health = in.readInt();
@@ -279,27 +273,32 @@ public class PacketHandler implements IPacketHandler {
             out.writeInt(3);
             out.writeInt(id);
             switch (id) {
-            case 0:
+            case 0: {
                 out.writeInt(spawner.spawnQueue + spawner.spawnedEntities.size());
-            break;
-            case 1:
+                break;
+            }
+            case 1: {
                 out.writeInt(spawner.score);
-            break;
-            case 2:
-                out.writeInt(spawner.waveActive ? -1 : spawner.timer);
-            break;
-            case 3:
-                int x = spawner.target.posX;
-                int y = spawner.target.posY;
-                int z = spawner.target.posZ;
-                TileEntity tile = spawner.worldObj.getBlockTileEntity(x, y, z);
-                if (tile instanceof TileEntityTarget) {
-                    out.writeInt(((TileEntityTarget) tile).health);
+                break;
+            }
+            case 2: {
+                out.writeInt(spawner.waveActive ? -1 : ((spawner.interval - spawner.timer) / 20));
+                break;
+            }
+            case 3: {
+                TileEntityTarget target = spawner.getTarget();
+                if (target != null) {
+                    out.writeInt(target.health);
                 }
                 else {
                     out.writeInt(0);
                 }
-            break;
+                break;
+            }
+            case 4: {
+                out.writeInt(spawner.coins);
+                break;
+            }
             }
         }
         catch (IOException e) {
@@ -314,18 +313,26 @@ public class PacketHandler implements IPacketHandler {
     public void handlePacketWaveUpdate(DataInputStream in) throws IOException {
         int id = in.readInt();
         switch (id) {
-        case 0:
+        case 0: {
             WaveInfo.monstersAlive = in.readInt();
-        break;
-        case 1:
+            break;
+        }
+        case 1: {
             WaveInfo.score = in.readInt();
-        break;
-        case 2:
+            break;
+        }
+        case 2: {
             WaveInfo.timer = in.readInt();
-        break;
-        case 3:
+            break;
+        }
+        case 3: {
             WaveInfo.health = in.readInt();
-        break;
+            break;
+        }
+        case 4: {
+            WaveInfo.coins = in.readInt();
+            break;
+        }
         }
     }
 

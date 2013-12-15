@@ -30,7 +30,8 @@ public class Objects {
 
     public static ItemGameLogic itemGameLogic;
 
-    public static ScoreTDCriteria scoreTDCriteria;
+    public static ScoreTDCriteria criteriaScore;
+    public static ScoreTDCriteria criteriaHealth;
 
     public static TowerAoE towerAoE;
     public static TowerArrow towerArrow;

@@ -6,9 +6,10 @@ import java.util.Random;
 
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
-import net.specialattack.modjam.Objects;
 import net.specialattack.modjam.packet.PacketHandler;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTower;
@@ -40,33 +41,114 @@ public class TowerArrow extends TowerBase {
 
     public static class Instance extends TowerBase.Instance {
 
+        private EntityLiving target;
+
         public Instance(TileEntityTower tower, ITower type) {
             super(tower, type);
-            this.level = 1;
-            this.speed = 50;
-            this.range = 10;
-            this.damage = 2;
+        }
+
+        @Override
+        public int getPriceUpgrade(int id) {
+            switch (id) {
+            case 0:
+                if (this.level >= 10) {
+                    return -1;
+                }
+                return 60 + 40 * this.level * this.level;
+            case 1:
+                if (this.level <= this.damage || this.damage >= 10) {
+                    return -1;
+                }
+                return 60 + 70 * this.damage * this.damage - 20 * (this.level - this.damage);
+            case 2:
+                if (this.level <= this.speed || this.speed >= 7) {
+                    return -1;
+                }
+                return 50 + 50 * this.speed * this.speed - 10 * (this.level - this.speed);
+            case 3:
+                if (this.level <= this.range || this.range >= 5) {
+                    return -1;
+                }
+                return 45 + 50 * this.range * this.range - 20 * (this.level - this.range);
+            }
+            return -1;
+        }
+
+        @Override
+        public int getSpeed() {
+            return (int) (40.0F - (30.0F / (6 - this.speed)));
+        }
+
+        @Override
+        public int getRange() {
+            return 2 + this.range * 2;
+        }
+
+        @Override
+        public int getDamage() {
+            return (int) (1.4F * this.damage);
         }
 
         @Override
         public boolean tick() {
             List<EntityLiving> list = this.getTargetableEntities();
 
-            boolean attacked = false;
+            if (list.isEmpty()) {
+                this.target = null;
+                return false;
+            }
 
-            for (Object obj : list) {
-                if (obj instanceof EntityLiving) {
-                    EntityLiving entity = (EntityLiving) obj;
+            if (this.target != null && !list.contains(this.target)) {
+                this.target = null;
+            }
 
-                    if (entity.attackEntityFrom(Objects.damageSourceTower, this.damage)) {
-                        attacked = true;
+            if (this.target == null) {
+                // Select the closest entity to attack
+                double distance = 0.0D;
+                boolean first = true;
+                for (EntityLiving living : list) {
+                    double currentDistance = (living.posX - this.tower.xCoord) * (living.posX - this.tower.xCoord);
+                    currentDistance += (living.posY - this.tower.yCoord) * (living.posY - this.tower.yCoord);
+                    currentDistance += (living.posZ - this.tower.zCoord) * (living.posZ - this.tower.zCoord);
+
+                    if (first) {
+                        distance = currentDistance;
+                        this.target = living;
+                        first = false;
+                    }
+                    else {
+                        if (currentDistance < distance) {
+                            distance = currentDistance;
+                            this.target = living;
+                        }
                     }
                 }
             }
 
-            if (!attacked) {
-                return false;
+            EntityArrow arrow = new EntityArrow(this.tower.worldObj);
+
+            arrow.renderDistanceWeight = 10.0D;
+            arrow.posY = this.tower.yCoord + 1.5D;
+            double distanceX = this.target.posX - this.tower.xCoord;
+            double distanceY = this.target.boundingBox.minY + this.target.height / 3.0F - arrow.posY;
+            double distanceZ = this.target.posZ - this.tower.zCoord;
+            double distance = MathHelper.sqrt_double(distanceX * distanceX + distanceZ * distanceZ);
+
+            if (distance >= 1.0E-7D) {
+                float yaw = (float) (Math.atan2(distanceZ, distanceX) * 180.0D / Math.PI) - 90.0F;
+                float pitch = (float) (-(Math.atan2(distanceY, distance) * 180.0D / Math.PI));
+                double offsetX = distanceX / distance;
+                double offsetZ = distanceZ / distance;
+                arrow.setLocationAndAngles(this.tower.xCoord + offsetX, arrow.posY, this.tower.zCoord + offsetZ, yaw, pitch);
+                arrow.yOffset = 0.0F;
+                float boostY = (float) distance * 0.2F;
+                arrow.setThrowableHeading(distanceX, distanceY + boostY, distanceZ, 1.6F, 14.0F);
             }
+
+            arrow.setDamage(this.getDamage());
+            arrow.setKnockbackStrength(0);
+
+            this.tower.worldObj.spawnEntityInWorld(arrow);
 
             PacketHandler.sendToAllPlayersWatchingBlock(PacketHandler.createPacketSpawnParticles(this.tower, 0), this.tower.worldObj, this.tower.xCoord, this.tower.yCoord, this.tower.zCoord);
 

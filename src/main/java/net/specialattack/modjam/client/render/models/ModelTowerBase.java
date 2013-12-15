@@ -3,7 +3,10 @@ package net.specialattack.modjam.client.render.models;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ModelTowerBase extends ModelBase {
     //This is the base model of a tower, before plates and other things are added
 
