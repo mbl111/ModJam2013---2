@@ -20,9 +20,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.specialattack.modjam.blocks.BlockColoredAvoiding;
 import net.specialattack.modjam.blocks.BlockGameLogic;
 import net.specialattack.modjam.blocks.BlockTower;
-import net.specialattack.modjam.client.gui.container.GuiTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
 import net.specialattack.modjam.inventory.ContainerSpawner;
+import net.specialattack.modjam.inventory.ContainerTower;
 import net.specialattack.modjam.items.ItemBlockColoredAvoiding;
 import net.specialattack.modjam.items.ItemBlockGameLogic;
 import net.specialattack.modjam.items.ItemBlockTower;
@@ -31,6 +31,7 @@ import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import net.specialattack.modjam.tileentity.TileEntityTower;
+import net.specialattack.modjam.towers.TowerAoE;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -46,7 +47,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
         Objects.blockTower = new BlockTower(Config.blockTowerId);
-        GameRegistry.registerBlock(Objects.blockTower,ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
+        GameRegistry.registerBlock(Objects.blockTower, ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
 
         Objects.blockGameLogic = new BlockGameLogic(Config.blockGameLogicId);
         GameRegistry.registerBlock(Objects.blockGameLogic, ItemBlockGameLogic.class, Objects.MOD_ID + ".blockGameLogic");
@@ -56,7 +57,6 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
         Objects.itemGameLogic = new ItemGameLogic(Config.itemGameLogicId);
         GameRegistry.registerItem(Objects.itemGameLogic, Objects.MOD_ID + ".itemGameLogic");
-
 
         Objects.creativeTab = new CreativeTabModjam(Assets.DOMAIN + "-bleigh");
         Objects.creativeTab.setIconItemStack(new ItemStack(Objects.blockTower));
@@ -80,6 +80,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         TileEntity.addMapping(TileEntitySpawner.class, "Modjam3-Spawner");
         TileEntity.addMapping(TileEntityTarget.class, "Modjam3-Target");
         TileEntity.addMapping(TileEntityTower.class, "Modjam3-Tower");
+
+        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE());
     }
 
     public void postInit(FMLPostInitializationEvent event) {
@@ -125,7 +127,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public static ArrayList<String> playernames = new ArrayList<String>();
 
     public static boolean isPlayerLoggedIn(String playername) {
-        return playernames.contains(playername);
+        return CommonProxy.playernames.contains(playername);
     }
 
     @SuppressWarnings("rawtypes")
@@ -146,8 +148,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager) {
         if (player instanceof EntityPlayer) {
             String username = ((EntityPlayer) player).username;
-            players.put(manager, username);
-            playernames.add(username);
+            CommonProxy.players.put(manager, username);
+            CommonProxy.playernames.add(username);
         }
     }
 
@@ -164,11 +166,11 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
     @Override
     public void connectionClosed(INetworkManager manager) {
-        if (!players.containsKey(manager)) {
+        if (!CommonProxy.players.containsKey(manager)) {
             System.err.println("Player changed network manager?!");
             return;
         }
-        playernames.remove(players.remove(manager));
+        CommonProxy.playernames.remove(CommonProxy.players.remove(manager));
     }
 
     @Override
@@ -183,9 +185,10 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
                 if (tile != null && tile instanceof TileEntitySpawner) {
                     return new ContainerSpawner((TileEntitySpawner) tile);
                 }
-            }else if (ID == 1){
+            }
+            else if (ID == 1) {
                 if (tile != null && tile instanceof TileEntityTower) {
-                    return new GuiTower((TileEntityTower) tile);
+                    return new ContainerTower((TileEntityTower) tile);
                 }
             }
         }

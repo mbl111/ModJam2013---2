@@ -13,12 +13,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.specialattack.modjam.Objects;
 import net.specialattack.modjam.logic.Booster;
 import net.specialattack.modjam.logic.SpawnerLogic;
 import net.specialattack.modjam.logic.WaveInfo;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
+import net.specialattack.modjam.tileentity.TileEntityTarget;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
@@ -28,7 +30,7 @@ public class PacketHandler implements IPacketHandler {
     public static PacketHandler instance;
 
     public PacketHandler() {
-        instance = this;
+        PacketHandler.instance = this;
     }
 
     @Override
@@ -41,10 +43,16 @@ public class PacketHandler implements IPacketHandler {
             id = in.readInt();
             switch (id) {
             case 0:
-                handlePacketBlank(in);
+                this.handlePacketBlank(in);
+            break;
+            case 1:
+                this.handlePacketWaveInfo(in);
             break;
             case 2:
-                handlePacketTowerInfo(in, player);
+                this.handlePacketTowerInfo(in, player);
+            break;
+            case 3:
+                this.handlePacketWaveUpdate(in);
             break;
             }
         }
@@ -53,6 +61,7 @@ public class PacketHandler implements IPacketHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void sendToAllPlayers(Packet250CustomPayload packet) {
         if (packet == null) {
             return;
@@ -66,7 +75,24 @@ public class PacketHandler implements IPacketHandler {
                 player.playerNetServerHandler.sendPacketToPlayer(packet);
             }
         }
+    }
 
+    @SuppressWarnings("unchecked")
+    public static void sendToAllPlayersInWorld(Packet250CustomPayload packet, World world) {
+        if (packet == null) {
+            return;
+        }
+
+        MinecraftServer server = MinecraftServer.getServer();
+
+        if (server != null) {
+            List<EntityPlayerMP> players = server.getConfigurationManager().playerEntityList;
+            for (EntityPlayerMP player : players) {
+                if (player.worldObj == world) {
+                    player.playerNetServerHandler.sendPacketToPlayer(packet);
+                }
+            }
+        }
     }
 
     public static Packet250CustomPayload createPacketBlank() {
@@ -97,10 +123,22 @@ public class PacketHandler implements IPacketHandler {
             if (spawner != null) {
                 out.writeInt(spawner.wave);
                 out.writeInt(spawner.monsterCount);
+                out.writeInt(spawner.spawnQueue + spawner.spawnedEntities.size());
+                int x = spawner.target.posX;
+                int y = spawner.target.posY;
+                int z = spawner.target.posZ;
+                TileEntity tile = spawner.worldObj.getBlockTileEntity(x, y, z);
+                if (tile instanceof TileEntityTarget) {
+                    out.writeInt(((TileEntityTarget) tile).health);
+                }
+                else {
+                    out.writeInt(0);
+                }
                 out.writeInt(spawner.boosters.size());
                 for (Booster booster : spawner.boosters) {
                     out.writeInt(booster.id);
                 }
+                out.writeInt(spawner.currentMonster.id);
             }
         }
         catch (IOException e) {
@@ -118,11 +156,14 @@ public class PacketHandler implements IPacketHandler {
         if (show) {
             WaveInfo.wave = in.readInt();
             WaveInfo.monsterCount = in.readInt();
+            WaveInfo.monstersAlive = in.readInt();
+            WaveInfo.health = in.readInt();
             WaveInfo.boosters.clear();
             int count = in.readInt();
             for (int i = 0; i < count; i++) {
-                WaveInfo.boosters.add(SpawnerLogic.boosters.get(in.readInt()));
+                WaveInfo.boosters.add(SpawnerLogic.getBooster(in.readInt()));
             }
+            WaveInfo.currentMonster = SpawnerLogic.getMonster(in.readInt());
         }
     }
 
@@ -147,7 +188,6 @@ public class PacketHandler implements IPacketHandler {
     }
 
     public void handlePacketTowerInfo(DataInputStream in, Player iplayer) throws IOException {
-
         EntityPlayer player = (EntityPlayer) iplayer;
 
         World world = player.worldObj;
@@ -155,11 +195,72 @@ public class PacketHandler implements IPacketHandler {
         int x = in.readInt();
         int y = in.readInt();
         int z = in.readInt();
-        
+
         TileEntityTower tower = (TileEntityTower) world.getBlockTileEntity(x, y, z);
 
         tower.setActive(in.readBoolean());
 
+        world.markBlockForRenderUpdate(x, y, z);
+        world.markBlockForRenderUpdate(x, y + 1, z);
+        world.markBlockForRenderUpdate(x, y + 2, z);
+    }
+
+    public static Packet250CustomPayload createPacketWaveUpdate(TileEntitySpawner spawner, int id) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(32767);
+        DataOutputStream out = new DataOutputStream(bos);
+
+        try {
+            out.writeInt(3);
+            out.writeInt(id);
+            switch (id) {
+            case 0:
+                out.writeInt(spawner.spawnQueue + spawner.spawnedEntities.size());
+            break;
+            case 1:
+                out.writeInt(spawner.score);
+            break;
+            case 2:
+                out.writeInt(spawner.waveActive ? -1 : spawner.timer);
+            break;
+            case 3:
+                int x = spawner.target.posX;
+                int y = spawner.target.posY;
+                int z = spawner.target.posZ;
+                TileEntity tile = spawner.worldObj.getBlockTileEntity(x, y, z);
+                if (tile instanceof TileEntityTarget) {
+                    out.writeInt(((TileEntityTarget) tile).health);
+                }
+                else {
+                    out.writeInt(0);
+                }
+            break;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Packet250CustomPayload packet = new Packet250CustomPayload(Objects.MOD_CHANNEL, bos.toByteArray());
+
+        return packet;
+    }
+
+    public void handlePacketWaveUpdate(DataInputStream in) throws IOException {
+        int id = in.readInt();
+        switch (id) {
+        case 0:
+            WaveInfo.monstersAlive = in.readInt();
+        break;
+        case 1:
+            WaveInfo.score = in.readInt();
+        break;
+        case 2:
+            WaveInfo.timer = in.readInt();
+        break;
+        case 3:
+            WaveInfo.health = in.readInt();
+        break;
+        }
     }
 
 }

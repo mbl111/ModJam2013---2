@@ -49,7 +49,7 @@ public class BlockColoredAvoiding extends Block implements IAvoided {
         this.icons = new Icon[16];
 
         for (int i = 0; i < this.icons.length; ++i) {
-            this.icons[i] = register.registerIcon(this.getTextureName() + "_" + ItemDye.dyeItemNames[getDyeFromBlock(i)]);
+            this.icons[i] = register.registerIcon(this.getTextureName() + "_" + ItemDye.dyeItemNames[BlockColoredAvoiding.getDyeFromBlock(i)]);
         }
     }
 

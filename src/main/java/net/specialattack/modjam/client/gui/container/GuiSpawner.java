@@ -10,6 +10,10 @@ import net.specialattack.modjam.tileentity.TileEntitySpawner;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class GuiSpawner extends GuiContainer {
 
     public TileEntitySpawner tile;
@@ -33,7 +37,7 @@ public class GuiSpawner extends GuiContainer {
             this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nowork");
         }
         else {
-            if (!tile.active) {
+            if (!this.tile.active) {
                 this.activate.enabled = true;
                 this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.bind");
             }
@@ -57,9 +61,9 @@ public class GuiSpawner extends GuiContainer {
 
         this.buttonList.clear();
 
-        this.buttonList.add(activate = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, this.xSize - 40, 20, ""));
+        this.buttonList.add(this.activate = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, this.xSize - 40, 20, ""));
 
-        setupButtons();
+        this.setupButtons();
     }
 
     @Override
@@ -73,13 +77,13 @@ public class GuiSpawner extends GuiContainer {
     public void updateScreen() {
         super.updateScreen();
 
-        if (this.prevActive != tile.active || this.prevCanWork != container.canWork) {
-            setupButtons();
+        if (this.prevActive != this.tile.active || this.prevCanWork != this.container.canWork) {
+            this.setupButtons();
         }
 
-        this.prevActive = tile.active;
-        this.prevWaveActive = tile.waveActive;
-        this.prevCanWork = container.canWork;
+        this.prevActive = this.tile.active;
+        this.prevWaveActive = this.tile.waveActive;
+        this.prevCanWork = this.container.canWork;
     }
 
     @Override

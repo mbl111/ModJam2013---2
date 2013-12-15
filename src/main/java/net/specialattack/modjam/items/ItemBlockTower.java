@@ -1,3 +1,4 @@
+
 package net.specialattack.modjam.items;
 
 import net.minecraft.item.ItemBlock;

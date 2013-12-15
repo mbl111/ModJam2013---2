@@ -12,17 +12,17 @@ public final class Config {
     public static int itemGameLogicId = 7895;
 
     public static void loadConfig(Configuration config) {
-        Property property = config.get(Configuration.CATEGORY_BLOCK, "blockTowerId", blockTowerId);
-        blockTowerId = property.getInt();
+        Property property = config.get(Configuration.CATEGORY_BLOCK, "blockTowerId", Config.blockTowerId);
+        Config.blockTowerId = property.getInt();
 
-        property = config.get(Configuration.CATEGORY_BLOCK, "blockSpawnerId", blockGameLogicId);
-        blockGameLogicId = property.getInt();
+        property = config.get(Configuration.CATEGORY_BLOCK, "blockSpawnerId", Config.blockGameLogicId);
+        Config.blockGameLogicId = property.getInt();
 
-        property = config.get(Configuration.CATEGORY_BLOCK, "blockClayAvoidingId", blockClayAvoidingId);
-        blockClayAvoidingId = property.getInt();
+        property = config.get(Configuration.CATEGORY_BLOCK, "blockClayAvoidingId", Config.blockClayAvoidingId);
+        Config.blockClayAvoidingId = property.getInt();
 
-        property = config.get(Configuration.CATEGORY_ITEM, "itemGameLogicId", itemGameLogicId);
-        itemGameLogicId = property.getInt();
+        property = config.get(Configuration.CATEGORY_ITEM, "itemGameLogicId", Config.itemGameLogicId);
+        Config.itemGameLogicId = property.getInt();
     }
 
 }

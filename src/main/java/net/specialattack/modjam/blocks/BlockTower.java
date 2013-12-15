@@ -1,7 +1,10 @@
 
 package net.specialattack.modjam.blocks;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -10,7 +13,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
@@ -21,11 +23,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
 import net.specialattack.modjam.ModModjam;
-import net.specialattack.modjam.client.render.timeentity.TileEntityTowerRenderer;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
-import net.specialattack.modjam.packet.PacketHandler;
 import net.specialattack.modjam.pathfinding.IAvoided;
 import net.specialattack.modjam.tileentity.TileEntityTower;
+import net.specialattack.modjam.towers.ITower;
+import net.specialattack.modjam.towers.ITowerRenderHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -46,10 +48,44 @@ public class BlockTower extends Block implements IAvoided {
     @SideOnly(Side.CLIENT)
     private Icon base;
 
+    public List<ITower> towerTypes;
+    private Map<String, ITower> towerMapping;
+
     public BlockTower(int blockId) {
         super(blockId, Material.anvil);
-        renderId = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(renderId, new BlockRendererTower(renderId));
+        this.renderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(this.renderId, new BlockRendererTower(this.renderId));
+        this.towerTypes = new ArrayList<ITower>();
+        this.towerMapping = new HashMap<String, ITower>();
+    }
+
+    public void registerTower(ITower tower) {
+        if (tower == null) {
+            throw new IllegalArgumentException("tower");
+        }
+        this.towerTypes.add(tower);
+        this.towerMapping.put(tower.getIdentifier(), tower);
+    }
+
+    public ITower getTower(String identifier) {
+        if (identifier == null) {
+            throw new IllegalArgumentException("identifier");
+        }
+        return this.towerMapping.get(identifier);
+    }
+
+    public TileEntityTower getTowerTile(IBlockAccess world, int x, int y, int z) {
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
+        if (tile != null && tile instanceof TileEntityTower) {
+            return (TileEntityTower) tile;
+        }
+        return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public ITowerRenderHandler getRenderHandler(String identifier) {
+        ITower tower = this.getTower(identifier);
+        return tower == null ? null : tower.getRenderHandler();
     }
 
     @Override
@@ -61,6 +97,10 @@ public class BlockTower extends Block implements IAvoided {
     @SideOnly(Side.CLIENT)
     public void registerIcons(IconRegister register) {
         this.base = register.registerIcon(Assets.DOMAIN + ":tower-base");
+
+        for (ITower tower : this.towerTypes) {
+            tower.registerIcons(register);
+        }
     }
 
     @Override
@@ -70,9 +110,26 @@ public class BlockTower extends Block implements IAvoided {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+        int metadata = world.getBlockMetadata(x, y, z);
+        if (metadata != 1 && metadata != 2) {
+            return super.getBlockTexture(world, x, y, z, side);
+        }
+
+        TileEntityTower tower = this.getTowerTile(world, x, y, z);
+
+        if (tower != null && tower.towerInstance != null) {
+            return tower.towerInstance.getTowerType().getIcon(side, metadata == 2);
+        }
+
+        return super.getBlockTexture(world, x, y, z, side);
+    }
+
+    @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z) {
         for (int i = 0; i < 3; i++) {
-            if (!world.isAirBlock(x, y + i, z)) {
+            if (!super.canPlaceBlockAt(world, x, y + i, z)) {
                 return false;
             }
         }
@@ -111,6 +168,7 @@ public class BlockTower extends Block implements IAvoided {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
         this.setBlockBoundsBasedOnState(world, x, y, z);
@@ -128,45 +186,38 @@ public class BlockTower extends Block implements IAvoided {
 
         return super.collisionRayTrace(world, x, y, z, start, end);
     }
-    
+
     @Override
     public TileEntity createTileEntity(World world, int metadata) {
-        if (metadata == 0){
+        if (metadata == 0) {
             return new TileEntityTower();
         }
         return null;
     }
-    
+
     @Override
     public boolean hasTileEntity(int metadata) {
         return metadata == 0;
     }
-    
+
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ) {
-       
-        if (world.isRemote){
-            return false;
+        if (world.isRemote) {
+            return true;
         }
-        
+
         TileEntity tile = world.getBlockTileEntity(x, y, z);
-        if (tile == null){
+        if (tile == null) {
             player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
-            return false;
+            return true;
         }
-        
-        if (!(tile instanceof TileEntityTower)){
+
+        if (!(tile instanceof TileEntityTower)) {
             player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
-            return false;
+            return true;
         }
-        
         player.openGui(ModModjam.instance, 1, world, x, y, z);
-        
-//        tower.setActive(true);
-//        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
-//        PacketHandler.sendToAllPlayers(packet);
-        
-        
+
         return true;
     }
 }

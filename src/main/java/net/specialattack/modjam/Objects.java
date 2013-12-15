@@ -7,6 +7,7 @@ import net.specialattack.modjam.blocks.BlockTower;
 import net.specialattack.modjam.creativetab.CreativeTabModjam;
 import net.specialattack.modjam.items.ItemGameLogic;
 import net.specialattack.modjam.scoreboard.ScoreTDCriteria;
+import net.specialattack.modjam.towers.TowerAoE;
 
 public class Objects {
 
@@ -28,5 +29,7 @@ public class Objects {
     public static ItemGameLogic itemGameLogic;
 
     public static ScoreTDCriteria scoreTDCriteria;
+
+    public static TowerAoE towerAoE;
 
 }
