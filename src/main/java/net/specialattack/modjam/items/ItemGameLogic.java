@@ -19,7 +19,7 @@ import net.specialattack.modjam.tileentity.TileEntityTarget;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemGameLogic extends Item {
+public class ItemGameLogic extends Item implements IPassClick {
 
     @SideOnly(Side.CLIENT)
     private Icon[] icons;
@@ -53,7 +53,7 @@ public class ItemGameLogic extends Item {
                     if (otherTile instanceof TileEntityTarget) {
                         TileEntityTarget target = (TileEntityTarget) otherTile;
 
-                        spawner.target(target);
+                        spawner.setTarget(target);
 
                         player.sendChatToPlayer(ChatMessageComponent.createFromText("Target linked to Spawner"));
                     }

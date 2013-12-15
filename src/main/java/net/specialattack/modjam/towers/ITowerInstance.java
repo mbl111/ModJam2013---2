@@ -11,4 +11,10 @@ public interface ITowerInstance {
 
     ITower getTowerType();
 
+    int getLevel();
+
+    int getSpeed();
+
+    boolean tick();
+
 }

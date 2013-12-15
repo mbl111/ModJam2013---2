@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
 import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
+import net.specialattack.modjam.items.IPassClick;
 import net.specialattack.modjam.pathfinding.IAvoided;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import net.specialattack.modjam.towers.ITower;
@@ -72,6 +73,15 @@ public class BlockTower extends Block implements IAvoided {
             throw new IllegalArgumentException("identifier");
         }
         return this.towerMapping.get(identifier);
+    }
+
+    public ITower getTower(int hash) {
+        for (ITower tower : towerTypes) {
+            if (tower.getIdentifier().hashCode() == hash) {
+                return tower;
+            }
+        }
+        return null;
     }
 
     public TileEntityTower getTowerTile(IBlockAccess world, int x, int y, int z) {
@@ -146,6 +156,7 @@ public class BlockTower extends Block implements IAvoided {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, int blockId, int meta) {
+        super.breakBlock(world, x, y, z, blockId, meta);
         for (int i = -meta; i < 3 - meta; i++) {
             if (world.getBlockId(x, y + i, z) == blockId) {
                 world.setBlockToAir(x, y + i, z);
@@ -202,6 +213,11 @@ public class BlockTower extends Block implements IAvoided {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ) {
+        ItemStack item = player.getHeldItem();
+        if (item != null && item.getItem() instanceof IPassClick) {
+            return false;
+        }
+
         if (world.isRemote) {
             return true;
         }

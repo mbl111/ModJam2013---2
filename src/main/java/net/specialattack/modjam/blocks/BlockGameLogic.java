@@ -11,12 +11,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.specialattack.modjam.ModModjam;
-import net.specialattack.modjam.items.ItemGameLogic;
+import net.specialattack.modjam.items.IPassClick;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
+import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -55,6 +57,38 @@ public class BlockGameLogic extends Block {
     }
 
     @Override
+    public void breakBlock(World world, int x, int y, int z, int blockId, int meta) {
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
+        if (tile != null) {
+            if (tile instanceof TileEntitySpawner) {
+                TileEntitySpawner spawner = (TileEntitySpawner) tile;
+                spawner.setTarget(null);
+
+                for (ChunkCoordinates coords : spawner.towers) {
+                    TileEntity otherTile = world.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
+                    if (otherTile != null && otherTile instanceof TileEntityTower) {
+                        int tempBlockId = world.getBlockId(coords.posX, coords.posY, coords.posZ);
+                        int tempMeta = world.getBlockMetadata(coords.posX, coords.posY, coords.posZ);
+                        world.setBlockToAir(coords.posX, coords.posY, coords.posZ);
+                        Block.blocksList[tempBlockId].breakBlock(world, coords.posX, coords.posY, coords.posZ, tempBlockId, tempMeta);
+                    }
+                }
+            }
+            else if (tile instanceof TileEntityTarget) {
+                ChunkCoordinates target = ((TileEntityTarget) tile).spawner;
+                if (target != null) {
+                    TileEntity otherTile = world.getBlockTileEntity(target.posX, target.posY, target.posZ);
+                    if (otherTile != null && otherTile instanceof TileEntitySpawner) {
+                        TileEntitySpawner spawner = (TileEntitySpawner) otherTile;
+                        spawner.target = null;
+                    }
+                }
+            }
+        }
+        super.breakBlock(world, x, y, z, blockId, meta);
+    }
+
+    @Override
     public boolean hasTileEntity(int metadata) {
         return metadata < 2;
     }
@@ -72,14 +106,14 @@ public class BlockGameLogic extends Block {
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float posX, float posY, float posZ) {
+        ItemStack item = player.getHeldItem();
+        if (item != null && item.getItem() instanceof IPassClick) {
+            return false;
+        }
+
         TileEntity tile = world.getBlockTileEntity(x, y, z);
 
         if (tile != null) {
-            ItemStack item = player.getHeldItem();
-            if (item != null && item.getItem() instanceof ItemGameLogic) {
-                return false;
-            }
-
             if (world.isRemote) {
                 return true;
             }

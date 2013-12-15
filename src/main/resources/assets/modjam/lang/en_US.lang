@@ -1,4 +1,7 @@
 tile.modjam-tower.name=Tower
+tile.modjam-tower.description=A tower to defend your Target. Attacks nearby enemies! Link to a Spawner before placing.
+tile.modjam-tower.linked=Linked @(%1$s, %2$s, %3$s)
+tile.modjam-tower.unlinked=Not linked
 
 tile.modjam-game-logic0.name=Spawner
 tile.modjam-game-logic1.name=Target
@@ -52,6 +55,10 @@ container.modjam-spawner.nowork=Spawner not setup
 
 container.modjam-tower=Tower
 container.modjam-tower.purchase=Purchase A Tower
+container.modjam-tower.level=Level: %1$s
+container.modjam-tower.speed=Attacks every %1$s seconds
 
 tower.AoE.name=Area of Effect
 tower.AoE.description=Periodically damages mobs in an area around itself
+
+death.attack.modkam-tower=%1$s was slain by a Tower

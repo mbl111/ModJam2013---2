@@ -36,7 +36,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         else if (metadata == 1) {
             TileEntity tile = world.getBlockTileEntity(x, y - 1, z);
 
-            if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).active) {
+            if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).towerInstance != null) {
                 // Base
                 this.renderBox(block, x, y, z, 2, 4, 2, 12, 11, 12, renderer);
 
@@ -62,7 +62,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         else if (metadata == 2) {
             TileEntity tile = world.getBlockTileEntity(x, y - 2, z);
 
-            if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).active) {
+            if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).towerInstance != null) {
                 // TODO: Let the tower render
             }
         }

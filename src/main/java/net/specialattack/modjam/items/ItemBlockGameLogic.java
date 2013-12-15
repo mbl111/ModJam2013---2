@@ -13,7 +13,7 @@ import net.minecraft.util.StatCollector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemBlockGameLogic extends ItemBlock {
+public class ItemBlockGameLogic extends ItemBlock implements IPassClick {
 
     private Block block;
 

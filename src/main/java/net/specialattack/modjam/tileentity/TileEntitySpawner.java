@@ -51,6 +51,7 @@ public class TileEntitySpawner extends TileEntity {
     public Monster currentMonster;
 
     public ChunkCoordinates target;
+    public List<ChunkCoordinates> towers;
 
     public TileEntitySpawner() {
         this.spawnedEntities = new ArrayList<Entity>();
@@ -66,6 +67,7 @@ public class TileEntitySpawner extends TileEntity {
         this.wave = 0;
         this.monsterCount = 10;
         this.currentMonster = null;
+        this.towers = new ArrayList<ChunkCoordinates>();
     }
 
     public String getActiveUser() {
@@ -109,7 +111,17 @@ public class TileEntitySpawner extends TileEntity {
         }
         this.spawnedEntities.clear();
 
-        // Clean up the playground
+        Iterator<ChunkCoordinates> i = this.towers.iterator();
+        while (i.hasNext()) {
+            ChunkCoordinates coords = i.next();
+            TileEntity tile = this.worldObj.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
+            if (tile != null && tile instanceof TileEntityTower) {
+                ((TileEntityTower) tile).reset();
+            }
+            else {
+                i.remove();
+            }
+        }
 
         TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
         if (tile instanceof TileEntityTarget) {
@@ -137,7 +149,7 @@ public class TileEntitySpawner extends TileEntity {
         }
     }
 
-    public void targetDamaged(TileEntityTarget target) {
+    public void onTargetDamaged(TileEntityTarget target) {
         EntityPlayer player = CommonProxy.getPlayer(this.playername);
         if (player != null) {
             if (player instanceof EntityPlayerMP) {
@@ -160,7 +172,7 @@ public class TileEntitySpawner extends TileEntity {
         }
     }
 
-    public void target(TileEntityTarget newTarget) {
+    public void setTarget(TileEntityTarget newTarget) {
         if (this.target != null) {
             TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
             if (tile != null && tile instanceof TileEntityTarget) {
@@ -176,6 +188,11 @@ public class TileEntitySpawner extends TileEntity {
             this.onInventoryChanged();
             newTarget.onInventoryChanged();
         }
+    }
+
+    public void addTower(TileEntityTower tile) {
+        this.towers.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
+        this.onInventoryChanged();
     }
 
     public boolean canWork() {
@@ -370,9 +387,20 @@ public class TileEntitySpawner extends TileEntity {
             boosters.appendTag(new NBTTagInt("", booster.id));
         }
         compound.setTag("boosters", boosters);
+
         if (this.currentMonster != null) {
             compound.setInteger("currentMonster", this.currentMonster.id);
         }
+
+        NBTTagList towers = new NBTTagList();
+        for (ChunkCoordinates coord : this.towers) {
+            NBTTagCompound tower = new NBTTagCompound();
+            tower.setInteger("posX", coord.posX);
+            tower.setInteger("posY", coord.posY);
+            tower.setInteger("posZ", coord.posZ);
+            towers.appendTag(tower);
+        }
+        compound.setTag("towers", towers);
     }
 
     @Override
@@ -402,6 +430,12 @@ public class TileEntitySpawner extends TileEntity {
 
         if (compound.hasKey("currentMonster")) {
             this.currentMonster = SpawnerLogic.getMonster(compound.getInteger("currentMonster"));
+        }
+
+        NBTTagList towers = compound.getTagList("towers");
+        for (int i = 0; i < towers.tagCount(); i++) {
+            NBTTagCompound tower = (NBTTagCompound) towers.tagAt(i);
+            this.towers.add(new ChunkCoordinates(tower.getInteger("posX"), tower.getInteger("posY"), tower.getInteger("posZ")));
         }
     }
 

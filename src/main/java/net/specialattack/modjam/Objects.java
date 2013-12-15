@@ -1,6 +1,7 @@
 
 package net.specialattack.modjam;
 
+import net.minecraft.util.DamageSource;
 import net.specialattack.modjam.blocks.BlockColoredAvoiding;
 import net.specialattack.modjam.blocks.BlockGameLogic;
 import net.specialattack.modjam.blocks.BlockTower;
@@ -31,5 +32,7 @@ public class Objects {
     public static ScoreTDCriteria scoreTDCriteria;
 
     public static TowerAoE towerAoE;
+
+    public static DamageSource damageSourceTower;
 
 }

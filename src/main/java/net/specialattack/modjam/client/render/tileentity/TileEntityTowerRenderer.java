@@ -19,7 +19,7 @@ public class TileEntityTowerRenderer extends TileEntitySpecialRenderer {
 
         TileEntityTower tower = (TileEntityTower) tile;
 
-        if (!tower.getActive()) {
+        if (tower.towerInstance != null) {
             return;
         }
 

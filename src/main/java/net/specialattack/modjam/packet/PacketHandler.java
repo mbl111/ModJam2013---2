@@ -95,6 +95,14 @@ public class PacketHandler implements IPacketHandler {
         }
     }
 
+    public static void resendTileInfo(TileEntity tile) {
+        if (tile == null) {
+            return;
+        }
+
+        tile.worldObj.markBlockForUpdate(tile.xCoord, tile.yCoord, tile.zCoord);
+    }
+
     public static Packet250CustomPayload createPacketBlank() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(32767);
         DataOutputStream out = new DataOutputStream(bos);
@@ -176,7 +184,14 @@ public class PacketHandler implements IPacketHandler {
             out.writeInt(tower.xCoord);
             out.writeInt(tower.yCoord);
             out.writeInt(tower.zCoord);
-            out.writeBoolean(tower.getActive());
+            if (tower.towerInstance != null) {
+                byte[] bytes = tower.towerInstance.getTowerType().getIdentifier().getBytes();
+                out.writeInt(bytes.length);
+                out.write(bytes);
+            }
+            else {
+                out.writeInt(0);
+            }
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -196,13 +211,24 @@ public class PacketHandler implements IPacketHandler {
         int y = in.readInt();
         int z = in.readInt();
 
-        TileEntityTower tower = (TileEntityTower) world.getBlockTileEntity(x, y, z);
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-        tower.setActive(in.readBoolean());
+        if (tile != null && tile instanceof TileEntityTower) {
+            TileEntityTower tower = (TileEntityTower) tile;
 
-        world.markBlockForRenderUpdate(x, y, z);
-        world.markBlockForRenderUpdate(x, y + 1, z);
-        world.markBlockForRenderUpdate(x, y + 2, z);
+            byte[] data = new byte[in.readInt()];
+            if (data.length > 0) {
+                in.readFully(data);
+                tower.towerInstance = tower.getTowerBlock().getTower(new String(data)).createNewInstance(tower);
+            }
+            else {
+                tower.towerInstance = null;
+            }
+
+            world.markBlockForRenderUpdate(x, y, z);
+            world.markBlockForRenderUpdate(x, y + 1, z);
+            world.markBlockForRenderUpdate(x, y + 2, z);
+        }
     }
 
     public static Packet250CustomPayload createPacketWaveUpdate(TileEntitySpawner spawner, int id) {

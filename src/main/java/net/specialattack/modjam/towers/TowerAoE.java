@@ -1,8 +1,13 @@
 
 package net.specialattack.modjam.towers;
 
+import java.util.List;
+
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.specialattack.modjam.Assets;
@@ -15,8 +20,7 @@ public class TowerAoE implements ITower {
 
     @Override
     public ITowerInstance createNewInstance(TileEntityTower tile) {
-        // TODO Auto-generated method stub
-        return null;
+        return new Instance(tile);
     }
 
     @Override
@@ -74,26 +78,62 @@ public class TowerAoE implements ITower {
     public static class Instance implements ITowerInstance {
 
         public TileEntityTower tower;
+        public int level;
+        public int speed;
 
         public Instance(TileEntityTower tower) {
             this.tower = tower;
+            this.level = 1;
+            this.speed = 50;
         }
 
         @Override
         public void readFromNBT(NBTTagCompound compound) {
-            // TODO Auto-generated method stub
-
+            this.level = compound.getInteger("level");
+            this.speed = compound.getInteger("speed");
         }
 
         @Override
         public void writeToNBT(NBTTagCompound compound) {
-            // TODO Auto-generated method stub
-
+            compound.setInteger("level", level);
+            compound.setInteger("speed", speed);
         }
 
         @Override
         public ITower getTowerType() {
             return Objects.towerAoE;
+        }
+
+        @Override
+        public int getLevel() {
+            return this.level;
+        }
+
+        @Override
+        public int getSpeed() {
+            return this.speed;
+        }
+
+        @SuppressWarnings("rawtypes")
+        @Override
+        public boolean tick() {
+            double posX = this.tower.xCoord;
+            double posY = this.tower.yCoord;
+            double posZ = this.tower.zCoord;
+            List list = this.tower.worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX + 1.0D, posY + 1.0D, posZ + 1.0D).expand(2.0D, 2.0D, 2.0D), IEntitySelector.selectAnything);
+
+            if (list.isEmpty()) {
+                return false;
+            }
+
+            for (Object obj : list) {
+                if (obj instanceof EntityLiving) {
+                    EntityLiving entity = (EntityLiving) obj;
+                    entity.attackEntityFrom(Objects.damageSourceTower, level * 3.0F);
+                }
+            }
+
+            return true;
         }
 
     }
