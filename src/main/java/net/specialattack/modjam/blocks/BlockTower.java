@@ -236,4 +236,10 @@ public class BlockTower extends Block implements IAvoided {
 
         return true;
     }
+
+    @Override
+    public void setBlockBoundsForItemRender() {
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    }
+
 }

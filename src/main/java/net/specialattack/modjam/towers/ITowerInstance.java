@@ -2,6 +2,8 @@
 package net.specialattack.modjam.towers;
 
 import net.minecraft.nbt.NBTTagCompound;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public interface ITowerInstance {
 
@@ -16,5 +18,8 @@ public interface ITowerInstance {
     int getSpeed();
 
     boolean tick();
+
+    @SideOnly(Side.CLIENT)
+    void spawnParticles(int type);
 
 }

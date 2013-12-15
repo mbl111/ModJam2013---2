@@ -13,8 +13,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.specialattack.modjam.Objects;
 import net.specialattack.modjam.logic.Booster;
 import net.specialattack.modjam.logic.SpawnerLogic;
@@ -54,6 +56,9 @@ public class PacketHandler implements IPacketHandler {
             case 3:
                 this.handlePacketWaveUpdate(in);
             break;
+            case 4:
+                this.handlePacketSpawnParticles(in, player);
+            break;
             }
         }
         catch (IOException e) {
@@ -91,6 +96,23 @@ public class PacketHandler implements IPacketHandler {
                 if (player.worldObj == world) {
                     player.playerNetServerHandler.sendPacketToPlayer(packet);
                 }
+            }
+        }
+    }
+
+    public static void sendToAllPlayersWatchingBlock(Packet250CustomPayload packet, World world, int x, int y, int z) {
+        if (packet == null) {
+            return;
+        }
+
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+
+        if (world instanceof WorldServer) {
+            PlayerInstance chunkWatcher = ((WorldServer) world).getPlayerManager().getOrCreateChunkWatcher(chunkX, chunkZ, false);
+
+            if (chunkWatcher != null) {
+                chunkWatcher.sendToAllPlayersWatchingChunk(packet);
             }
         }
     }
@@ -146,7 +168,18 @@ public class PacketHandler implements IPacketHandler {
                 for (Booster booster : spawner.boosters) {
                     out.writeInt(booster.id);
                 }
-                out.writeInt(spawner.currentMonster.id);
+                if (spawner.currentMonster != null) {
+                    out.writeInt(spawner.currentMonster.id);
+                }
+                else {
+                    out.writeInt(0);
+                }
+                if (spawner.currentBoss != null) {
+                    out.writeInt(spawner.currentBoss.id);
+                }
+                else {
+                    out.writeInt(0);
+                }
             }
         }
         catch (IOException e) {
@@ -172,6 +205,7 @@ public class PacketHandler implements IPacketHandler {
                 WaveInfo.boosters.add(SpawnerLogic.getBooster(in.readInt()));
             }
             WaveInfo.currentMonster = SpawnerLogic.getMonster(in.readInt());
+            WaveInfo.currentBoss = SpawnerLogic.getMonster(in.readInt());
         }
     }
 
@@ -286,6 +320,46 @@ public class PacketHandler implements IPacketHandler {
         case 3:
             WaveInfo.health = in.readInt();
         break;
+        }
+    }
+
+    public static Packet250CustomPayload createPacketSpawnParticles(TileEntityTower tower, int type) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(32767);
+        DataOutputStream out = new DataOutputStream(bos);
+
+        try {
+            out.writeInt(4);
+            out.writeInt(tower.xCoord);
+            out.writeInt(tower.yCoord);
+            out.writeInt(tower.zCoord);
+            out.writeInt(type);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Packet250CustomPayload packet = new Packet250CustomPayload(Objects.MOD_CHANNEL, bos.toByteArray());
+
+        return packet;
+    }
+
+    public void handlePacketSpawnParticles(DataInputStream in, Player iplayer) throws IOException {
+        EntityPlayer player = (EntityPlayer) iplayer;
+
+        World world = player.worldObj;
+
+        int x = in.readInt();
+        int y = in.readInt();
+        int z = in.readInt();
+
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+        if (tile != null && tile instanceof TileEntityTower) {
+            TileEntityTower tower = (TileEntityTower) tile;
+
+            if (tower.towerInstance != null) {
+                tower.towerInstance.spawnParticles(in.readInt());
+            }
         }
     }
 

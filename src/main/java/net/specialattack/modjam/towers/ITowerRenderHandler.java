@@ -13,6 +13,6 @@ public interface ITowerRenderHandler {
     void renderDynamic(TileEntity tile, double x, double y, double z, float partialTicks);
 
     @SideOnly(Side.CLIENT)
-    boolean renderStatic(TileEntity tile, IBlockAccess world, int x, int y, int z, RenderBlocks renderer);
+    boolean renderStatic(TileEntity tile, boolean isTop, IBlockAccess world, int x, int y, int z, RenderBlocks renderer);
 
 }

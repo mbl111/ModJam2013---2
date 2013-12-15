@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import net.specialattack.modjam.towers.ITower;
+import net.specialattack.modjam.towers.ITowerRenderHandler;
 import net.specialattack.modjam.towers.TowerAoE;
 
 import org.lwjgl.opengl.GL11;
@@ -25,7 +26,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
         block.setBlockBoundsForItemRender();
-        this.renderBox(block, metadata, renderer);
+        BlockRendererTower.renderBox(block, metadata, renderer);
     }
 
     @Override
@@ -33,40 +34,40 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         int metadata = world.getBlockMetadata(x, y, z);
         if (metadata == 0) {
             block.setBlockBoundsForItemRender();
-            this.renderBox(block, x, y, z, renderer);
+            BlockRendererTower.renderBox(block, x, y, z, renderer);
         }
         else if (metadata == 1) {
             TileEntity tile = world.getBlockTileEntity(x, y - 1, z);
 
             if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).towerInstance != null) {
                 // Base
-                this.renderBox(block, x, y, z, 2, 4, 2, 12, 11, 12, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 2, 4, 2, 12, 11, 12, renderer);
 
                 //Legs
-                this.renderBox(block, x, y, z, 0.5F, 0, 0.5F, 4, 8, 4, renderer);
-                this.renderBox(block, x, y, z, 11.5F, 0, 0.5F, 4, 8, 4, renderer);
-                this.renderBox(block, x, y, z, 11.5F, 0, 11.5F, 4, 8, 4, renderer);
-                this.renderBox(block, x, y, z, 0.5F, 0, 11.5F, 4, 8, 4, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 0.5F, 0, 0.5F, 4, 8, 4, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 11.5F, 0, 0.5F, 4, 8, 4, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 11.5F, 0, 11.5F, 4, 8, 4, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 0.5F, 0, 11.5F, 4, 8, 4, renderer);
 
                 //Decoration
-                this.renderBox(block, x, y, z, 1, 8, 1, 1, 8, 1, renderer);
-                this.renderBox(block, x, y, z, 1, 8, 14, 1, 8, 1, renderer);
-                this.renderBox(block, x, y, z, 14, 8, 14, 1, 8, 1, renderer);
-                this.renderBox(block, x, y, z, 14, 8, 1, 1, 8, 1, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 1, 8, 1, 1, 8, 1, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 1, 8, 14, 1, 8, 1, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 14, 8, 14, 1, 8, 1, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 14, 8, 1, 1, 8, 1, renderer);
 
                 //Decoration
-                this.renderBox(block, x, y, z, 2, 15, 1, 12, 1, 1, renderer);
-                this.renderBox(block, x, y, z, 2, 15, 14, 12, 1, 1, renderer);
-                this.renderBox(block, x, y, z, 1, 15, 2, 1, 1, 12, renderer);
-                this.renderBox(block, x, y, z, 14, 15, 2, 1, 1, 12, renderer);
-
-                this.renderBox(block, x, y, z, 6, 16, 6, 5, 1, 5, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 2, 15, 1, 12, 1, 1, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 2, 15, 14, 12, 1, 1, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 1, 15, 2, 1, 1, 12, renderer);
+                BlockRendererTower.renderBox(block, x, y, z, 14, 15, 2, 1, 1, 12, renderer);
 
                 ITower tower = ((TileEntityTower) tile).towerInstance.getTowerType();
-                if (tower instanceof TowerAoE) {
-                    this.renderBox(block, x, y, z, 3, 17, 3, 11, 8, 11, renderer);
-                    this.renderBox(block, x, y, z, 4, 25, 4, 9, 1, 9, renderer);
-                    this.renderBox(block, x, y, z, 5, 26, 5, 7, 1, 7, renderer);
+
+                if (tower != null && tower instanceof TowerAoE) {
+                    ITowerRenderHandler renderHandler = ((TowerAoE) tower).getRenderHandler();
+                    if (renderHandler != null) {
+                        renderHandler.renderStatic(tile, false, world, x, y, z, renderer);
+                    }
                 }
 
             }
@@ -75,7 +76,16 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
             TileEntity tile = world.getBlockTileEntity(x, y - 2, z);
 
             if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).towerInstance != null) {
-                // TODO: Let the tower render
+                BlockRendererTower.renderBox(block, x, y, z, 6, 0, 6, 5, 1, 5, renderer);
+
+                ITower tower = ((TileEntityTower) tile).towerInstance.getTowerType();
+
+                if (tower != null && tower instanceof TowerAoE) {
+                    ITowerRenderHandler renderHandler = ((TowerAoE) tower).getRenderHandler();
+                    if (renderHandler != null) {
+                        renderHandler.renderStatic(tile, true, world, x, y, z, renderer);
+                    }
+                }
             }
         }
         else {
@@ -85,19 +95,19 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         return true;
     }
 
-    private void renderBox(Block block, int x, int y, int z, float startX, float startY, float startZ, float sizeX, float sizeY, float sizeZ, RenderBlocks renderer) {
+    public static void renderBox(Block block, int x, int y, int z, float startX, float startY, float startZ, float sizeX, float sizeY, float sizeZ, RenderBlocks renderer) {
         float pixel = 0.0625F;
 
         block.setBlockBounds(pixel * startX, pixel * startY, pixel * startZ, pixel * (startX + sizeX), pixel * (startY + sizeY), pixel * (startZ + sizeZ));
-        this.renderBox(block, x, y, z, renderer);
+        BlockRendererTower.renderBox(block, x, y, z, renderer);
     }
 
-    private void renderBox(Block block, int x, int y, int z, RenderBlocks renderer) {
+    public static void renderBox(Block block, int x, int y, int z, RenderBlocks renderer) {
         renderer.setRenderBoundsFromBlock(block);
         renderer.renderStandardBlock(block, x, y, z);
     }
 
-    private void renderBox(Block block, int metadata, RenderBlocks renderer) {
+    public static void renderBox(Block block, int metadata, RenderBlocks renderer) {
         Tessellator tessellator = Tessellator.instance;
 
         renderer.setRenderBoundsFromBlock(block);

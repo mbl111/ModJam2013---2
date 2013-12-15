@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.specialattack.modjam.logic.Booster;
+import net.specialattack.modjam.logic.Monster;
 import net.specialattack.modjam.logic.WaveInfo;
 
 import org.lwjgl.opengl.GL11;
@@ -57,19 +58,20 @@ public class GuiOverlay extends Gui {
         Tessellator tess = Tessellator.instance;
 
         if (WaveInfo.currentMonster != null) {
-            mc.renderEngine.bindTexture(WaveInfo.currentMonster.getResourceLocation());
+            Monster monster = WaveInfo.currentMonster;
+            mc.renderEngine.bindTexture(monster.getResourceLocation());
 
             tess.startDrawingQuads();
-            tess.addVertexWithUV(x, y + WaveInfo.currentMonster.iconHeight, 0.0D, WaveInfo.currentMonster.minU, WaveInfo.currentMonster.maxV);
-            tess.addVertexWithUV(x + WaveInfo.currentMonster.iconWidth, y + WaveInfo.currentMonster.iconHeight, 0.0D, WaveInfo.currentMonster.maxU, WaveInfo.currentMonster.maxV);
-            tess.addVertexWithUV(x + WaveInfo.currentMonster.iconWidth, y, 0.0D, WaveInfo.currentMonster.maxU, WaveInfo.currentMonster.minV);
-            tess.addVertexWithUV(x, y, 0.0D, WaveInfo.currentMonster.minU, WaveInfo.currentMonster.minV);
+            tess.addVertexWithUV(x, y + monster.iconHeight, 0.0D, monster.minU, monster.maxV);
+            tess.addVertexWithUV(x + monster.iconWidth, y + monster.iconHeight, 0.0D, monster.maxU, monster.maxV);
+            tess.addVertexWithUV(x + monster.iconWidth, y, 0.0D, monster.maxU, monster.minV);
+            tess.addVertexWithUV(x, y, 0.0D, monster.minU, monster.minV);
             tess.draw();
 
-            this.font.drawStringWithShadow("" + WaveInfo.monsterCount, x, y + WaveInfo.currentMonster.iconHeight - 2, 0xFFFF00);
+            this.font.drawStringWithShadow("" + WaveInfo.monsterCount, x, y + 12, 0xFFFF00);
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
-            x += WaveInfo.currentMonster.iconWidth + 4;
+            x += monster.iconWidth + 4;
         }
 
         for (Booster booster : WaveInfo.boosters) {
@@ -84,16 +86,32 @@ public class GuiOverlay extends Gui {
 
             String data = booster.getDisplay();
             if (data != null && !data.isEmpty()) {
-                this.font.drawStringWithShadow(data, x, y + 14, 0xFFFF00);
+                this.font.drawStringWithShadow(data, x, y + 12, 0xFFFF00);
                 GL11.glColor3f(1.0F, 1.0F, 1.0F);
             }
 
             x += 20;
         }
 
-        if (!WaveInfo.boosters.isEmpty()) {
+        if (WaveInfo.currentMonster != null || WaveInfo.boosters.size() > 0) {
             x = 2;
             y += 20;
         }
+
+        if (WaveInfo.currentBoss != null) {
+            Monster monster = WaveInfo.currentBoss;
+            mc.renderEngine.bindTexture(monster.getResourceLocation());
+
+            tess.startDrawingQuads();
+            tess.addVertexWithUV(x, y + monster.iconHeight, 0.0D, monster.minU, monster.maxV);
+            tess.addVertexWithUV(x + monster.iconWidth, y + monster.iconHeight, 0.0D, monster.maxU, monster.maxV);
+            tess.addVertexWithUV(x + monster.iconWidth, y, 0.0D, monster.maxU, monster.minV);
+            tess.addVertexWithUV(x, y, 0.0D, monster.minU, monster.minV);
+            tess.draw();
+
+            x += monster.iconWidth + 4;
+            y += 20;
+        }
+
     }
 }

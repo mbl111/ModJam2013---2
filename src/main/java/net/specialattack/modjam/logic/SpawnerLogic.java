@@ -7,7 +7,9 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.item.ItemStack;
@@ -18,25 +20,36 @@ import net.minecraft.world.World;
 public final class SpawnerLogic {
 
     public static List<Monster> monsters = new ArrayList<Monster>();
+    public static List<Monster> bosses = new ArrayList<Monster>();
     public static List<ItemStack> monsterAccessoires = new ArrayList<ItemStack>();
     public static List<Booster> boosters = new ArrayList<Booster>();
 
     static {
-        Monster monster = new Monster(1, EntityZombie.class, 200, true);
+        // Regular monsters
+        Monster monster = new Monster(1, EntityZombie.class, 100, true);
         monster.setIcon(0, 36, 16, 16);
         SpawnerLogic.monsters.add(monster);
 
-        monster = new Monster(2, EntitySkeleton.class, 100, true);
+        monster = new Monster(2, EntitySkeleton.class, 150, true);
         monster.setIcon(16, 36, 16, 16);
         SpawnerLogic.monsters.add(monster);
 
-        monster = new Monster(3, EntityCreeper.class, 100, true);
+        monster = new Monster(3, EntityCreeper.class, 150, false);
         monster.setIcon(32, 36, 16, 16);
         SpawnerLogic.monsters.add(monster);
 
-        monster = new Monster(4, EntityWitch.class, 50, true);
+        monster = new Monster(4, EntityWitch.class, 70, false);
         monster.setIcon(48, 36, 16, 16);
         SpawnerLogic.monsters.add(monster);
+
+        monster = new Monster(5, EntitySnowman.class, 70, false);
+        monster.setIcon(80, 36, 16, 16);
+        SpawnerLogic.monsters.add(monster);
+
+        // Bosses
+        monster = new Monster(6, EntityIronGolem.class, 100, false);
+        monster.setIcon(64, 36, 16, 16);
+        SpawnerLogic.bosses.add(monster);
 
         SpawnerLogic.monsterAccessoires.add(new ItemStack(Block.anvil));
         SpawnerLogic.monsterAccessoires.add(new ItemStack(Block.fence));
@@ -48,22 +61,33 @@ public final class SpawnerLogic {
         SpawnerLogic.monsterAccessoires.add(new ItemStack(Block.beacon));
 
         SpawnerLogic.boosters.add(new BoosterEmpty(1, 150, 0, -1, 0));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(2, Potion.moveSpeed, 0, 100, 5, 30, 1));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(3, Potion.moveSpeed, 1, 50, 20, 50, 1));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(4, Potion.moveSpeed, 2, 50, 40, -1, 1));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(5, Potion.moveSlowdown, 0, 50, 0, -1, 2));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(6, Potion.moveSlowdown, 1, 30, 0, -1, 2));
-        // Health Boosters
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(7, Potion.invisibility, 0, 50, 20, -1, 4));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(2, Potion.moveSpeed, 0, 140, 5, 30, 1));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(3, Potion.moveSpeed, 1, 70, 20, 50, 1));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(4, Potion.moveSpeed, 2, 70, 40, -1, 1));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(5, Potion.moveSlowdown, 0, 80, 0, -1, 2));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(6, Potion.moveSlowdown, 1, 80, 0, -1, 2));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(7, Potion.invisibility, 0, 40, 20, -1, 4));
         SpawnerLogic.boosters.add(new BoosterPotionEffect(8, Potion.resistance, 0, 80, 5, 10, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(9, Potion.resistance, 1, 100, 10, 30, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(10, Potion.resistance, 2, 120, 20, 50, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(11, Potion.resistance, 3, 120, 40, -1, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(12, Potion.fireResistance, 0, 80, 10, -1, 6));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(9, Potion.resistance, 1, 120, 10, 30, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(10, Potion.resistance, 2, 120, 20, -1, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(11, Potion.resistance, 3, 60, 30, -1, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(12, Potion.resistance, 4, 30, 40, -1, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(13, Potion.fireResistance, 0, 80, 10, -1, 6));
+        // Health boost
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(14, Potion.field_76434_w, 0, 80, 5, -1, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(15, Potion.field_76434_w, 1, 80, 15, -1, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(16, Potion.field_76434_w, 2, 80, 25, -1, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(17, Potion.field_76434_w, 3, 80, 35, -1, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(17, Potion.field_76434_w, 4, 80, 45, -1, 7));
     }
 
     public static Monster getMonster(int id) {
         for (Monster monster : SpawnerLogic.monsters) {
+            if (monster.id == id) {
+                return monster;
+            }
+        }
+        for (Monster monster : SpawnerLogic.bosses) {
             if (monster.id == id) {
                 return monster;
             }
@@ -73,6 +97,10 @@ public final class SpawnerLogic {
 
     public static Monster getRandomMonster(Random rand) {
         return (Monster) WeightedRandom.getRandomItem(rand, SpawnerLogic.monsters);
+    }
+
+    public static Monster getRandomBoss(Random rand) {
+        return (Monster) WeightedRandom.getRandomItem(rand, SpawnerLogic.bosses);
     }
 
     public static Booster getBooster(int id) {
