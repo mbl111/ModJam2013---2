@@ -160,7 +160,7 @@ public class BlockTower extends Block implements IAvoided {
             return false;
         }
         
-        player.openGui(ModModjam.instance, 0, world, x, y, z);
+        player.openGui(ModModjam.instance, 1, world, x, y, z);
         
 //        tower.setActive(true);
 //        Packet250CustomPayload packet = PacketHandler.createPacketTowerInfo(tower);
