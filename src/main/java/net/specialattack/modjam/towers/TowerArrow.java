@@ -10,8 +10,8 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.specialattack.modjam.CommonProxy;
 import net.specialattack.modjam.packet.PacketHandler;
-import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -158,7 +158,7 @@ public class TowerArrow extends TowerBase {
         @Override
         @SideOnly(Side.CLIENT)
         public void spawnParticles(int type) {
-            Random rand = TileEntitySpawner.rand;
+            Random rand = CommonProxy.rand;
             for (int i = 0; i < 10; i++) {
                 this.tower.worldObj.spawnParticle("reddust", this.tower.xCoord + rand.nextDouble(), this.tower.yCoord + 2.0D + rand.nextDouble(), this.tower.zCoord + rand.nextDouble(), 1.0D, 0.0D, 0.0D);
             }

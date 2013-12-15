@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -30,8 +29,6 @@ import net.specialattack.modjam.packet.PacketHandler;
 
 @SuppressWarnings("rawtypes")
 public class TileEntitySpawner extends TileEntity {
-
-    public static final Random rand = new Random();
 
     public List<Entity> spawnedEntities;
     public int spawnQueue;
@@ -110,7 +107,9 @@ public class TileEntitySpawner extends TileEntity {
                 score.func_96647_c(0);
             }
 
-            this.prepareWave();
+            if (this.multiplayerController != null) {
+                this.prepareWave();
+            }
         }
 
         for (Entity entity : this.spawnedEntities) {
@@ -135,13 +134,19 @@ public class TileEntitySpawner extends TileEntity {
             target.health = 100;
         }
 
-        this.onInventoryChanged();
+        this.markDirty();
     }
 
     public void sendChatToPlayer(String message) {
         EntityPlayer player = CommonProxy.getPlayer(this.playername);
         if (player != null) {
             player.sendChatToPlayer(ChatMessageComponent.createFromText(message));
+        }
+    }
+
+    public void markDirty() {
+        if (this.worldObj != null) {
+            this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
         }
     }
 
@@ -165,7 +170,7 @@ public class TileEntitySpawner extends TileEntity {
                 ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, stat));
             }
         }
-        this.onInventoryChanged();
+        this.markDirty();
     }
 
     public void onTargetDamaged(TileEntityTarget target) {
@@ -207,7 +212,7 @@ public class TileEntitySpawner extends TileEntity {
             this.target = new ChunkCoordinates(newTarget.xCoord, newTarget.yCoord, newTarget.zCoord);
             newTarget.spawner = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
 
-            this.onInventoryChanged();
+            this.markDirty();
             newTarget.onInventoryChanged();
         }
     }
@@ -224,7 +229,7 @@ public class TileEntitySpawner extends TileEntity {
 
     public void addTower(TileEntityTower tile) {
         this.towers.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
-        this.onInventoryChanged();
+        this.markDirty();
     }
 
     public List<TileEntityTower> getAllTowers() {
@@ -266,8 +271,8 @@ public class TileEntitySpawner extends TileEntity {
     private void prepareWave() {
         this.interval = 600;
         this.wave++;
-        this.boosters = SpawnerLogic.getRandomBoosters(TileEntitySpawner.rand, this.worldObj, this.wave);
-        if (TileEntitySpawner.rand.nextInt(2) == 1) {
+        this.boosters = SpawnerLogic.getRandomBoosters(CommonProxy.rand, this.worldObj, this.wave);
+        if (CommonProxy.rand.nextInt(2) == 1) {
             this.monsterCount += 5;
         }
 
@@ -275,10 +280,10 @@ public class TileEntitySpawner extends TileEntity {
 
         this.spawnQueue = this.monsterCount;
 
-        this.currentMonster = SpawnerLogic.getRandomMonster(TileEntitySpawner.rand);
+        this.currentMonster = SpawnerLogic.getRandomMonster(CommonProxy.rand);
 
         if (this.wave % 5 == 0) {
-            this.currentBoss = SpawnerLogic.getRandomBoss(TileEntitySpawner.rand);
+            this.currentBoss = SpawnerLogic.getRandomBoss(CommonProxy.rand);
             this.addCoins(this.wave * 10);
         }
         else {
@@ -299,9 +304,9 @@ public class TileEntitySpawner extends TileEntity {
         }
 
         if (this.playername != null) {
-            if (this.active && CommonProxy.isPlayerLoggedIn(this.playername)) {
+            if (this.active && (this.multiplayerController != null || CommonProxy.isPlayerLoggedIn(this.playername))) {
                 this.timer++;
-                this.onInventoryChanged();
+                this.markDirty();
             }
 
             if (this.waveActive) {
@@ -315,7 +320,7 @@ public class TileEntitySpawner extends TileEntity {
                             entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
                             if (this.currentMonster.supportsHat) {
-                                entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(TileEntitySpawner.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
+                                entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(CommonProxy.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
                                 entity.setEquipmentDropChance(4, 0.0F);
                             }
                             entity.func_110163_bv();
@@ -338,6 +343,7 @@ public class TileEntitySpawner extends TileEntity {
                             this.active = false;
                         }
                         this.spawnQueue--;
+                        this.markDirty();
                     }
                     else {
                         if (this.currentBoss != null) {
@@ -348,7 +354,7 @@ public class TileEntitySpawner extends TileEntity {
                                 entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
                                 if (this.currentBoss.supportsHat) {
-                                    entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(TileEntitySpawner.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
+                                    entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(CommonProxy.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
                                     entity.setEquipmentDropChance(4, 0.0F);
                                 }
                                 entity.func_110163_bv();
@@ -368,6 +374,7 @@ public class TileEntitySpawner extends TileEntity {
                             }
                         }
                         this.spawning = false;
+                        this.markDirty();
                     }
                 }
 
@@ -382,6 +389,8 @@ public class TileEntitySpawner extends TileEntity {
                     if (this.multiplayerController != null) {
                         this.prepareWave();
                     }
+
+                    this.markDirty();
 
                     this.sendChatToPlayer("Wave complete!");
                 }
@@ -401,6 +410,7 @@ public class TileEntitySpawner extends TileEntity {
                     }
                     if (removed) {
                         this.updateStat(0);
+                        this.markDirty();
                     }
                 }
             }
@@ -426,6 +436,7 @@ public class TileEntitySpawner extends TileEntity {
                             //this.setActiveUser(null);
                             this.active = false;
                         }
+                        this.markDirty();
                     }
                 }
             }

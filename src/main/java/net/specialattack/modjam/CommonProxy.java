@@ -4,6 +4,7 @@ package net.specialattack.modjam;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -47,6 +48,8 @@ import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class CommonProxy implements IConnectionHandler, IGuiHandler {
+
+    public static final Random rand = new Random();
 
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
@@ -141,6 +144,9 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
     @SuppressWarnings("rawtypes")
     public static EntityPlayer getPlayer(String playername) {
+        if (playername == null) {
+            return null;
+        }
         List players = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList;
         for (Object obj : players) {
             if (obj instanceof EntityPlayer) {
