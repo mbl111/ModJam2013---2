@@ -66,12 +66,17 @@ public class EntityTargetLocation extends EntityAIBase {
 
         if (distance < this.entity.width * this.entity.width * 4) {
             if (this.tile.isInvalid()) {
-
+                // Fail silently
+                this.entity.worldObj.removeEntity(this.entity);
+                this.entity = null;
+                this.tile = null;
             }
-            this.tile.damage(1);
-            this.entity.worldObj.removeEntity(this.entity);
-            this.entity = null;
-            this.tile = null;
+            else {
+                this.tile.damage(1);
+                this.entity.worldObj.removeEntity(this.entity);
+                this.entity = null;
+                this.tile = null;
+            }
         }
         else {
             this.running = false;

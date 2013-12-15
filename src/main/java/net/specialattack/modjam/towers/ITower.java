@@ -32,4 +32,6 @@ public interface ITower {
     @SideOnly(Side.CLIENT)
     int getIconV();
 
+    int getBuyPrice();
+
 }

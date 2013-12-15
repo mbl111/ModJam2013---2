@@ -62,6 +62,7 @@ public class BlockGameLogic extends Block {
         if (tile != null) {
             if (tile instanceof TileEntitySpawner) {
                 TileEntitySpawner spawner = (TileEntitySpawner) tile;
+                spawner.setActiveUser(null);
                 spawner.setTarget(null);
 
                 for (ChunkCoordinates coords : spawner.towers) {
@@ -80,7 +81,7 @@ public class BlockGameLogic extends Block {
                     TileEntity otherTile = world.getBlockTileEntity(target.posX, target.posY, target.posZ);
                     if (otherTile != null && otherTile instanceof TileEntitySpawner) {
                         TileEntitySpawner spawner = (TileEntitySpawner) otherTile;
-                        spawner.target = null;
+                        spawner.setTarget(null);
                     }
                 }
             }

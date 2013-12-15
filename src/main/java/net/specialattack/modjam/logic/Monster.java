@@ -38,10 +38,10 @@ public class Monster extends WeightedRandomItem {
     }
 
     public void setIcon(int left, int top, int width, int height) {
-        this.minU = left / 255.0D;
-        this.minV = top / 255.0D;
-        this.maxU = (left + width) / 255.0D;
-        this.maxV = (top + height) / 255.0D;
+        this.minU = left / 256.0D;
+        this.minV = top / 256.0D;
+        this.maxU = (left + width) / 256.0D;
+        this.maxV = (top + height) / 256.0D;
         this.iconWidth = width;
         this.iconHeight = height;
     }

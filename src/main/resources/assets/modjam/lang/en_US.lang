@@ -55,11 +55,16 @@ container.modjam-spawner.nowork=Spawner not setup
 container.modjam-spawner.startnow=Start Wave Now
 
 container.modjam-tower=Tower
-container.modjam-tower.purchase=Purchase A Tower
+container.modjam-tower.purchase=Buy a Tower
+container.modjam-tower.cost=Buy price: %1$s coins
 container.modjam-tower.level=Level: %1$s
 container.modjam-tower.speed=Attacks every %1$s seconds
+container.modjam-tower.range=Range: %1$s
+container.modjam-tower.damage=Attack damage: %1$s
 
-tower.AoE.name=Area of Effect
+tower.AoE.name=Area of Effect Tower
 tower.AoE.description=Periodically damages mobs in an area around itself
+tower.arrow.name=Arrow Tower
+tower.arrow.description=Shoots a single arrow at a nearby entity
 
 death.attack.modkam-tower=%1$s was slain by a Tower

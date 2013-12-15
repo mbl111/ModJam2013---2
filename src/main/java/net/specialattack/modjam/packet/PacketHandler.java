@@ -154,12 +154,17 @@ public class PacketHandler implements IPacketHandler {
                 out.writeInt(spawner.wave);
                 out.writeInt(spawner.monsterCount);
                 out.writeInt(spawner.spawnQueue + spawner.spawnedEntities.size());
-                int x = spawner.target.posX;
-                int y = spawner.target.posY;
-                int z = spawner.target.posZ;
-                TileEntity tile = spawner.worldObj.getBlockTileEntity(x, y, z);
-                if (tile instanceof TileEntityTarget) {
-                    out.writeInt(((TileEntityTarget) tile).health);
+                if (spawner.target != null) {
+                    int x = spawner.target.posX;
+                    int y = spawner.target.posY;
+                    int z = spawner.target.posZ;
+                    TileEntity tile = spawner.worldObj.getBlockTileEntity(x, y, z);
+                    if (tile instanceof TileEntityTarget) {
+                        out.writeInt(((TileEntityTarget) tile).health);
+                    }
+                    else {
+                        out.writeInt(0);
+                    }
                 }
                 else {
                     out.writeInt(0);
@@ -206,6 +211,7 @@ public class PacketHandler implements IPacketHandler {
             }
             WaveInfo.currentMonster = SpawnerLogic.getMonster(in.readInt());
             WaveInfo.currentBoss = SpawnerLogic.getMonster(in.readInt());
+            WaveInfo.timer = 0;
         }
     }
 

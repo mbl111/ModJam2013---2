@@ -108,7 +108,7 @@ public class ContainerSpawner extends Container {
             else {
                 if (this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
                     //Start the game now
-                    this.tile.timer = 1200 - 20 * 3;
+                    this.tile.timer = 600 - 20 * 3;
                 }
             }
         }

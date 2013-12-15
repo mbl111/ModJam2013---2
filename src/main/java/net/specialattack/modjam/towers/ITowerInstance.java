@@ -17,6 +17,10 @@ public interface ITowerInstance {
 
     int getSpeed();
 
+    int getRange();
+
+    int getDamage();
+
     boolean tick();
 
     @SideOnly(Side.CLIENT)

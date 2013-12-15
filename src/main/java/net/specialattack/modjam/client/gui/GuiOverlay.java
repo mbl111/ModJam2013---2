@@ -46,8 +46,8 @@ public class GuiOverlay extends Gui {
         y += 10;
         this.font.drawStringWithShadow("Health: " + WaveInfo.health + "/100", x, y, 0xFFFFFF);
         y += 10;
-        if (WaveInfo.timer > 0) {
-            int time = (1200 - WaveInfo.timer) / 20;
+        if (WaveInfo.timer >= 0) {
+            int time = (600 - WaveInfo.timer) / 20;
             this.font.drawStringWithShadow("Next wave: " + time, x, y, 0xFFFFFF);
         }
         else {

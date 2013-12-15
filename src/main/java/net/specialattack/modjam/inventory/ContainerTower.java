@@ -17,6 +17,8 @@ public class ContainerTower extends Container {
     public boolean activated;
     public int level;
     public int speed;
+    public int range;
+    public int damage;
 
     public ContainerTower(TileEntityTower tile) {
         this.tile = tile;
@@ -35,6 +37,8 @@ public class ContainerTower extends Container {
         if (this.tile.towerInstance != null) {
             crafting.sendProgressBarUpdate(this, 1, this.tile.towerInstance.getLevel());
             crafting.sendProgressBarUpdate(this, 2, this.tile.towerInstance.getSpeed());
+            crafting.sendProgressBarUpdate(this, 3, this.tile.towerInstance.getRange());
+            crafting.sendProgressBarUpdate(this, 4, this.tile.towerInstance.getDamage());
         }
     }
 
@@ -53,6 +57,8 @@ public class ContainerTower extends Container {
                 if (activated) {
                     crafting.sendProgressBarUpdate(this, 1, this.tile.towerInstance.getLevel());
                     crafting.sendProgressBarUpdate(this, 2, this.tile.towerInstance.getSpeed());
+                    crafting.sendProgressBarUpdate(this, 3, this.tile.towerInstance.getRange());
+                    crafting.sendProgressBarUpdate(this, 4, this.tile.towerInstance.getDamage());
                 }
             }
         }
@@ -71,6 +77,12 @@ public class ContainerTower extends Container {
         }
         else if (id == 2) {
             this.speed = value;
+        }
+        else if (id == 3) {
+            this.range = value;
+        }
+        else if (id == 4) {
+            this.damage = value;
         }
     }
 

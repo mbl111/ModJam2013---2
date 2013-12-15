@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.specialattack.modjam.logic.WaveInfo;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -20,29 +21,39 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiButtonTinyOverlay extends GuiButton {
+public class GuiButtonTower extends GuiButton {
 
     public String identifier;
     public ResourceLocation resourceLocation;
     public int texU;
     public int texV;
+    public int price;
 
-    public GuiButtonTinyOverlay(int id, int posX, int posY, int width, String identifier, ResourceLocation resourceLocation, int texU, int texV) {
-        super(id, posX, posY, width, 20, "");
+    public GuiButtonTower(int id, int posX, int posY, String identifier, int price, ResourceLocation resourceLocation, int texU, int texV) {
+        super(id, posX, posY, 20, 20, "");
         this.identifier = identifier;
         this.resourceLocation = resourceLocation;
         this.texU = texU;
         this.texV = texV;
+        this.price = price;
     }
 
     @Override
     public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
+        this.enabled = WaveInfo.coins >= this.price;
         super.drawButton(minecraft, mouseX, mouseY);
         if (this.drawButton) {
             minecraft.getTextureManager().bindTexture(this.resourceLocation);
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GL11.glEnable(GL11.GL_BLEND);
+            if (this.enabled) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            }
+            else {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+            }
 
-            this.drawTexturedModalRect(this.xPosition + ((this.width - minecraft.fontRenderer.getStringWidth(this.identifier)) / 2), this.yPosition, this.texU, this.texV, this.width, this.height);
+            this.drawTexturedModalRect(this.xPosition, this.yPosition, this.texU, this.texV, this.width, this.height);
+            GL11.glDisable(GL11.GL_BLEND);
         }
     }
 
@@ -56,6 +67,7 @@ public class GuiButtonTinyOverlay extends GuiButton {
         if (this.field_82253_i) {
             List<String> lines = new ArrayList<String>();
             lines.add(I18n.getString("tower." + this.identifier + ".name"));
+            lines.add(I18n.getStringParams("container.modjam-tower.cost", this.price));
             lines.addAll(minecraft.fontRenderer.listFormattedStringToWidth(I18n.getString("tower." + this.identifier + ".description"), 150));
 
             this.drawHoveringText(lines, mouseX, mouseY, minecraft.fontRenderer);

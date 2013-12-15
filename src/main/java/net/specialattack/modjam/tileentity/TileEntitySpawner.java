@@ -126,9 +126,11 @@ public class TileEntitySpawner extends TileEntity {
             }
         }
 
-        TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-        if (tile instanceof TileEntityTarget) {
-            ((TileEntityTarget) tile).health = 100;
+        if (this.target != null) {
+            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
+            if (tile instanceof TileEntityTarget) {
+                ((TileEntityTarget) tile).health = 100;
+            }
         }
 
         this.onInventoryChanged();
@@ -156,7 +158,7 @@ public class TileEntitySpawner extends TileEntity {
         EntityPlayer player = CommonProxy.getPlayer(this.playername);
         if (player != null) {
             if (player instanceof EntityPlayerMP) {
-                widthwidth((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 3));
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, 3));
             }
 
             if (target.health == 0) {
@@ -370,7 +372,7 @@ public class TileEntitySpawner extends TileEntity {
                         }
                     }
                 }
-                if (this.timer >= 1200) {
+                if (this.timer >= 600) {
                     this.waveActive = true;
                     this.timer = 0;
 

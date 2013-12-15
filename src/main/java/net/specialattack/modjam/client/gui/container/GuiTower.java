@@ -10,7 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.specialattack.modjam.Assets;
 import net.specialattack.modjam.blocks.BlockTower;
-import net.specialattack.modjam.client.gui.GuiButtonTinyOverlay;
+import net.specialattack.modjam.client.gui.GuiButtonTower;
 import net.specialattack.modjam.inventory.ContainerTower;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import net.specialattack.modjam.towers.ITower;
@@ -26,13 +26,13 @@ public class GuiTower extends GuiContainer {
     public TileEntityTower tile;
     private ContainerTower container;
 
-    private List<GuiButtonTinyOverlay> buttons;
+    private List<GuiButtonTower> buttons;
 
     public GuiTower(TileEntityTower tile) {
         super(new ContainerTower(tile));
         this.tile = tile;
         this.container = (ContainerTower) this.inventorySlots;
-        this.buttons = new ArrayList<GuiButtonTinyOverlay>();
+        this.buttons = new ArrayList<GuiButtonTower>();
 
         Block block = tile.getBlockType();
         if (block instanceof BlockTower) {
@@ -40,7 +40,7 @@ public class GuiTower extends GuiContainer {
 
             for (int i = 0; i < towerTypes.size(); i++) {
                 ITower tower = towerTypes.get(i);
-                this.buttons.add(new GuiButtonTinyOverlay(tower.getIdentifier().hashCode(), 0, 0, 80, tower.getIdentifier(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
+                this.buttons.add(new GuiButtonTower(tower.getIdentifier().hashCode(), 0, 0, tower.getIdentifier(), tower.getBuyPrice(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
             }
         }
     }
@@ -54,7 +54,7 @@ public class GuiTower extends GuiContainer {
 
         if (!this.container.activated) {
             int i = 0;
-            for (GuiButtonTinyOverlay button : this.buttons) {
+            for (GuiButtonTower button : this.buttons) {
                 button.xPosition = this.guiLeft + (i % 7) * 23 + 8;
                 button.yPosition = this.guiTop + (i / 7) * 23 + 32;
                 i++;
@@ -84,7 +84,7 @@ public class GuiTower extends GuiContainer {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         if (!this.container.activated) {
-            for (GuiButtonTinyOverlay button : this.buttons) {
+            for (GuiButtonTower button : this.buttons) {
                 if (button.drawButton) {
                     button.drawTooltips(this.mc, mouseX, mouseY);
                 }
@@ -103,8 +103,9 @@ public class GuiTower extends GuiContainer {
         }
         else {
             this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.level", this.container.level), 8, 20, 0x404040);
-            float speed = this.container.speed / 20.0F;
-            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.speed", speed), 8, 30, 0x404040);
+            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.damage", this.container.damage), 8, 30, 0x404040);
+            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.speed", this.container.speed / 20.0F), 8, 40, 0x404040);
+            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.range", this.container.range), 8, 50, 0x404040);
         }
     }
 

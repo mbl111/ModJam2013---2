@@ -32,6 +32,7 @@ import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import net.specialattack.modjam.towers.TowerAoE;
+import net.specialattack.modjam.towers.TowerArrow;
 import net.specialattack.modjam.util.CustomDamageSource;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -82,7 +83,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         TileEntity.addMapping(TileEntityTarget.class, Assets.DOMAIN + "-Target");
         TileEntity.addMapping(TileEntityTower.class, Assets.DOMAIN + "-Tower");
 
-        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE());
+        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE("AoE", 20, 0, 0));
+        Objects.blockTower.registerTower(Objects.towerArrow = new TowerArrow("arrow", 20, 20, 0));
 
         Objects.damageSourceTower = new CustomDamageSource(Assets.DOMAIN + "-tower");
     }

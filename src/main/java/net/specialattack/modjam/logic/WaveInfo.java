@@ -18,5 +18,6 @@ public final class WaveInfo {
     public static int score = 0;
     public static int timer = 0;
     public static int health = 100;
+    public static int coins = 0;
 
 }
