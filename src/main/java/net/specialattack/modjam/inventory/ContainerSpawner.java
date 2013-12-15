@@ -100,7 +100,8 @@ public class ContainerSpawner extends Container {
                     this.tile.setActiveUser(null);
                 }
             }
-        }else if (id == 1){
+        }
+        else if (id == 1) {
             if (!this.tile.active) {
                 this.tile.setActiveUser(player.username);
             }

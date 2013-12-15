@@ -76,7 +76,7 @@ public class BlockTower extends Block implements IAvoided {
     }
 
     public ITower getTower(int hash) {
-        for (ITower tower : towerTypes) {
+        for (ITower tower : this.towerTypes) {
             if (tower.getIdentifier().hashCode() == hash) {
                 return tower;
             }

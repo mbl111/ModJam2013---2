@@ -1,3 +1,4 @@
+
 package net.specialattack.modjam.util;
 
 import net.minecraft.util.DamageSource;

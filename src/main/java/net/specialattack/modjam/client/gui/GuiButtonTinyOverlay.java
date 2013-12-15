@@ -27,7 +27,7 @@ public class GuiButtonTinyOverlay extends GuiButton {
     public int texU;
     public int texV;
 
-    public GuiButtonTinyOverlay(int id, int posX, int posY,int width, String identifier, ResourceLocation resourceLocation, int texU, int texV) {
+    public GuiButtonTinyOverlay(int id, int posX, int posY, int width, String identifier, ResourceLocation resourceLocation, int texU, int texV) {
         super(id, posX, posY, width, 20, "");
         this.identifier = identifier;
         this.resourceLocation = resourceLocation;
@@ -42,10 +42,10 @@ public class GuiButtonTinyOverlay extends GuiButton {
             minecraft.getTextureManager().bindTexture(this.resourceLocation);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-            this.drawTexturedModalRect(this.xPosition + ((this.width - minecraft.fontRenderer.getStringWidth(identifier))/2), this.yPosition, this.texU, this.texV, this.width, this.height);
+            this.drawTexturedModalRect(this.xPosition + ((this.width - minecraft.fontRenderer.getStringWidth(this.identifier)) / 2), this.yPosition, this.texU, this.texV, this.width, this.height);
         }
     }
-    
+
     @Override
     public void drawCenteredString(FontRenderer arg0, String arg1, int arg2, int arg3, int arg4) {
         super.drawCenteredString(arg0, arg1, arg2, arg3, arg4);
@@ -55,8 +55,8 @@ public class GuiButtonTinyOverlay extends GuiButton {
     public void drawTooltips(Minecraft minecraft, int mouseX, int mouseY) {
         if (this.field_82253_i) {
             List<String> lines = new ArrayList<String>();
-            lines.add(I18n.getString("tower." + identifier + ".name"));
-            lines.addAll(minecraft.fontRenderer.listFormattedStringToWidth(I18n.getString("tower." + identifier + ".description"), 150));
+            lines.add(I18n.getString("tower." + this.identifier + ".name"));
+            lines.addAll(minecraft.fontRenderer.listFormattedStringToWidth(I18n.getString("tower." + this.identifier + ".description"), 150));
 
             this.drawHoveringText(lines, mouseX, mouseY, minecraft.fontRenderer);
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
@@ -104,7 +104,7 @@ public class GuiButtonTinyOverlay extends GuiButton {
             this.drawGradientRect(startX - 3, startY + height + 2, startX + width + 3, startY + height + 3, backgroundSecondary, backgroundSecondary);
 
             for (int i = 0; i < lines.size(); ++i) {
-                String line = (String) lines.get(i);
+                String line = lines.get(i);
 
                 if (i != 0) {
                     line = EnumChatFormatting.GRAY + line;

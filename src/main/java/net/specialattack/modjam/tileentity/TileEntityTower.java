@@ -94,7 +94,7 @@ public class TileEntityTower extends TileEntity {
 
         if (compound.hasKey("towerType")) {
             String towerType = compound.getString("towerType");
-            this.towerInstance = getTowerBlock().getTower(towerType).createNewInstance(this);
+            this.towerInstance = this.getTowerBlock().getTower(towerType).createNewInstance(this);
 
             NBTTagCompound tower = compound.getCompoundTag("tower");
             this.towerInstance.readFromNBT(tower);

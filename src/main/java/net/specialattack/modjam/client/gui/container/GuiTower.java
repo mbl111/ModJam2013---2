@@ -54,7 +54,7 @@ public class GuiTower extends GuiContainer {
 
         if (!this.container.activated) {
             int i = 0;
-            for (GuiButtonTinyOverlay button : buttons) {
+            for (GuiButtonTinyOverlay button : this.buttons) {
                 button.xPosition = this.guiLeft + (i % 7) * 23 + 8;
                 button.yPosition = this.guiTop + (i / 7) * 23 + 32;
                 i++;
@@ -84,9 +84,9 @@ public class GuiTower extends GuiContainer {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         if (!this.container.activated) {
-            for (GuiButtonTinyOverlay button : buttons) {
+            for (GuiButtonTinyOverlay button : this.buttons) {
                 if (button.drawButton) {
-                    button.drawTooltips(mc, mouseX, mouseY);
+                    button.drawTooltips(this.mc, mouseX, mouseY);
                 }
             }
         }
@@ -102,8 +102,8 @@ public class GuiTower extends GuiContainer {
             this.fontRenderer.drawString(I18n.getString("container." + Assets.DOMAIN + "-tower.purchase"), 8, 20, 0x404040);
         }
         else {
-            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.level", container.level), 8, 20, 0x404040);
-            float speed = (float) container.speed / 20.0F;
+            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.level", this.container.level), 8, 20, 0x404040);
+            float speed = this.container.speed / 20.0F;
             this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.speed", speed), 8, 30, 0x404040);
         }
     }

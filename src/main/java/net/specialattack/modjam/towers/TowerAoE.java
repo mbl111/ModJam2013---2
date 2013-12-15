@@ -96,8 +96,8 @@ public class TowerAoE implements ITower {
 
         @Override
         public void writeToNBT(NBTTagCompound compound) {
-            compound.setInteger("level", level);
-            compound.setInteger("speed", speed);
+            compound.setInteger("level", this.level);
+            compound.setInteger("speed", this.speed);
         }
 
         @Override
@@ -130,7 +130,7 @@ public class TowerAoE implements ITower {
             for (Object obj : list) {
                 if (obj instanceof EntityLiving) {
                     EntityLiving entity = (EntityLiving) obj;
-                    entity.attackEntityFrom(Objects.damageSourceTower, level * 3.0F);
+                    entity.attackEntityFrom(Objects.damageSourceTower, this.level * 3.0F);
                 }
             }
 

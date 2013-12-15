@@ -1,3 +1,4 @@
+
 package net.specialattack.modjam.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -75,12 +76,12 @@ public class ContainerTower extends Container {
 
     @Override
     public boolean enchantItem(EntityPlayer player, int id) {
-        if (tile.towerInstance == null) {
-            ITower tower = tile.getTowerBlock().getTower(id);
+        if (this.tile.towerInstance == null) {
+            ITower tower = this.tile.getTowerBlock().getTower(id);
             if (tower != null) {
-                tile.towerInstance = tower.createNewInstance(tile);
-                PacketHandler.resendTileInfo(tile);
-                tile.onInventoryChanged();
+                this.tile.towerInstance = tower.createNewInstance(this.tile);
+                PacketHandler.resendTileInfo(this.tile);
+                this.tile.onInventoryChanged();
             }
         }
 
