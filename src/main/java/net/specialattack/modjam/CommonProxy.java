@@ -32,6 +32,7 @@ import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTarget;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import net.specialattack.modjam.towers.TowerAoE;
+import net.specialattack.modjam.util.CustomDamageSource;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -77,11 +78,13 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
         Objects.scoreTDCriteria = new ScoreTDCriteria("towerDefence");
 
-        TileEntity.addMapping(TileEntitySpawner.class, "Modjam3-Spawner");
-        TileEntity.addMapping(TileEntityTarget.class, "Modjam3-Target");
-        TileEntity.addMapping(TileEntityTower.class, "Modjam3-Tower");
+        TileEntity.addMapping(TileEntitySpawner.class, Assets.DOMAIN + "-Spawner");
+        TileEntity.addMapping(TileEntityTarget.class, Assets.DOMAIN + "-Target");
+        TileEntity.addMapping(TileEntityTower.class, Assets.DOMAIN + "-Tower");
 
         Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE());
+
+        Objects.damageSourceTower = new CustomDamageSource(Assets.DOMAIN + "-tower");
     }
 
     public void postInit(FMLPostInitializationEvent event) {

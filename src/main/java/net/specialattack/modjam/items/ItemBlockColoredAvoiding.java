@@ -15,7 +15,7 @@ import net.minecraft.util.StatCollector;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemBlockColoredAvoiding extends ItemBlock {
+public class ItemBlockColoredAvoiding extends ItemBlock implements IPassClick {
 
     private Block block;
 

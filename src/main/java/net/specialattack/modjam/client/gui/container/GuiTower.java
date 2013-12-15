@@ -1,9 +1,11 @@
+
 package net.specialattack.modjam.client.gui.container;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.specialattack.modjam.Assets;
@@ -22,7 +24,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class GuiTower extends GuiContainer {
 
     public TileEntityTower tile;
-    @SuppressWarnings("unused")
     private ContainerTower container;
 
     private List<GuiButtonTinyOverlay> buttons;
@@ -39,7 +40,7 @@ public class GuiTower extends GuiContainer {
 
             for (int i = 0; i < towerTypes.size(); i++) {
                 ITower tower = towerTypes.get(i);
-                this.buttons.add(new GuiButtonTinyOverlay(i++, 0, 0, 80, tower.getIdentifier(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
+                this.buttons.add(new GuiButtonTinyOverlay(tower.getIdentifier().hashCode(), 0, 0, 80, tower.getIdentifier(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
             }
         }
     }
@@ -51,23 +52,42 @@ public class GuiTower extends GuiContainer {
 
         this.buttonList.clear();
 
-        int i = 0;
-        for (GuiButtonTinyOverlay button : buttons) {
-            button.xPosition = this.guiLeft + (i % 7) * 23 + 8;
-            button.yPosition = this.guiTop + (i / 7) * 23 + 32;
-            i++;
-        }
+        if (!this.container.activated) {
+            int i = 0;
+            for (GuiButtonTinyOverlay button : buttons) {
+                button.xPosition = this.guiLeft + (i % 7) * 23 + 8;
+                button.yPosition = this.guiTop + (i / 7) * 23 + 32;
+                i++;
+            }
 
-        this.buttonList.addAll(this.buttons);
+            this.buttonList.addAll(this.buttons);
+        }
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.drawButton && button.enabled) {
+            this.mc.playerController.sendEnchantPacket(this.container.windowId, button.id);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        if (this.container.prevActivated != this.container.activated) {
+            this.container.prevActivated = this.container.activated;
+            this.initGui();
+        }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        for (GuiButtonTinyOverlay button : buttons) {
-            if (button.drawButton) {
-                button.drawTooltips(mc, mouseX, mouseY);
+        if (!this.container.activated) {
+            for (GuiButtonTinyOverlay button : buttons) {
+                if (button.drawButton) {
+                    button.drawTooltips(mc, mouseX, mouseY);
+                }
             }
         }
     }
@@ -77,7 +97,15 @@ public class GuiTower extends GuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         String title = I18n.getString("container." + Assets.DOMAIN + "-tower");
         this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 6, 0x404040);
-        this.fontRenderer.drawString(I18n.getString("container." + Assets.DOMAIN + "-tower.purchase"), 8, 20, 0x404040);
+
+        if (!this.container.activated) {
+            this.fontRenderer.drawString(I18n.getString("container." + Assets.DOMAIN + "-tower.purchase"), 8, 20, 0x404040);
+        }
+        else {
+            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.level", container.level), 8, 20, 0x404040);
+            float speed = (float) container.speed / 20.0F;
+            this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-tower.speed", speed), 8, 30, 0x404040);
+        }
     }
 
     @Override

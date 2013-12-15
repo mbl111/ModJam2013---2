@@ -8,7 +8,7 @@ import net.minecraft.util.ChunkCoordinates;
 public class TileEntityTarget extends TileEntity {
 
     public int health;
-    protected ChunkCoordinates spawner;
+    public ChunkCoordinates spawner;
 
     public TileEntityTarget() {
         this.health = 100;
@@ -23,7 +23,7 @@ public class TileEntityTarget extends TileEntity {
         if (this.spawner != null) {
             TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
             if (tile != null && tile instanceof TileEntitySpawner) {
-                ((TileEntitySpawner) tile).targetDamaged(this);
+                ((TileEntitySpawner) tile).onTargetDamaged(this);
             }
             else {
                 this.spawner = null;

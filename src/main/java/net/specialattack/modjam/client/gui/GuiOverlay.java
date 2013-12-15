@@ -41,6 +41,8 @@ public class GuiOverlay extends Gui {
 
         this.font.drawStringWithShadow("Wave: " + WaveInfo.wave, x, y, 0xFFFFFF);
         y += 10;
+        this.font.drawStringWithShadow("Score: " + WaveInfo.score, x, y, 0xFFFFFF);
+        y += 10;
         this.font.drawStringWithShadow("Health: " + WaveInfo.health + "/100", x, y, 0xFFFFFF);
         y += 10;
         if (WaveInfo.timer > 0) {
@@ -64,7 +66,7 @@ public class GuiOverlay extends Gui {
             tess.addVertexWithUV(x, y, 0.0D, WaveInfo.currentMonster.minU, WaveInfo.currentMonster.minV);
             tess.draw();
 
-            this.font.drawStringWithShadow("" + WaveInfo.monsterCount, x, y + 10, 0xFFFF00);
+            this.font.drawStringWithShadow("" + WaveInfo.monsterCount, x, y + WaveInfo.currentMonster.iconHeight - 2, 0xFFFF00);
             GL11.glColor3f(1.0F, 1.0F, 1.0F);
 
             x += WaveInfo.currentMonster.iconWidth + 4;
@@ -82,7 +84,7 @@ public class GuiOverlay extends Gui {
 
             String data = booster.getDisplay();
             if (data != null && !data.isEmpty()) {
-                this.font.drawStringWithShadow(data, x, y + 10, 0xFFFF00);
+                this.font.drawStringWithShadow(data, x, y + 14, 0xFFFF00);
                 GL11.glColor3f(1.0F, 1.0F, 1.0F);
             }
 
