@@ -39,7 +39,7 @@ public class GuiTower extends GuiContainer {
 
             for (int i = 0; i < towerTypes.size(); i++) {
                 ITower tower = towerTypes.get(i);
-                this.buttons.add(new GuiButtonTinyOverlay(i++, 0, 0, tower.getIdentifier(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
+                this.buttons.add(new GuiButtonTinyOverlay(i++, 0, 0, 80, tower.getIdentifier(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
             }
         }
     }

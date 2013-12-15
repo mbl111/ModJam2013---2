@@ -27,8 +27,8 @@ public class GuiButtonTinyOverlay extends GuiButton {
     public int texU;
     public int texV;
 
-    public GuiButtonTinyOverlay(int id, int posX, int posY, String identifier, ResourceLocation resourceLocation, int texU, int texV) {
-        super(id, posX, posY, 20, 20, "");
+    public GuiButtonTinyOverlay(int id, int posX, int posY,int width, String identifier, ResourceLocation resourceLocation, int texU, int texV) {
+        super(id, posX, posY, width, 20, "");
         this.identifier = identifier;
         this.resourceLocation = resourceLocation;
         this.texU = texU;
@@ -42,8 +42,13 @@ public class GuiButtonTinyOverlay extends GuiButton {
             minecraft.getTextureManager().bindTexture(this.resourceLocation);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, this.texU, this.texV, this.width, this.height);
+            this.drawTexturedModalRect(this.xPosition + ((this.width - minecraft.fontRenderer.getStringWidth(identifier))/2), this.yPosition, this.texU, this.texV, this.width, this.height);
         }
+    }
+    
+    @Override
+    public void drawCenteredString(FontRenderer arg0, String arg1, int arg2, int arg3, int arg4) {
+        super.drawCenteredString(arg0, arg1, arg2, arg3, arg4);
     }
 
     @SuppressWarnings("unchecked")
