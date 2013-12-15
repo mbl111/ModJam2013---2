@@ -24,6 +24,7 @@ public class GuiSpawner extends GuiContainer {
     public boolean prevCanWork;
 
     private GuiButton activate;
+    private GuiButton startnow;
 
     public GuiSpawner(TileEntitySpawner tile) {
         super(new ContainerSpawner(tile));
@@ -35,20 +36,28 @@ public class GuiSpawner extends GuiContainer {
         if (!this.container.canWork) {
             this.activate.enabled = false;
             this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nowork");
+
+            this.startnow.enabled = false;
         }
         else {
             if (!this.tile.active) {
                 this.activate.enabled = true;
                 this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.bind");
+
+                this.startnow.enabled = false;
             }
             else {
                 if (this.container.isMyName) {
                     this.activate.enabled = true;
                     this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.unbind");
+
+                    this.startnow.enabled = true;
                 }
                 else {
                     this.activate.enabled = false;
                     this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nobind");
+
+                    this.startnow.enabled = false;
                 }
             }
         }
@@ -62,6 +71,7 @@ public class GuiSpawner extends GuiContainer {
         this.buttonList.clear();
 
         this.buttonList.add(this.activate = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, this.xSize - 40, 20, ""));
+        this.buttonList.add(this.startnow = new GuiButton(1, this.guiLeft + 20, this.guiTop + 45, this.xSize - 40, 20, I18n.getString("container." + Assets.DOMAIN + "-spawner.startnow")));
 
         this.setupButtons();
     }

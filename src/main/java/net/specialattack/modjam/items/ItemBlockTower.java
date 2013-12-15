@@ -47,9 +47,9 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
             }
         }
 
-        int blockX = stack.stackTagCompound.getInteger("blockX");
-        int blockY = stack.stackTagCompound.getInteger("blockY");
-        int blockZ = stack.stackTagCompound.getInteger("blockZ");
+        int blockX = 0;
+        int blockY = 0;
+        int blockZ = 0;
 
         if (stack.stackTagCompound == null) {
             if (!world.isRemote) {
@@ -59,6 +59,11 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
             return false;
         }
         else if (!world.isRemote) {
+
+            blockX = stack.stackTagCompound.getInteger("blockX");
+            blockY = stack.stackTagCompound.getInteger("blockY");
+            blockZ = stack.stackTagCompound.getInteger("blockZ");
+
             TileEntity otherTile = world.getBlockTileEntity(blockX, blockY, blockZ);
             if (otherTile == null || !(otherTile instanceof TileEntitySpawner)) {
                 player.sendChatToPlayer(ChatMessageComponent.createFromText("The link on this block is no longer valid"));

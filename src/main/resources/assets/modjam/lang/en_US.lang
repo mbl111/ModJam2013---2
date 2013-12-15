@@ -52,6 +52,7 @@ container.modjam-spawner.bind=Bind to Spawner
 container.modjam-spawner.unbind=Unbind from Spawner
 container.modjam-spawner.nobind=Another player is bound
 container.modjam-spawner.nowork=Spawner not setup
+container.modjam-spawner.startnow=Start Wave Now
 
 container.modjam-tower=Tower
 container.modjam-tower.purchase=Purchase A Tower

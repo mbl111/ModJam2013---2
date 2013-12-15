@@ -100,6 +100,16 @@ public class ContainerSpawner extends Container {
                     this.tile.setActiveUser(null);
                 }
             }
+        }else if (id == 1){
+            if (!this.tile.active) {
+                this.tile.setActiveUser(player.username);
+            }
+            else {
+                if (this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
+                    //Start the game now
+                    this.tile.timer = 1200 - 20 * 3;
+                }
+            }
         }
         return true;
     }

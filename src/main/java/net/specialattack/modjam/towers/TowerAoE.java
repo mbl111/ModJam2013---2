@@ -2,6 +2,7 @@
 package net.specialattack.modjam.towers;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.command.IEntitySelector;
@@ -133,6 +134,12 @@ public class TowerAoE implements ITower {
                 }
             }
 
+            Random rand = this.tower.worldObj.rand;
+
+            for (int i = 0; i < 10; i++) {
+                this.tower.worldObj.spawnParticle("reddust", this.tower.xCoord + 0.5D, this.tower.yCoord + 3.0D, this.tower.zCoord + 0.5D, 0.0D, 1.0D, 0.0D);
+                System.out.println("Particle");
+            }
             return true;
         }
 

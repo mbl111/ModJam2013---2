@@ -7,6 +7,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.specialattack.modjam.tileentity.TileEntityTower;
+import net.specialattack.modjam.towers.ITower;
+import net.specialattack.modjam.towers.ITowerInstance;
+import net.specialattack.modjam.towers.TowerAoE;
 
 import org.lwjgl.opengl.GL11;
 
@@ -57,6 +60,17 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
                 this.renderBox(block, x, y, z, 2, 15, 14, 12, 1, 1, renderer);
                 this.renderBox(block, x, y, z, 1, 15, 2, 1, 1, 12, renderer);
                 this.renderBox(block, x, y, z, 14, 15, 2, 1, 1, 12, renderer);
+                
+                this.renderBox(block, x, y, z, 6, 16, 6, 5, 1, 5, renderer);
+                
+                
+                ITower tower = ((TileEntityTower) tile).towerInstance.getTowerType();
+                if (tower instanceof TowerAoE){
+                    this.renderBox(block, x, y, z, 3, 17, 3, 11, 8, 11, renderer);
+                    this.renderBox(block, x, y, z, 4, 25, 4, 9, 1, 9, renderer);
+                    this.renderBox(block, x, y, z, 5, 26, 5, 7, 1, 7, renderer);
+                }
+                
             }
         }
         else if (metadata == 2) {
