@@ -82,18 +82,28 @@ public final class SpawnerLogic {
         SpawnerLogic.boosters.add(new BoosterPotionEffect(5, Potion.moveSlowdown, 0, 80, 0, -1, 2));
         SpawnerLogic.boosters.add(new BoosterPotionEffect(6, Potion.moveSlowdown, 1, 80, 0, -1, 2));
         SpawnerLogic.boosters.add(new BoosterPotionEffect(7, Potion.invisibility, 0, 40, 20, -1, 4));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(8, Potion.resistance, 0, 80, 5, 10, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(9, Potion.resistance, 1, 120, 10, 30, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(10, Potion.resistance, 2, 120, 20, -1, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(11, Potion.resistance, 3, 60, 30, -1, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(12, Potion.resistance, 4, 30, 40, -1, 5));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(13, Potion.fireResistance, 0, 80, 10, -1, 6));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(8, Potion.resistance, 0, 100, 5, 15, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(9, Potion.resistance, 1, 110, 10, 20, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(10, Potion.resistance, 2, 120, 15, 25, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(11, Potion.resistance, 3, 130, 20, 30, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(12, Potion.resistance, 4, 140, 25, 35, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(24, Potion.resistance, 5, 150, 30, 40, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(25, Potion.resistance, 6, 160, 35, 45, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(26, Potion.resistance, 7, 170, 40, 50, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(27, Potion.resistance, 8, 180, 45, -1, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(28, Potion.resistance, 9, 190, 50, -1, 5));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(13, Potion.fireResistance, 0, 200, 10, -1, 6));
         // Health boost
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(14, Potion.field_76434_w, 0, 80, 5, -1, 7));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(15, Potion.field_76434_w, 1, 80, 15, -1, 7));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(16, Potion.field_76434_w, 2, 80, 25, -1, 7));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(17, Potion.field_76434_w, 3, 80, 35, -1, 7));
-        SpawnerLogic.boosters.add(new BoosterPotionEffect(17, Potion.field_76434_w, 4, 80, 45, -1, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(14, Potion.field_76434_w, 0, 80, 5, 15, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(15, Potion.field_76434_w, 1, 90, 10, 20, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(16, Potion.field_76434_w, 2, 100, 15, 25, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(17, Potion.field_76434_w, 3, 110, 20, 30, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(18, Potion.field_76434_w, 4, 120, 25, 35, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(19, Potion.field_76434_w, 5, 130, 30, 40, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(20, Potion.field_76434_w, 6, 140, 35, 45, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(21, Potion.field_76434_w, 7, 150, 40, 50, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(22, Potion.field_76434_w, 8, 160, 45, -1, 7));
+        SpawnerLogic.boosters.add(new BoosterPotionEffect(23, Potion.field_76434_w, 9, 170, 50, -1, 7));
     }
 
     public static Monster getMonster(int id) {

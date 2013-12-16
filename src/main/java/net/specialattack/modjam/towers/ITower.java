@@ -12,6 +12,8 @@ public interface ITower {
 
     ITowerInstance createNewInstance(TileEntityTower tile);
 
+    int getId();
+
     String getIdentifier();
 
     @SideOnly(Side.CLIENT)

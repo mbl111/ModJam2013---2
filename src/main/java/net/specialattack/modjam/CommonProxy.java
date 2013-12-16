@@ -90,8 +90,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         TileEntity.addMapping(TileEntityTower.class, Assets.DOMAIN + "-Tower");
         TileEntity.addMapping(TileEntityMultiplayerController.class, Assets.DOMAIN + "-MultiplayerController");
 
-        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE("AoE", 70, 0, 0));
-        Objects.blockTower.registerTower(Objects.towerArrow = new TowerArrow("arrow", 50, 20, 0));
+        Objects.blockTower.registerTower(Objects.towerAoE = new TowerAoE("AoE", 1, 70, 0, 0));
+        Objects.blockTower.registerTower(Objects.towerArrow = new TowerArrow("arrow", 2, 50, 20, 0));
 
         Objects.damageSourceTower = new CustomDamageSource(Assets.DOMAIN + "-tower");
     }
@@ -138,6 +138,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public static HashMap<INetworkManager, String> players = new HashMap<INetworkManager, String>();
     public static ArrayList<String> playernames = new ArrayList<String>();
 
+    public static HashMap<String, TileEntitySpawner> spawners = new HashMap<String, TileEntitySpawner>();
+
     public static boolean isPlayerLoggedIn(String playername) {
         return CommonProxy.playernames.contains(playername);
     }
@@ -166,6 +168,10 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
             CommonProxy.players.put(manager, username);
             CommonProxy.playernames.add(username);
         }
+    }
+
+    public static boolean isPlayerInGame(String playername) {
+        return spawners.containsKey(playername);
     }
 
     @Override

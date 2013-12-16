@@ -18,8 +18,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class TowerArrow extends TowerBase {
 
-    public TowerArrow(String identifier, int cost, int u, int v) {
-        super(identifier, cost, u, v);
+    public TowerArrow(String identifier, int id, int cost, int u, int v) {
+        super(identifier, id, cost, u, v);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TowerArrow extends TowerBase {
                 if (this.level >= 10) {
                     return -1;
                 }
-                return 60 + 40 * this.level * this.level;
+                return 60 + 20 * this.level;
             case 1:
                 if (this.level <= this.damage || this.damage >= 10) {
                     return -1;
@@ -86,7 +86,7 @@ public class TowerArrow extends TowerBase {
 
         @Override
         public int getDamage() {
-            return (int) (1.4F * this.damage);
+            return (int) (1.9F * this.damage);
         }
 
         @Override
@@ -142,7 +142,7 @@ public class TowerArrow extends TowerBase {
                 arrow.setLocationAndAngles(this.tower.xCoord + offsetX, arrow.posY, this.tower.zCoord + offsetZ, yaw, pitch);
                 arrow.yOffset = 0.0F;
                 float boostY = (float) distance * 0.2F;
-                arrow.setThrowableHeading(distanceX, distanceY + boostY, distanceZ, 1.6F, 14.0F);
+                arrow.setThrowableHeading(distanceX, distanceY + boostY, distanceZ, 1.6F, 1.0F);
             }
 
             arrow.setDamage(this.getDamage());

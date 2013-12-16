@@ -36,8 +36,10 @@ public class TileEntitySpawner extends TileEntity {
     public int spawnQueue;
 
     public boolean waveActive;
+    public boolean waveStarted;
     public boolean active;
     public boolean spawning;
+    public boolean gameOver;
 
     public int interval;
     public int timer;
@@ -61,6 +63,7 @@ public class TileEntitySpawner extends TileEntity {
         this.boosters = new ArrayList<Booster>();
         this.playername = null;
         this.waveActive = false;
+        this.waveStarted = false;
         this.active = false;
         this.spawning = false;
         this.timer = 0;
@@ -80,13 +83,16 @@ public class TileEntitySpawner extends TileEntity {
 
     public void setActiveUser(String playername) {
         if (this.playername != null) {
+            CommonProxy.spawners.remove(playername);
             EntityPlayer player = CommonProxy.getPlayer(this.playername);
             if (player instanceof EntityPlayerMP) {
                 ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveInfo(null));
             }
         }
+        CommonProxy.spawners.put(playername, this);
         this.playername = playername;
         this.waveActive = false;
+        this.waveStarted = false;
         this.spawning = false;
         this.spawnQueue = 0;
         this.boosters.clear();
@@ -159,6 +165,12 @@ public class TileEntitySpawner extends TileEntity {
         }
     }
 
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        CommonProxy.spawners.remove(this.playername);
+    }
+
     public void updateScore() {
         Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaScore);
         Iterator iterator = collection.iterator();
@@ -196,6 +208,12 @@ public class TileEntitySpawner extends TileEntity {
 
         if (target.health == 0) {
             this.sendChatToPlayer("This is the end, sadfully :(");
+            this.active = false;
+
+            for (Entity entity : this.spawnedEntities) {
+                entity.worldObj.removeEntity(entity);
+            }
+            this.spawnedEntities.clear();
         }
         else {
             this.sendChatToPlayer("A monster passed! Remaining health: " + target.health);
@@ -381,6 +399,11 @@ public class TileEntitySpawner extends TileEntity {
                             this.sendChatToPlayer("Whoops! Something went wrong :<");
                             // this.setActiveUser(null);
                             this.active = false;
+
+                            for (Entity entity : this.spawnedEntities) {
+                                entity.worldObj.removeEntity(entity);
+                            }
+                            this.spawnedEntities.clear();
                         }
                         this.spawnQueue--;
                         this.markDirty();
@@ -411,6 +434,11 @@ public class TileEntitySpawner extends TileEntity {
                                 this.sendChatToPlayer("Whoops! Something went wrong :<");
                                 // this.setActiveUser(null);
                                 this.active = false;
+
+                                for (Entity entity : this.spawnedEntities) {
+                                    entity.worldObj.removeEntity(entity);
+                                }
+                                this.spawnedEntities.clear();
                             }
                         }
                         this.spawning = false;
@@ -428,6 +456,7 @@ public class TileEntitySpawner extends TileEntity {
 
                     if (this.multiplayerController == null) {
                         this.prepareWave();
+                        this.waveStarted = false;
                     }
 
                     this.markDirty();
@@ -461,6 +490,7 @@ public class TileEntitySpawner extends TileEntity {
                 if (this.multiplayerController == null) {
                     if (this.timer >= this.interval) {
                         this.waveActive = true;
+                        this.waveStarted = true;
                         this.timer = 0;
                         this.interval = 30;
 
@@ -475,6 +505,11 @@ public class TileEntitySpawner extends TileEntity {
                             this.sendChatToPlayer("Whoops! Something went wrong :<");
                             //this.setActiveUser(null);
                             this.active = false;
+
+                            for (Entity entity : this.spawnedEntities) {
+                                entity.worldObj.removeEntity(entity);
+                            }
+                            this.spawnedEntities.clear();
                         }
                         this.markDirty();
                     }
@@ -490,13 +525,17 @@ public class TileEntitySpawner extends TileEntity {
             compound.setString("playername", this.playername);
         }
         compound.setBoolean("waveActive", this.waveActive);
+        compound.setBoolean("waveStarted", this.waveStarted);
         compound.setBoolean("active", this.active);
         compound.setBoolean("spawning", this.spawning);
+        compound.setBoolean("gameOver", this.gameOver);
         compound.setInteger("timer", this.timer);
         compound.setInteger("interval", this.interval);
         compound.setInteger("spawnQueue", this.spawnQueue);
         compound.setInteger("score", this.score);
         compound.setInteger("coins", this.coins);
+        compound.setInteger("monsterCount", this.monsterCount);
+        compound.setInteger("wave", this.wave);
 
         if (this.target != null) {
             NBTTagCompound target = new NBTTagCompound();
@@ -507,11 +546,11 @@ public class TileEntitySpawner extends TileEntity {
         }
 
         if (this.multiplayerController != null) {
-            NBTTagCompound multiplayerController = new NBTTagCompound();
-            multiplayerController.setInteger("posX", this.target.posX);
-            multiplayerController.setInteger("posY", this.target.posY);
-            multiplayerController.setInteger("posZ", this.target.posZ);
-            compound.setCompoundTag("multiplayerController", multiplayerController);
+            NBTTagCompound controller = new NBTTagCompound();
+            controller.setInteger("posX", this.multiplayerController.posX);
+            controller.setInteger("posY", this.multiplayerController.posY);
+            controller.setInteger("posZ", this.multiplayerController.posZ);
+            compound.setCompoundTag("multiplayerController", controller);
         }
 
         NBTTagList boosters = new NBTTagList();
@@ -547,13 +586,17 @@ public class TileEntitySpawner extends TileEntity {
             this.playername = null;
         }
         this.waveActive = compound.getBoolean("waveActive");
+        this.waveStarted = compound.getBoolean("waveStarted");
         this.active = compound.getBoolean("active");
         this.spawning = compound.getBoolean("spawning");
+        this.gameOver = compound.getBoolean("gameOver");
         this.timer = compound.getInteger("timer");
         this.interval = compound.getInteger("interval");
         this.spawnQueue = compound.getInteger("spawnQueue");
         this.score = compound.getInteger("score");
         this.coins = compound.getInteger("coins");
+        this.monsterCount = compound.getInteger("monsterCount");
+        this.wave = compound.getInteger("wave");
 
         if (compound.hasKey("target")) {
             NBTTagCompound target = compound.getCompoundTag("target");
@@ -561,8 +604,8 @@ public class TileEntitySpawner extends TileEntity {
         }
 
         if (compound.hasKey("multiplayerController")) {
-            NBTTagCompound multiplayerController = compound.getCompoundTag("multiplayerController");
-            this.multiplayerController = new ChunkCoordinates(multiplayerController.getInteger("posX"), multiplayerController.getInteger("posY"), multiplayerController.getInteger("posZ"));
+            NBTTagCompound controller = compound.getCompoundTag("multiplayerController");
+            this.multiplayerController = new ChunkCoordinates(controller.getInteger("posX"), controller.getInteger("posY"), controller.getInteger("posZ"));
         }
 
         NBTTagList boosters = compound.getTagList("boosters");
@@ -584,6 +627,8 @@ public class TileEntitySpawner extends TileEntity {
             NBTTagCompound tower = (NBTTagCompound) towers.tagAt(i);
             this.towers.add(new ChunkCoordinates(tower.getInteger("posX"), tower.getInteger("posY"), tower.getInteger("posZ")));
         }
+
+        CommonProxy.spawners.put(playername, this);
     }
 
 }

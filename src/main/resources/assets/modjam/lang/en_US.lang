@@ -49,8 +49,8 @@ item.modjam-game-logic0.description=Use this item to link a Target to a Spawner
 item.modjam-game-logic0.linked=Linked @(%1$s, %2$s, %3$s)
 item.modjam-game-logic0.unlinked=Not linked
 item.modjam-game-logic1.name=Multiplayer Linker
-item.modjam-game-logic1.description=Use this item to link a Spawner to a Multiplayer Controller
-item.modjam-game-logic1.linked=Linked @(%1$s, %2$s, %3$s)
+item.modjam-game-logic1.description=Use this item to link Spawners to a Multiplayer Controller
+item.modjam-game-logic1.linked=Spawners linked: %1$s
 item.modjam-game-logic1.unlinked=Not linked
 
 itemGroup.modjam-bleigh=Modjam
@@ -61,6 +61,8 @@ container.modjam-spawner.unbind=Unbind from Spawner
 container.modjam-spawner.nobind=Another player is bound
 container.modjam-spawner.nowork=Spawner not setup
 container.modjam-spawner.startnow=Start Wave Now
+container.modjam-spawner.revoke=Revoke player
+container.modjam-spawner.alreadybound=Already bound to a Spawner
 
 container.modjam-multiplayerController=Multiplayer Controller
 container.modjam-multiplayerController.nowork=No Spawners connected
@@ -68,6 +70,7 @@ container.modjam-multiplayerController.noplayers=Not enough players (%1$s)
 container.modjam-multiplayerController.start=Start game (%1$s)
 container.modjam-multiplayerController.stop=Stop game
 container.modjam-multiplayerController.spawners=Connected spawners: %1$s
+container.modjam-multiplayerController.revoke=Revoke all players
 
 container.modjam-tower=Tower
 container.modjam-tower.purchase=Buy a Tower

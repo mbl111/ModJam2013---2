@@ -11,6 +11,7 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
@@ -49,7 +50,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                     TileEntitySpawner spawner = (TileEntitySpawner) tile;
 
                     if (stack.stackTagCompound == null) {
-                        player.sendChatToPlayer(ChatMessageComponent.createFromText("No Target yet set"));
+                        player.sendChatToPlayer(ChatMessageComponent.createFromText("No Target set yet"));
                     }
                     else {
                         int blockX = stack.stackTagCompound.getInteger("blockX");
@@ -86,36 +87,52 @@ public class ItemGameLogic extends Item implements IPassClick {
                     TileEntityMultiplayerController controller = (TileEntityMultiplayerController) tile;
 
                     if (stack.stackTagCompound == null) {
-                        player.sendChatToPlayer(ChatMessageComponent.createFromText("No Spawner yet set"));
+                        player.sendChatToPlayer(ChatMessageComponent.createFromText("No Spawners set yet"));
                     }
                     else {
-                        int blockX = stack.stackTagCompound.getInteger("blockX");
-                        int blockY = stack.stackTagCompound.getInteger("blockY");
-                        int blockZ = stack.stackTagCompound.getInteger("blockZ");
+                        NBTTagList locations = stack.stackTagCompound.getTagList("locations");
 
-                        TileEntity otherTile = world.getBlockTileEntity(blockX, blockY, blockZ);
+                        int success = 0;
+                        int fail = 0;
+                        for (int i = 0; i < locations.tagCount(); i++) {
+                            NBTTagCompound location = (NBTTagCompound) locations.tagAt(i);
 
-                        if (otherTile instanceof TileEntitySpawner) {
-                            TileEntitySpawner spawner = (TileEntitySpawner) otherTile;
+                            int blockX = location.getInteger("blockX");
+                            int blockY = location.getInteger("blockY");
+                            int blockZ = location.getInteger("blockZ");
 
-                            controller.addSpawner(spawner);
+                            TileEntity otherTile = world.getBlockTileEntity(blockX, blockY, blockZ);
 
-                            player.sendChatToPlayer(ChatMessageComponent.createFromText("Spawner linked to Multiplayer Controller"));
+                            if (otherTile instanceof TileEntitySpawner) {
+                                TileEntitySpawner spawner = (TileEntitySpawner) otherTile;
+
+                                controller.addSpawner(spawner);
+
+                                success++;
+                            }
+                            else {
+                                fail++;
+                            }
                         }
-                        else {
-                            player.sendChatToPlayer(ChatMessageComponent.createFromText("The Spawner is gone :("));
-                        }
+
+                        player.sendChatToPlayer(ChatMessageComponent.createFromText(success + " Spawners added, " + fail + " failed"));
 
                         stack.stackTagCompound = null;
                     }
                 }
                 else if (tile instanceof TileEntitySpawner) {
-                    stack.stackTagCompound = new NBTTagCompound("tag");
-                    stack.stackTagCompound.setInteger("blockX", x);
-                    stack.stackTagCompound.setInteger("blockY", y);
-                    stack.stackTagCompound.setInteger("blockZ", z);
+                    if (stack.stackTagCompound == null) {
+                        stack.stackTagCompound = new NBTTagCompound("tag");
+                    }
+                    NBTTagList locations = stack.stackTagCompound.getTagList("locations");
+                    NBTTagCompound location = new NBTTagCompound();
+                    location.setInteger("blockX", x);
+                    location.setInteger("blockY", y);
+                    location.setInteger("blockZ", z);
+                    locations.appendTag(location);
+                    stack.stackTagCompound.setTag("locations", locations);
 
-                    player.sendChatToPlayer(ChatMessageComponent.createFromText("Spawner set"));
+                    player.sendChatToPlayer(ChatMessageComponent.createFromText("Spawner set, " + locations.tagCount() + " total Spawners"));
                 }
             }
         }
@@ -157,10 +174,8 @@ public class ItemGameLogic extends Item implements IPassClick {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extra) {
         if (stack.stackTagCompound != null) {
-            int x = stack.stackTagCompound.getInteger("blockX");
-            int y = stack.stackTagCompound.getInteger("blockY");
-            int z = stack.stackTagCompound.getInteger("blockZ");
-            list.add(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".linked", x, y, z));
+            NBTTagList locations = stack.stackTagCompound.getTagList("locations");
+            list.add(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".linked", locations.tagCount()));
         }
         else {
             list.add(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".unlinked"));

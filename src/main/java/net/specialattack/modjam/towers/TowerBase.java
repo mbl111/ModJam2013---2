@@ -20,18 +20,25 @@ public abstract class TowerBase implements ITower {
     private int u;
     private int v;
     private String identifier;
+    private int id;
     private int cost;
 
-    public TowerBase(String identifier, int cost, int u, int v) {
+    public TowerBase(String identifier, int id, int cost, int u, int v) {
         this.u = u;
         this.v = v;
         this.identifier = identifier;
+        this.id = id;
         this.cost = cost;
     }
 
     @Override
     public String getIdentifier() {
         return this.identifier;
+    }
+
+    @Override
+    public int getId() {
+        return this.id;
     }
 
     @Override

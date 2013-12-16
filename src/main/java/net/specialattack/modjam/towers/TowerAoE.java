@@ -19,8 +19,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class TowerAoE extends TowerBase {
 
-    public TowerAoE(String identifier, int cost, int u, int v) {
-        super(identifier, cost, u, v);
+    public TowerAoE(String identifier, int id, int cost, int u, int v) {
+        super(identifier, id, cost, u, v);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TowerAoE extends TowerBase {
                 if (this.level >= 5) {
                     return -1;
                 }
-                return 50 + 30 * this.level * this.level;
+                return 50 + 30 * this.level;
             case 1:
                 if (this.level <= this.damage || this.damage >= 5) {
                     return -1;
@@ -82,7 +82,7 @@ public class TowerAoE extends TowerBase {
 
         @Override
         public int getDamage() {
-            return (int) (1.5F * this.damage);
+            return (int) (2.5F * this.damage);
         }
 
         @Override

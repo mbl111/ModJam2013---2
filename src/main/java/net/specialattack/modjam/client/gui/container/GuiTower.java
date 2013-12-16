@@ -41,7 +41,7 @@ public class GuiTower extends GuiContainer {
 
             for (int i = 0; i < towerTypes.size(); i++) {
                 ITower tower = towerTypes.get(i);
-                this.buyButtons.add(new GuiButtonPriced(tower.getIdentifier().hashCode(), 0, 0, "tower." + tower.getIdentifier(), tower.getBuyPrice(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
+                this.buyButtons.add(new GuiButtonPriced(tower.getId(), 0, 0, "tower." + tower.getIdentifier(), tower.getBuyPrice(), tower.getIconLocation(), tower.getIconU(), tower.getIconV()));
             }
         }
     }
@@ -65,10 +65,16 @@ public class GuiTower extends GuiContainer {
             this.buttonList.addAll(this.buyButtons);
         }
         else {
-            this.buttonList.add(new GuiButtonPriced(0, this.guiLeft + 8, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.level", this.container.prices[0], Assets.SHEET_TOWERS, 60, 20));
-            this.buttonList.add(new GuiButtonPriced(1, this.guiLeft + 31, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.damage", this.container.prices[1], Assets.SHEET_TOWERS, 40, 20));
-            this.buttonList.add(new GuiButtonPriced(2, this.guiLeft + 54, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.speed", this.container.prices[2], Assets.SHEET_TOWERS, 0, 20));
-            this.buttonList.add(new GuiButtonPriced(3, this.guiLeft + 77, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.range", this.container.prices[3], Assets.SHEET_TOWERS, 20, 20));
+            GuiButtonPriced[] buttons = new GuiButtonPriced[4];
+            buttons[0] = new GuiButtonPriced(0, this.guiLeft + 8, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.level", this.container.prices[0], Assets.SHEET_TOWERS, 60, 20);
+            buttons[1] = new GuiButtonPriced(1, this.guiLeft + 31, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.damage", this.container.prices[1], Assets.SHEET_TOWERS, 40, 20);
+            buttons[2] = new GuiButtonPriced(2, this.guiLeft + 54, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.speed", this.container.prices[2], Assets.SHEET_TOWERS, 0, 20);
+            buttons[3] = new GuiButtonPriced(3, this.guiLeft + 77, this.guiTop + 90, "container." + Assets.DOMAIN + "-tower.upgrade.range", this.container.prices[3], Assets.SHEET_TOWERS, 20, 20);
+            if (!this.container.isMyName) {
+                for (GuiButtonPriced button : buttons) {
+                    button.shouldDisable = true;
+                }
+            }
         }
     }
 

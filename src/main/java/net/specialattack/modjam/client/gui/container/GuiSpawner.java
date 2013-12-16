@@ -21,6 +21,7 @@ public class GuiSpawner extends GuiContainer {
 
     private GuiButton activate;
     private GuiButton startnow;
+    private GuiButton revoke;
 
     public GuiSpawner(TileEntitySpawner tile) {
         super(new ContainerSpawner(tile));
@@ -34,13 +35,23 @@ public class GuiSpawner extends GuiContainer {
             this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.nowork");
 
             this.startnow.enabled = false;
+            this.revoke.enabled = false;
         }
         else {
+            this.revoke.enabled = this.container.isOp;
             if (!this.container.active) {
-                this.activate.enabled = true;
-                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.bind");
+                if (this.container.canIJoin) {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.bind");
 
-                this.startnow.enabled = false;
+                    this.startnow.enabled = false;
+                }
+                else {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.alreadybound");
+
+                    this.startnow.enabled = false;
+                }
             }
             else {
                 if (this.container.isMyName) {
@@ -66,8 +77,9 @@ public class GuiSpawner extends GuiContainer {
 
         this.buttonList.clear();
 
-        this.buttonList.add(this.activate = new GuiButton(0, this.guiLeft + 20, this.guiTop + 20, this.xSize - 40, 20, ""));
-        this.buttonList.add(this.startnow = new GuiButton(1, this.guiLeft + 20, this.guiTop + 45, this.xSize - 40, 20, I18n.getString("container." + Assets.DOMAIN + "-spawner.startnow")));
+        this.buttonList.add(this.activate = new GuiButton(0, this.guiLeft + 10, this.guiTop + 20, this.xSize - 20, 20, ""));
+        this.buttonList.add(this.startnow = new GuiButton(1, this.guiLeft + 10, this.guiTop + 45, this.xSize - 20, 20, I18n.getString("container." + Assets.DOMAIN + "-spawner.startnow")));
+        this.buttonList.add(this.revoke = new GuiButton(2, this.guiLeft + 10, this.guiTop + 70, this.xSize - 20, 20, I18n.getString("container." + Assets.DOMAIN + "-spawner.revoke")));
 
         this.setupButtons();
     }
