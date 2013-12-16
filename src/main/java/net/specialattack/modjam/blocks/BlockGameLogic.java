@@ -14,7 +14,7 @@ import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import net.specialattack.modjam.ModModjam;
+import net.specialattack.modjam.ModTowerDefence;
 import net.specialattack.modjam.items.IPassClick;
 import net.specialattack.modjam.tileentity.TileEntityMultiplayerController;
 import net.specialattack.modjam.tileentity.TileEntitySpawner;
@@ -128,13 +128,13 @@ public class BlockGameLogic extends Block {
             }
 
             if (tile instanceof TileEntitySpawner) {
-                player.openGui(ModModjam.instance, 0, world, x, y, z);
+                player.openGui(ModTowerDefence.instance, 0, world, x, y, z);
             }
             else if (tile instanceof TileEntityTarget) {
                 player.sendChatToPlayer(ChatMessageComponent.createFromText("Whack me with a Target Linker"));
             }
             else if (tile instanceof TileEntityMultiplayerController) {
-                player.openGui(ModModjam.instance, 2, world, x, y, z);
+                player.openGui(ModTowerDefence.instance, 2, world, x, y, z);
             }
         }
         else {

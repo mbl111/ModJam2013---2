@@ -1,7 +1,7 @@
 [
 {
-  "modid": "Modjam - Bleigh",
-  "name": "Team Bleigh's Modjam Entry",
+  "modid": "TowerDefence",
+  "name": "Tower Defence",
   "description": "Team Bleigh's entry for the 2013 december modjam",
   "version": "${version}",
   "mcversion": "${mcversion}",

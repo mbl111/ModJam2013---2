@@ -15,29 +15,29 @@ import cpw.mods.fml.common.network.NetworkMod;
 
 @Mod(modid = Objects.MOD_ID, name = Objects.MOD_NAME)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false, channels = { Objects.MOD_CHANNEL }, packetHandler = PacketHandler.class)
-public class ModModjam {
+public class ModTowerDefence {
 
     @Instance
-    public static ModModjam instance;
+    public static ModTowerDefence instance;
 
     @SidedProxy(clientSide = Objects.CLIENT_PROXY, serverSide = Objects.SERVER_PROXY)
     public static CommonProxy proxy;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ModModjam.proxy.preInit(event);
+        ModTowerDefence.proxy.preInit(event);
 
         Config.loadConfig(new Configuration(event.getSuggestedConfigurationFile()));
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        ModModjam.proxy.init(event);
+        ModTowerDefence.proxy.init(event);
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        ModModjam.proxy.postInit(event);
+        ModTowerDefence.proxy.postInit(event);
     }
 
     @EventHandler

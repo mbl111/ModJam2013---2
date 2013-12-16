@@ -23,7 +23,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.specialattack.modjam.Assets;
-import net.specialattack.modjam.ModModjam;
+import net.specialattack.modjam.ModTowerDefence;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
 import net.specialattack.modjam.items.IPassClick;
 import net.specialattack.modjam.pathfinding.IAvoided;
@@ -252,7 +252,7 @@ public class BlockTower extends Block implements IAvoided {
             player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
             return true;
         }
-        player.openGui(ModModjam.instance, 1, world, x, y, z);
+        player.openGui(ModTowerDefence.instance, 1, world, x, y, z);
 
         return true;
     }

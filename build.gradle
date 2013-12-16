@@ -26,7 +26,7 @@ configFile.withReader {
 
 group= "net.specialattack.modjam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 version = config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
-archivesBaseName = "Modjam"
+archivesBaseName = "TowerDefence"
 
 minecraft {
     version = config.minecraft_version + "-" + config.forge_version

@@ -75,7 +75,7 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         Objects.itemGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName(Assets.DOMAIN + "-game-logic").setTextureName(Assets.DOMAIN + ":game-logic");
 
         NetworkRegistry.instance().registerConnectionHandler(this);
-        NetworkRegistry.instance().registerGuiHandler(ModModjam.instance, this);
+        NetworkRegistry.instance().registerGuiHandler(ModTowerDefence.instance, this);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
