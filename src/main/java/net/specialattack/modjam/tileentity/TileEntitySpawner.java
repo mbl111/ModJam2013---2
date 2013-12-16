@@ -107,7 +107,7 @@ public class TileEntitySpawner extends TileEntity {
                 score.func_96647_c(0);
             }
 
-            if (this.multiplayerController != null) {
+            if (this.multiplayerController == null) {
                 this.prepareWave();
             }
         }
@@ -386,7 +386,7 @@ public class TileEntitySpawner extends TileEntity {
                     this.timer = 0;
                     this.spawnQueue = 0;
 
-                    if (this.multiplayerController != null) {
+                    if (this.multiplayerController == null) {
                         this.prepareWave();
                     }
 
@@ -418,7 +418,7 @@ public class TileEntitySpawner extends TileEntity {
                 if ((this.interval - this.timer) % 20 == 0) {
                     this.updateStat(2);
                 }
-                if (this.multiplayerController != null) {
+                if (this.multiplayerController == null) {
                     if (this.timer >= this.interval) {
                         this.waveActive = true;
                         this.timer = 0;

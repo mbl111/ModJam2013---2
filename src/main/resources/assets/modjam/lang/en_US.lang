@@ -4,10 +4,10 @@ tile.modjam-tower.linked=Linked @(%1$s, %2$s, %3$s)
 tile.modjam-tower.unlinked=Not linked
 
 tile.modjam-game-logic0.name=Spawner
-tile.modjam-game-logic1.name=Target
-tile.modjam-game-logic2.name=Multiplayer Controller
 tile.modjam-game-logic0.description=This block spawns waves of monsters that target a Target block
+tile.modjam-game-logic1.name=Target
 tile.modjam-game-logic1.description=This block is the target of a Spawner, it has hitpoints so don't let the monsters reach it!
+tile.modjam-game-logic2.name=Multiplayer Controller
 tile.modjam-game-logic2.description=This block can controll a range of Spawners, it is not required for a Spawner to work, but it allows for synced games
 
 tile.modjam-avoiding-clay.black.name=Black Stained Avoiding Clay
@@ -46,6 +46,8 @@ tile.modjam-avoiding-clay.white.description=Monsters that are spawned through Sp
 
 item.modjam-game-logic0.name=Target Linker
 item.modjam-game-logic0.description=Use this item to link a Target to a Spawner
+item.modjam-game-logic1.name=Multiplayer Linker
+item.modjam-game-logic1.description=Use this item to link a Spawner to a Multiplayer Controller
 
 itemGroup.modjam-bleigh=Modjam
 

@@ -140,7 +140,7 @@ public abstract class TowerBase implements ITower {
             double posX = this.tower.xCoord;
             double posY = this.tower.yCoord;
             double posZ = this.tower.zCoord;
-            List<EntityLiving> list = this.tower.worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX + 1.0D, posY + 1.0D, posZ + 1.0D).expand(this.getRange(), this.getRange(), this.getRange()), IEntitySelector.selectAnything);
+            List<EntityLiving> list = this.tower.worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX + 1.0D, posY + 1.0D, posZ + 1.0D).expand(this.getRange(), this.getRange() + 5.0D, this.getRange()), IEntitySelector.selectAnything);
 
             return list;
         }
