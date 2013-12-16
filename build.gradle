@@ -24,8 +24,8 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-version = config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
 group= "net.specialattack.modjam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
 archivesBaseName = "Modjam"
 
 minecraft {
@@ -48,14 +48,6 @@ processResources
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
         exclude 'version.properties'
-    }
-}
-
-jar {
-    manifest {
-        attributes 'FMLCorePlugin': 'me.heldplayer.util.HeldCore.asm.HeldCorePlugin'
-        attributes 'AccessTransformer': 'heldcore_at.cfg'
-        attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 }
 
