@@ -13,14 +13,14 @@ public class ContainerSpawner extends Container {
     // Client + Server side
     public TileEntitySpawner tile;
     // Server Side
-    public boolean prevWaveActive;
+    public boolean prevIsMultiplayer;
     public boolean prevActive;
     public boolean prevCanWork;
     // Client side
-    public boolean waveActive;
     public boolean active;
-    public boolean canWork;
     public boolean isMyName;
+    public boolean canWork;
+    public boolean isMultiplayer;
     public boolean updated;
 
     public ContainerSpawner(TileEntitySpawner tile) {
@@ -36,44 +36,45 @@ public class ContainerSpawner extends Container {
     public void addCraftingToCrafters(ICrafting crafting) {
         super.addCraftingToCrafters(crafting);
 
-        crafting.sendProgressBarUpdate(this, 0, this.tile.waveActive ? 1 : 0);
-        crafting.sendProgressBarUpdate(this, 1, this.tile.active ? 1 : 0);
+        boolean active = this.tile.getActiveUser() != null;
+        crafting.sendProgressBarUpdate(this, 0, active ? 1 : 0);
         if (crafting instanceof EntityPlayer) {
-            crafting.sendProgressBarUpdate(this, 2, this.tile.active ? (this.tile.getActiveUser().equalsIgnoreCase(((EntityPlayer) crafting).username) ? 1 : 0) : 0);
+            crafting.sendProgressBarUpdate(this, 1, active ? (this.tile.getActiveUser().equalsIgnoreCase(((EntityPlayer) crafting).username) ? 1 : 0) : 0);
         }
 
-        crafting.sendProgressBarUpdate(this, 3, this.tile.canWork() ? 1 : 0);
+        crafting.sendProgressBarUpdate(this, 2, this.tile.canWork() ? 1 : 0);
+        crafting.sendProgressBarUpdate(this, 3, this.tile.hasController() ? 1 : 0);
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        boolean waveActive = this.tile.waveActive;
-        boolean active = this.tile.active;
+        boolean active = this.tile.getActiveUser() != null;
         boolean canWork = this.tile.canWork();
+        boolean isMultiplayer = this.tile.hasController();
 
         for (int i = 0; i < this.crafters.size(); i++) {
             ICrafting crafting = (ICrafting) this.crafters.get(i);
 
-            if (this.prevWaveActive != waveActive) {
-                crafting.sendProgressBarUpdate(this, 0, waveActive ? 1 : 0);
-            }
-
             if (this.prevActive != active) {
-                crafting.sendProgressBarUpdate(this, 1, active ? 1 : 0);
+                crafting.sendProgressBarUpdate(this, 0, active ? 1 : 0);
 
                 if (crafting instanceof EntityPlayer) {
-                    crafting.sendProgressBarUpdate(this, 2, this.tile.active ? (this.tile.getActiveUser().equalsIgnoreCase(((EntityPlayer) crafting).username) ? 1 : 0) : 0);
+                    crafting.sendProgressBarUpdate(this, 1, active ? (this.tile.getActiveUser().equalsIgnoreCase(((EntityPlayer) crafting).username) ? 1 : 0) : 0);
                 }
             }
 
             if (this.prevCanWork != canWork) {
-                crafting.sendProgressBarUpdate(this, 3, canWork ? 1 : 0);
+                crafting.sendProgressBarUpdate(this, 2, canWork ? 1 : 0);
+            }
+
+            if (this.prevIsMultiplayer != isMultiplayer) {
+                crafting.sendProgressBarUpdate(this, 3, isMultiplayer ? 1 : 0);
             }
         }
 
-        this.prevWaveActive = waveActive;
+        this.prevIsMultiplayer = isMultiplayer;
         this.prevActive = active;
         this.prevCanWork = active;
     }
@@ -82,16 +83,16 @@ public class ContainerSpawner extends Container {
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int id, int value) {
         if (id == 0) {
-            this.waveActive = value == 1;
-        }
-        else if (id == 1) {
             this.active = value == 1;
         }
-        else if (id == 2) {
+        else if (id == 1) {
             this.isMyName = value == 1;
         }
-        else if (id == 3) {
+        else if (id == 2) {
             this.canWork = value == 1;
+        }
+        else if (id == 3) {
+            this.isMultiplayer = value == 1;
         }
         this.updated = true;
     }
@@ -99,7 +100,7 @@ public class ContainerSpawner extends Container {
     @Override
     public boolean enchantItem(EntityPlayer player, int id) {
         if (id == 0) {
-            if (!this.tile.active) {
+            if (this.tile.getActiveUser() == null) {
                 this.tile.setActiveUser(player.username);
             }
             else {
@@ -109,14 +110,9 @@ public class ContainerSpawner extends Container {
             }
         }
         else if (id == 1) {
-            if (!this.tile.active) {
-                this.tile.setActiveUser(player.username);
-            }
-            else {
-                if (this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
-                    //Start the game now
-                    this.tile.timer = 600 - 20 * 3;
-                }
+            if (this.tile.getActiveUser() != null && this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
+                //Start the game now
+                this.tile.timer = 600 - 20 * 3;
             }
         }
         return true;

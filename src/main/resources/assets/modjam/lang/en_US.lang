@@ -46,8 +46,12 @@ tile.modjam-avoiding-clay.white.description=Monsters that are spawned through Sp
 
 item.modjam-game-logic0.name=Target Linker
 item.modjam-game-logic0.description=Use this item to link a Target to a Spawner
+item.modjam-game-logic0.linked=Linked @(%1$s, %2$s, %3$s)
+item.modjam-game-logic0.unlinked=Not linked
 item.modjam-game-logic1.name=Multiplayer Linker
 item.modjam-game-logic1.description=Use this item to link a Spawner to a Multiplayer Controller
+item.modjam-game-logic1.linked=Linked @(%1$s, %2$s, %3$s)
+item.modjam-game-logic1.unlinked=Not linked
 
 itemGroup.modjam-bleigh=Modjam
 
@@ -60,8 +64,10 @@ container.modjam-spawner.startnow=Start Wave Now
 
 container.modjam-multiplayerController=Multiplayer Controller
 container.modjam-multiplayerController.nowork=No Spawners connected
-container.modjam-multiplayerController.start=Start game
+container.modjam-multiplayerController.noplayers=Not enough players (%1$s)
+container.modjam-multiplayerController.start=Start game (%1$s)
 container.modjam-multiplayerController.stop=Stop game
+container.modjam-multiplayerController.spawners=Connected spawners: %1$s
 
 container.modjam-tower=Tower
 container.modjam-tower.purchase=Buy a Tower

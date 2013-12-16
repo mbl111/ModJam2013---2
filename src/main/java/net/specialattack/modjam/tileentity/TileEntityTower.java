@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class TileEntityTower extends TileEntity {
 
     public ITowerInstance towerInstance;
-    public ChunkCoordinates spawner;
+    private ChunkCoordinates spawner;
     private int cooldown;
 
     public BlockTower getTowerBlock() {
@@ -34,6 +34,16 @@ public class TileEntityTower extends TileEntity {
         }
 
         this.spawner = coords;
+    }
+
+    public TileEntitySpawner getSpawner() {
+        TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
+
+        if (tile != null && tile instanceof TileEntitySpawner) {
+            return (TileEntitySpawner) tile;
+        }
+
+        return null;
     }
 
     public void reset() {

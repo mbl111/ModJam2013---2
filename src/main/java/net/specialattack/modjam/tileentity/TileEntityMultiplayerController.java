@@ -4,6 +4,8 @@ package net.specialattack.modjam.tileentity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,8 +21,8 @@ import net.specialattack.modjam.packet.PacketHandler;
 
 public class TileEntityMultiplayerController extends TileEntity {
 
-    public List<ChunkCoordinates> spawners;
-    public List<ChunkCoordinates> activeSpawners;
+    private Set<ChunkCoordinates> spawners;
+    private Set<ChunkCoordinates> activeSpawners;
 
     public boolean active;
 
@@ -32,7 +34,8 @@ public class TileEntityMultiplayerController extends TileEntity {
     public Monster currentBoss;
 
     public TileEntityMultiplayerController() {
-        this.spawners = new ArrayList<ChunkCoordinates>();
+        this.spawners = new TreeSet<ChunkCoordinates>();
+        this.activeSpawners = new TreeSet<ChunkCoordinates>();
     }
 
     @Override
@@ -137,7 +140,7 @@ public class TileEntityMultiplayerController extends TileEntity {
             TileEntity tile = this.worldObj.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
             if (tile != null && tile instanceof TileEntitySpawner) {
                 TileEntitySpawner spawner = (TileEntitySpawner) tile;
-                if (!spawner.active) {
+                if (spawner.getActiveUser() == null) {
                     continue;
                 }
                 this.activeSpawners.add(coords);
@@ -146,6 +149,10 @@ public class TileEntityMultiplayerController extends TileEntity {
                 i.remove();
             }
         }
+    }
+
+    public int getActiveSpawnersCount() {
+        return this.activeSpawners.size();
     }
 
     public List<TileEntitySpawner> getActiveSpawners() {
@@ -166,6 +173,10 @@ public class TileEntityMultiplayerController extends TileEntity {
         return spawners;
     }
 
+    public int getSpawnersCount() {
+        return this.spawners.size();
+    }
+
     public List<TileEntitySpawner> getAllSpawners() {
         List<TileEntitySpawner> spawners = new ArrayList<TileEntitySpawner>();
 
@@ -184,8 +195,21 @@ public class TileEntityMultiplayerController extends TileEntity {
         return spawners;
     }
 
+    public void addSpawner(TileEntitySpawner tile) {
+        this.spawners.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
+        tile.setController(this);
+        this.onInventoryChanged();
+    }
+
+    public void removeSpawner(TileEntitySpawner tile) {
+        this.spawners.remove(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
+        tile.setController(null);
+        this.onInventoryChanged();
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
         NBTTagList spawners = new NBTTagList();
         for (ChunkCoordinates coord : this.spawners) {
             NBTTagCompound spawner = new NBTTagCompound();
@@ -195,14 +219,31 @@ public class TileEntityMultiplayerController extends TileEntity {
             spawners.appendTag(spawner);
         }
         compound.setTag("spawners", spawners);
+
+        NBTTagList activeSpawners = new NBTTagList();
+        for (ChunkCoordinates coord : this.activeSpawners) {
+            NBTTagCompound spawner = new NBTTagCompound();
+            spawner.setInteger("posX", coord.posX);
+            spawner.setInteger("posY", coord.posY);
+            spawner.setInteger("posZ", coord.posZ);
+            activeSpawners.appendTag(spawner);
+        }
+        compound.setTag("activeSpawners", activeSpawners);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
         NBTTagList spawners = compound.getTagList("spawners");
         for (int i = 0; i < spawners.tagCount(); i++) {
             NBTTagCompound spawner = (NBTTagCompound) spawners.tagAt(i);
             this.spawners.add(new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ")));
+        }
+
+        NBTTagList activeSpawners = compound.getTagList("activeSpawners");
+        for (int i = 0; i < activeSpawners.tagCount(); i++) {
+            NBTTagCompound spawner = (NBTTagCompound) activeSpawners.tagAt(i);
+            this.activeSpawners.add(new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ")));
         }
     }
 

@@ -41,7 +41,7 @@ processResources
         include 'version.properties'
                 
         // replace version and mcversion
-        expand 'version': config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
+        expand 'version': config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number, 'mcversion':project.minecraft.version
     }
         
     // copy everything else, thats not the mcmod.info

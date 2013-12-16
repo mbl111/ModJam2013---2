@@ -69,10 +69,7 @@ public class BlockGameLogic extends Block {
                 List<TileEntityTower> towers = spawner.getAllTowers();
 
                 for (TileEntityTower tower : towers) {
-                    int tempBlockId = world.getBlockId(tower.xCoord, tower.yCoord, tower.zCoord);
-                    int tempMeta = world.getBlockMetadata(tower.xCoord, tower.yCoord, tower.zCoord);
                     world.setBlockToAir(tower.xCoord, tower.yCoord, tower.zCoord);
-                    Block.blocksList[tempBlockId].breakBlock(world, tower.xCoord, tower.yCoord, tower.zCoord, tempBlockId, tempMeta);
                 }
             }
             else if (tile instanceof TileEntityTarget) {
@@ -86,7 +83,12 @@ public class BlockGameLogic extends Block {
                 }
             }
             else if (tile instanceof TileEntityMultiplayerController) {
+                TileEntityMultiplayerController controller = (TileEntityMultiplayerController) tile;
+                List<TileEntitySpawner> spawners = controller.getAllSpawners();
 
+                for (TileEntitySpawner spawner : spawners) {
+                    spawner.setController(null);
+                }
             }
         }
         super.breakBlock(world, x, y, z, blockId, meta);

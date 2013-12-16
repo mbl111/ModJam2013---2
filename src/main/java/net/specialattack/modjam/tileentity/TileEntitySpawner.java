@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -51,7 +53,7 @@ public class TileEntitySpawner extends TileEntity {
     private String playername;
     private ChunkCoordinates multiplayerController;
     private ChunkCoordinates target;
-    private List<ChunkCoordinates> towers;
+    private Set<ChunkCoordinates> towers;
 
     public TileEntitySpawner() {
         this.spawnedEntities = new ArrayList<Entity>();
@@ -69,7 +71,7 @@ public class TileEntitySpawner extends TileEntity {
         this.monsterCount = 10;
         this.currentMonster = null;
         this.currentBoss = null;
-        this.towers = new ArrayList<ChunkCoordinates>();
+        this.towers = new TreeSet<ChunkCoordinates>();
     }
 
     public String getActiveUser() {
@@ -95,7 +97,10 @@ public class TileEntitySpawner extends TileEntity {
         this.monsterCount = 10;
         this.currentMonster = null;
         this.currentBoss = null;
-        this.active = playername != null && this.multiplayerController == null;
+
+        TileEntityMultiplayerController controller = this.getController();
+
+        this.active = playername != null && controller == null;
 
         if (playername != null) {
             Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaScore);
@@ -107,7 +112,7 @@ public class TileEntitySpawner extends TileEntity {
                 score.func_96647_c(0);
             }
 
-            if (this.multiplayerController == null) {
+            if (controller == null) {
                 this.prepareWave();
             }
         }
@@ -132,6 +137,10 @@ public class TileEntitySpawner extends TileEntity {
         TileEntityTarget target = this.getTarget();
         if (target != null) {
             target.health = 100;
+        }
+
+        if (controller != null) {
+            controller.updateActiveSpawners();
         }
 
         this.markDirty();
@@ -205,6 +214,7 @@ public class TileEntitySpawner extends TileEntity {
         TileEntityTarget target = this.getTarget();
         if (target != null) {
             target.spawner = null;
+            target.onInventoryChanged();
             this.target = null;
         }
 
@@ -215,6 +225,8 @@ public class TileEntitySpawner extends TileEntity {
             this.markDirty();
             newTarget.onInventoryChanged();
         }
+
+        this.setActiveUser(null);
     }
 
     public TileEntityTarget getTarget() {
@@ -227,8 +239,32 @@ public class TileEntitySpawner extends TileEntity {
         return null;
     }
 
+    public void setController(TileEntityMultiplayerController newController) {
+        if (newController != null) {
+            this.multiplayerController = new ChunkCoordinates(newController.xCoord, newController.yCoord, newController.zCoord);
+        }
+        else {
+            this.multiplayerController = null;
+        }
+    }
+
+    public TileEntityMultiplayerController getController() {
+        if (this.multiplayerController != null) {
+            TileEntity tile = this.worldObj.getBlockTileEntity(this.multiplayerController.posX, this.multiplayerController.posY, this.multiplayerController.posZ);
+            if (tile instanceof TileEntityMultiplayerController) {
+                return ((TileEntityMultiplayerController) tile);
+            }
+        }
+        return null;
+    }
+
     public void addTower(TileEntityTower tile) {
         this.towers.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
+        this.markDirty();
+    }
+
+    public void removeTower(TileEntityTower tile) {
+        this.towers.remove(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
         this.markDirty();
     }
 
@@ -266,6 +302,10 @@ public class TileEntitySpawner extends TileEntity {
 
     public boolean canWork() {
         return this.target != null;
+    }
+
+    public boolean hasController() {
+        return this.multiplayerController != null;
     }
 
     private void prepareWave() {

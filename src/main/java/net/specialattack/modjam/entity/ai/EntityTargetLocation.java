@@ -25,9 +25,9 @@ public class EntityTargetLocation extends EntityAIBase {
         this.speed = speed;
         this.setMutexBits(1);
 
-        this.posX = target.xCoord;
-        this.posY = target.yCoord;
-        this.posZ = target.zCoord;
+        this.posX = (double) target.xCoord + 0.5D;
+        this.posY = (double) target.yCoord + 0.5D;
+        this.posZ = (double) target.zCoord + 0.5D;
 
         this.tile = tile;
     }
@@ -64,8 +64,8 @@ public class EntityTargetLocation extends EntityAIBase {
         double distanceZ = this.entity.posZ - this.posZ;
         double distance = distanceX * distanceX + distanceZ * distanceZ;
 
-        if (distance < this.entity.width * this.entity.width * 4) {
-            if (this.tile.isInvalid()) {
+        if (distance < this.entity.width * this.entity.width * 8) {
+            if (this.tile == null || this.tile.isInvalid()) {
                 // Fail silently
                 this.entity.worldObj.removeEntity(this.entity);
                 this.entity = null;

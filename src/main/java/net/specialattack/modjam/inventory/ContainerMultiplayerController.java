@@ -15,10 +15,12 @@ public class ContainerMultiplayerController extends Container {
     // Server Side
     public boolean prevActive;
     public int prevConnections;
+    public int prevActiveConnections;
     // Client side
     public boolean active;
     public boolean updated;
     public int connections;
+    public int activeConnections;
 
     public ContainerMultiplayerController(TileEntityMultiplayerController tile) {
         this.tile = tile;
@@ -34,7 +36,8 @@ public class ContainerMultiplayerController extends Container {
         super.addCraftingToCrafters(crafting);
 
         crafting.sendProgressBarUpdate(this, 0, this.tile.active ? 1 : 0);
-        crafting.sendProgressBarUpdate(this, 1, this.tile.spawners.size());
+        crafting.sendProgressBarUpdate(this, 1, this.tile.getSpawnersCount());
+        crafting.sendProgressBarUpdate(this, 2, this.tile.getActiveSpawnersCount());
     }
 
     @Override
@@ -42,7 +45,8 @@ public class ContainerMultiplayerController extends Container {
         super.detectAndSendChanges();
 
         boolean active = this.tile.active;
-        int connections = this.tile.spawners.size();
+        int connections = this.tile.getSpawnersCount();
+        int activeConnections = this.tile.getActiveSpawnersCount();
 
         for (int i = 0; i < this.crafters.size(); i++) {
             ICrafting crafting = (ICrafting) this.crafters.get(i);
@@ -54,9 +58,15 @@ public class ContainerMultiplayerController extends Container {
             if (this.prevConnections != connections) {
                 crafting.sendProgressBarUpdate(this, 1, connections);
             }
+
+            if (this.prevActiveConnections != activeConnections) {
+                crafting.sendProgressBarUpdate(this, 2, activeConnections);
+            }
         }
 
         this.prevActive = active;
+        this.prevConnections = connections;
+        this.prevActiveConnections = activeConnections;
     }
 
     @Override
@@ -67,6 +77,9 @@ public class ContainerMultiplayerController extends Container {
         }
         if (id == 1) {
             this.connections = value;
+        }
+        if (id == 2) {
+            this.activeConnections = value;
         }
         this.updated = true;
     }

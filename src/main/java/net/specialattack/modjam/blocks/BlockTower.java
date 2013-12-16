@@ -27,6 +27,7 @@ import net.specialattack.modjam.ModModjam;
 import net.specialattack.modjam.client.renderer.BlockRendererTower;
 import net.specialattack.modjam.items.IPassClick;
 import net.specialattack.modjam.pathfinding.IAvoided;
+import net.specialattack.modjam.tileentity.TileEntitySpawner;
 import net.specialattack.modjam.tileentity.TileEntityTower;
 import net.specialattack.modjam.towers.ITower;
 import net.specialattack.modjam.towers.ITowerRenderHandler;
@@ -157,12 +158,25 @@ public class BlockTower extends Block implements IAvoided {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, int blockId, int meta) {
-        super.breakBlock(world, x, y, z, blockId, meta);
         for (int i = -meta; i < 3 - meta; i++) {
             if (world.getBlockId(x, y + i, z) == blockId) {
                 world.setBlockToAir(x, y + i, z);
             }
         }
+
+        TileEntity tile = world.getBlockTileEntity(x, y - meta, z);
+        if (tile != null) {
+            if (tile instanceof TileEntityTower) {
+                TileEntityTower tower = (TileEntityTower) tile;
+                TileEntitySpawner spawner = tower.getSpawner();
+
+                if (spawner != null) {
+                    spawner.removeTower(tower);
+                }
+            }
+        }
+        super.breakBlock(world, x, y, z, blockId, meta);
+
     }
 
     @Override

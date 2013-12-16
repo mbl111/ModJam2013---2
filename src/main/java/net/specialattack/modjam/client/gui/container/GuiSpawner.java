@@ -47,7 +47,7 @@ public class GuiSpawner extends GuiContainer {
                     this.activate.enabled = true;
                     this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-spawner.unbind");
 
-                    this.startnow.enabled = true;
+                    this.startnow.enabled = !this.container.isMultiplayer;
                 }
                 else {
                     this.activate.enabled = false;

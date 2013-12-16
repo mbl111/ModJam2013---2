@@ -33,13 +33,19 @@ public class GuiMultiplayerController extends GuiContainer {
             this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.nowork");
         }
         else {
-            if (!this.tile.active) {
-                this.activate.enabled = true;
-                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.start");
+            if (this.container.activeConnections < 2) {
+                this.activate.enabled = false;
+                this.activate.displayString = I18n.getStringParams("container." + Assets.DOMAIN + "-multiplayerController.noplayers", this.container.activeConnections);
             }
             else {
-                this.activate.enabled = true;
-                this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.stop");
+                if (!this.tile.active) {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getStringParams("container." + Assets.DOMAIN + "-multiplayerController.start", this.container.activeConnections);
+                }
+                else {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController.stop");
+                }
             }
         }
     }
@@ -78,6 +84,8 @@ public class GuiMultiplayerController extends GuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         String title = I18n.getString("container." + Assets.DOMAIN + "-multiplayerController");
         this.fontRenderer.drawString(title, this.xSize / 2 - this.fontRenderer.getStringWidth(title) / 2, 6, 0x404040);
+
+        this.fontRenderer.drawString(I18n.getStringParams("container." + Assets.DOMAIN + "-multiplayerController.spawners", this.container.connections), 8, 50, 0x404040);
     }
 
     @Override
