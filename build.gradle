@@ -24,8 +24,8 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-group= "net.specialattack.modjam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-version = config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
+group= "net.specialattack.towerdefence" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = config.minecraft_version + "-" + config.super_number + "." + config.major_number + "." + config.minor_number + "." + config.build_number
 archivesBaseName = "TowerDefence"
 
 minecraft {
