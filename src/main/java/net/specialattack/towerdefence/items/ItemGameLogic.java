@@ -50,7 +50,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                     TileEntitySpawner spawner = (TileEntitySpawner) tile;
 
                     if (stack.stackTagCompound == null) {
-                        player.sendChatToPlayer(ChatMessageComponent.createFromText("No Target set yet"));
+                        player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".no-target")));
                     }
                     else {
                         int blockX = stack.stackTagCompound.getInteger("blockX");
@@ -64,10 +64,10 @@ public class ItemGameLogic extends Item implements IPassClick {
 
                             spawner.setTarget(target);
 
-                            player.sendChatToPlayer(ChatMessageComponent.createFromText("Target linked to Spawner"));
+                            player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".linked")));
                         }
                         else {
-                            player.sendChatToPlayer(ChatMessageComponent.createFromText("The Target is gone :("));
+                            player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".target-gone")));
                         }
 
                         stack.stackTagCompound = null;
@@ -79,7 +79,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                     stack.stackTagCompound.setInteger("blockY", y);
                     stack.stackTagCompound.setInteger("blockZ", z);
 
-                    player.sendChatToPlayer(ChatMessageComponent.createFromText("Target set"));
+                    player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".target-set")));
                 }
             }
             else if (meta == 1) {
@@ -87,7 +87,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                     TileEntityMultiplayerController controller = (TileEntityMultiplayerController) tile;
 
                     if (stack.stackTagCompound == null) {
-                        player.sendChatToPlayer(ChatMessageComponent.createFromText("No Spawners set yet"));
+                        player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".no-spawners")));
                     }
                     else {
                         NBTTagList locations = stack.stackTagCompound.getTagList("locations");
@@ -115,7 +115,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                             }
                         }
 
-                        player.sendChatToPlayer(ChatMessageComponent.createFromText(success + " Spawners added, " + fail + " failed"));
+                        player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".linked", success, fail)));
 
                         stack.stackTagCompound = null;
                     }
@@ -132,7 +132,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                     locations.appendTag(location);
                     stack.stackTagCompound.setTag("locations", locations);
 
-                    player.sendChatToPlayer(ChatMessageComponent.createFromText("Spawner set, " + locations.tagCount() + " total Spawners"));
+                    player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".spawner-added", locations.tagCount())));
                 }
             }
         }

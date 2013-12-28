@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Icon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.specialattack.towerdefence.ModTowerDefence;
 import net.specialattack.towerdefence.items.IPassClick;
@@ -131,14 +132,14 @@ public class BlockGameLogic extends Block {
                 player.openGui(ModTowerDefence.instance, 0, world, x, y, z);
             }
             else if (tile instanceof TileEntityTarget) {
-                player.sendChatToPlayer(ChatMessageComponent.createFromText("Whack me with a Target Linker"));
+                player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName() + "1.use")));
             }
             else if (tile instanceof TileEntityMultiplayerController) {
                 player.openGui(ModTowerDefence.instance, 2, world, x, y, z);
             }
         }
         else {
-            player.sendChatToPlayer(ChatMessageComponent.createFromText("This block is broken :("));
+            player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName() + "2.broken")));
         }
 
         return true;

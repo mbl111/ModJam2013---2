@@ -6,6 +6,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.StatCollector;
 import net.specialattack.towerdefence.logic.Booster;
 import net.specialattack.towerdefence.logic.Monster;
 import net.specialattack.towerdefence.logic.WaveInfo;
@@ -40,19 +41,19 @@ public class GuiOverlay extends Gui {
         int x = 2;
         int y = 2;
 
-        this.font.drawStringWithShadow("Wave: " + WaveInfo.wave, x, y, 0xFFFFFF);
+        this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.wave", WaveInfo.wave), x, y, 0xFFFFFF);
         y += 10;
-        this.font.drawStringWithShadow("Score: " + WaveInfo.score, x, y, 0xFFFFFF);
+        this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.score", WaveInfo.score), x, y, 0xFFFFFF);
         y += 10;
-        this.font.drawStringWithShadow("Coins: " + WaveInfo.coins, x, y, 0xFFFFFF);
+        this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.coins", WaveInfo.coins), x, y, 0xFFFFFF);
         y += 10;
-        this.font.drawStringWithShadow("Health: " + WaveInfo.health + "/100", x, y, 0xFFFFFF);
+        this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.health", WaveInfo.health, 100), x, y, 0xFFFFFF);
         y += 10;
         if (WaveInfo.timer >= 0) {
-            this.font.drawStringWithShadow("Next wave: " + WaveInfo.timer, x, y, 0xFFFFFF);
+            this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.next", WaveInfo.timer), x, y, 0xFFFFFF);
         }
         else {
-            this.font.drawStringWithShadow("Remaining Monsters: " + WaveInfo.monstersAlive, x, y, 0xFFFFFF);
+            this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.remaining", WaveInfo.monstersAlive), x, y, 0xFFFFFF);
         }
         y += 10;
 

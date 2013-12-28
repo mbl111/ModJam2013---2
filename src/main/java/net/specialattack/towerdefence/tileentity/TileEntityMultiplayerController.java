@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.StatCollector;
 import net.specialattack.towerdefence.CommonProxy;
 import net.specialattack.towerdefence.logic.Booster;
 import net.specialattack.towerdefence.logic.Monster;
@@ -84,10 +85,10 @@ public class TileEntityMultiplayerController extends TileEntity {
                         if (spawner.getTarget() != null) {
                             spawner.spawning = true;
 
-                            spawner.sendChatToPlayer("The next wave is starting!");
+                            spawner.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.start"));
                         }
                         else {
-                            spawner.sendChatToPlayer("Whoops! Something went wrong :<");
+                            spawner.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
                             spawner.active = false;
                         }
                         spawner.markDirty();
@@ -137,7 +138,7 @@ public class TileEntityMultiplayerController extends TileEntity {
             spawner.currentMonster = this.currentMonster;
             spawner.currentBoss = this.currentBoss;
 
-            spawner.sendChatToPlayer("Prepare for the next wave!");
+            spawner.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.prepare"));
 
             EntityPlayer player = CommonProxy.getPlayer(spawner.getActiveUser());
             if (player != null && player instanceof EntityPlayerMP) {

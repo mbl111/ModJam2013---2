@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetworkManager;
@@ -18,14 +17,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.specialattack.towerdefence.blocks.BlockColoredAvoiding;
 import net.specialattack.towerdefence.blocks.BlockGameLogic;
 import net.specialattack.towerdefence.blocks.BlockTower;
-import net.specialattack.towerdefence.creativetab.CreativeTabModjam;
+import net.specialattack.towerdefence.creativetab.CreativeTabTowerDefence;
 import net.specialattack.towerdefence.inventory.ContainerMultiplayerController;
 import net.specialattack.towerdefence.inventory.ContainerSpawner;
 import net.specialattack.towerdefence.inventory.ContainerTower;
-import net.specialattack.towerdefence.items.ItemBlockColoredAvoiding;
 import net.specialattack.towerdefence.items.ItemBlockGameLogic;
 import net.specialattack.towerdefence.items.ItemBlockTower;
 import net.specialattack.towerdefence.items.ItemGameLogic;
@@ -54,23 +51,19 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
         Objects.blockTower = new BlockTower(Config.blockTowerId);
-        GameRegistry.registerBlock(Objects.blockTower, ItemBlockTower.class, Objects.MOD_ID + ".blockTower");
+        GameRegistry.registerBlock(Objects.blockTower, ItemBlockTower.class, "towerDefence.blockTower");
 
         Objects.blockGameLogic = new BlockGameLogic(Config.blockGameLogicId);
-        GameRegistry.registerBlock(Objects.blockGameLogic, ItemBlockGameLogic.class, Objects.MOD_ID + ".blockGameLogic");
-
-        Objects.blockClayAvoiding = new BlockColoredAvoiding(Config.blockClayAvoidingId, Material.rock);
-        GameRegistry.registerBlock(Objects.blockClayAvoiding, ItemBlockColoredAvoiding.class, Objects.MOD_ID + ".blockClayAvoiding");
+        GameRegistry.registerBlock(Objects.blockGameLogic, ItemBlockGameLogic.class, "towerDefence.blockGameLogic");
 
         Objects.itemGameLogic = new ItemGameLogic(Config.itemGameLogicId);
-        GameRegistry.registerItem(Objects.itemGameLogic, Objects.MOD_ID + ".itemGameLogic");
+        GameRegistry.registerItem(Objects.itemGameLogic, "towerDefence.itemGameLogic");
 
-        Objects.creativeTab = new CreativeTabModjam("towerdefence-bleigh");
+        Objects.creativeTab = new CreativeTabTowerDefence("towerdefence-bleigh");
         Objects.creativeTab.setIconItemStack(new ItemStack(Objects.blockTower));
 
-        Objects.blockTower.setCreativeTab(Objects.creativeTab).setUnlocalizedName("towerdefence-tower").setTextureName("towerdefence:tower").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundAnvilFootstep);
+        Objects.blockTower.setCreativeTab(Objects.creativeTab).setUnlocalizedName("towerdefence-tower").setTextureName("towerdefence:tower").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundMetalFootstep);
         Objects.blockGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName("towerdefence-game-logic").setTextureName("towerdefence:game-logic").setHardness(1.0F).setResistance(100.0F).setStepSound(Block.soundPowderFootstep);
-        Objects.blockClayAvoiding.setCreativeTab(Objects.creativeTab).setUnlocalizedName("towerdefence-avoiding-clay").setTextureName("towerdefence:avoiding-clay").setHardness(1.25F).setResistance(100.0F).setStepSound(Block.soundStoneFootstep);
 
         Objects.itemGameLogic.setCreativeTab(Objects.creativeTab).setUnlocalizedName("towerdefence-game-logic").setTextureName("towerdefence:game-logic");
 
@@ -82,8 +75,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     public void init(FMLInitializationEvent event) {
         //Set block features, creative tabs, tile entity mappings
 
-        Objects.criteriaScore = new ScoreTDCriteria("towerDefenceScore");
-        Objects.criteriaHealth = new ScoreTDCriteria("towerDefenceHealth");
+        Objects.criteriaScore = new ScoreTDCriteria("towerDefence-Score");
+        Objects.criteriaHealth = new ScoreTDCriteria("towerDefence-Health");
 
         TileEntity.addMapping(TileEntitySpawner.class, "towerdefence-Spawner");
         TileEntity.addMapping(TileEntityTarget.class, "towerdefence-Target");

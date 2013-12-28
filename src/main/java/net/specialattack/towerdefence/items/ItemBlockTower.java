@@ -41,7 +41,7 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
                 stack.stackTagCompound.setInteger("blockY", y);
                 stack.stackTagCompound.setInteger("blockZ", z);
 
-                player.sendChatToPlayer(ChatMessageComponent.createFromText("This stack is bound to this Spawner now"));
+                player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".linked")));
 
                 return true;
             }
@@ -53,20 +53,19 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
 
         if (stack.stackTagCompound == null) {
             if (!world.isRemote) {
-                player.sendChatToPlayer(ChatMessageComponent.createFromText("You need to link this block first"));
+                player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".no-link")));
             }
 
             return false;
         }
         else if (!world.isRemote) {
-
             blockX = stack.stackTagCompound.getInteger("blockX");
             blockY = stack.stackTagCompound.getInteger("blockY");
             blockZ = stack.stackTagCompound.getInteger("blockZ");
 
             TileEntity otherTile = world.getBlockTileEntity(blockX, blockY, blockZ);
             if (otherTile == null || !(otherTile instanceof TileEntitySpawner)) {
-                player.sendChatToPlayer(ChatMessageComponent.createFromText("The link on this block is no longer valid"));
+                player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".bad-link")));
 
                 return false;
             }

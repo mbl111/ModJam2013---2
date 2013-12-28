@@ -20,6 +20,7 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.specialattack.towerdefence.CommonProxy;
 import net.specialattack.towerdefence.Objects;
@@ -207,7 +208,7 @@ public class TileEntitySpawner extends TileEntity {
         this.updateStat(3);
 
         if (target.health == 0) {
-            this.sendChatToPlayer("This is the end, sadfully :(");
+            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.failed"));
             this.active = false;
 
             for (Entity entity : this.spawnedEntities) {
@@ -216,7 +217,7 @@ public class TileEntitySpawner extends TileEntity {
             this.spawnedEntities.clear();
         }
         else {
-            this.sendChatToPlayer("A monster passed! Remaining health: " + target.health);
+            this.sendChatToPlayer(StatCollector.translateToLocalFormatted("towerdefence.wave.health", target.health));
         }
 
         this.score--;
@@ -396,7 +397,7 @@ public class TileEntitySpawner extends TileEntity {
                             this.spawnedEntities.add(entity);
                         }
                         else {
-                            this.sendChatToPlayer("Whoops! Something went wrong :<");
+                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
                             // this.setActiveUser(null);
                             this.active = false;
 
@@ -431,7 +432,7 @@ public class TileEntitySpawner extends TileEntity {
                                 this.spawnedEntities.add(entity);
                             }
                             else {
-                                this.sendChatToPlayer("Whoops! Something went wrong :<");
+                                this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
                                 // this.setActiveUser(null);
                                 this.active = false;
 
@@ -461,7 +462,7 @@ public class TileEntitySpawner extends TileEntity {
 
                     this.markDirty();
 
-                    this.sendChatToPlayer("Wave complete!");
+                    this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.finished"));
                 }
                 else {
                     Iterator<Entity> i = this.spawnedEntities.iterator();
@@ -499,10 +500,10 @@ public class TileEntitySpawner extends TileEntity {
                         if (this.getTarget() != null) {
                             this.spawning = true;
 
-                            this.sendChatToPlayer("The next wave is starting!");
+                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.start"));
                         }
                         else {
-                            this.sendChatToPlayer("Whoops! Something went wrong :<");
+                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
                             //this.setActiveUser(null);
                             this.active = false;
 

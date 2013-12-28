@@ -19,6 +19,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -244,12 +245,12 @@ public class BlockTower extends Block implements IAvoided {
 
         TileEntity tile = world.getBlockTileEntity(x, y, z);
         if (tile == null) {
-            player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
+            player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(super.getUnlocalizedName() + ".error")));
             return true;
         }
 
         if (!(tile instanceof TileEntityTower)) {
-            player.sendChatToPlayer(ChatMessageComponent.createFromText("Tower error!"));
+            player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(super.getUnlocalizedName() + ".error")));
             return true;
         }
         player.openGui(ModTowerDefence.instance, 1, world, x, y, z);

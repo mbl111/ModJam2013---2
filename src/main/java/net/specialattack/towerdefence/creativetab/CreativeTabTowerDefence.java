@@ -4,11 +4,11 @@ package net.specialattack.towerdefence.creativetab;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
-public class CreativeTabModjam extends CreativeTabs {
+public class CreativeTabTowerDefence extends CreativeTabs {
 
     private ItemStack iconItemStack;
 
-    public CreativeTabModjam(String label) {
+    public CreativeTabTowerDefence(String label) {
         super(label);
     }
 
