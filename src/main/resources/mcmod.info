@@ -1,16 +1,21 @@
-[
 {
-  "modid": "TowerDefence",
-  "name": "Tower Defence",
-  "description": "Team Bleigh's entry for the 2013 december modjam",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authors": ["mbl111", "heldplayer"],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+    "modListVersion" : 2,
+    "modList" : [
+        {
+            "modid" : "TowerDefence",
+            "name" : "Tower Defence",
+            "description" : "Team Bleigh's entry for the 2013 december modjam",
+            "version" : "${version}",
+            "mcversion" : "${mcversion}",
+            "authorList" : [
+                "heldplayer",
+                "mbl111"
+            ],
+            "url" : "",
+            "useDependencyInformation" : true,
+            "requiredMods" : [ "spacoreforge", "spacore" ],
+            "dependencies" : [ "spacore" ],
+            "dependants" : []
+        }
+    ]
 }
-]
