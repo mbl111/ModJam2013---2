@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.logic;
 
 import net.minecraft.entity.EntityLiving;

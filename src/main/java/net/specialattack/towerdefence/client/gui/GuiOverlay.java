@@ -1,6 +1,7 @@
-
 package net.specialattack.towerdefence.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -10,11 +11,7 @@ import net.minecraft.util.StatCollector;
 import net.specialattack.towerdefence.logic.Booster;
 import net.specialattack.towerdefence.logic.Monster;
 import net.specialattack.towerdefence.logic.WaveInfo;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiOverlay extends Gui {
@@ -51,8 +48,7 @@ public class GuiOverlay extends Gui {
         y += 10;
         if (WaveInfo.timer >= 0) {
             this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.next", WaveInfo.timer), x, y, 0xFFFFFF);
-        }
-        else {
+        } else {
             this.font.drawStringWithShadow(StatCollector.translateToLocalFormatted("gui.overlay.remaining", WaveInfo.monstersAlive), x, y, 0xFFFFFF);
         }
         y += 10;

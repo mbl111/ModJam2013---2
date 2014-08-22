@@ -1,11 +1,8 @@
-
 package net.specialattack.towerdefence.blocks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -15,12 +12,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraft.util.Icon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.StatCollector;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.specialattack.towerdefence.Assets;
@@ -32,9 +24,11 @@ import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
 import net.specialattack.towerdefence.towers.ITower;
 import net.specialattack.towerdefence.towers.ITowerRenderHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BlockTower extends Block implements IAvoided {
 
@@ -47,12 +41,10 @@ public class BlockTower extends Block implements IAvoided {
     // 0 base
     // 1,2 fake block
 
+    public List<ITower> towerTypes;
     private int renderId;
-
     @SideOnly(Side.CLIENT)
     private Icon base;
-
-    public List<ITower> towerTypes;
     private Map<String, ITower> towerMapping;
 
     public BlockTower(int blockId) {
@@ -71,26 +63,11 @@ public class BlockTower extends Block implements IAvoided {
         this.towerMapping.put(tower.getIdentifier(), tower);
     }
 
-    public ITower getTower(String identifier) {
-        if (identifier == null) {
-            throw new IllegalArgumentException("identifier");
-        }
-        return this.towerMapping.get(identifier);
-    }
-
     public ITower getTower(int id) {
         for (ITower tower : this.towerTypes) {
             if (tower.getId() == id) {
                 return tower;
             }
-        }
-        return null;
-    }
-
-    public TileEntityTower getTowerTile(IBlockAccess world, int x, int y, int z) {
-        TileEntity tile = world.getBlockTileEntity(x, y, z);
-        if (tile != null && tile instanceof TileEntityTower) {
-            return (TileEntityTower) tile;
         }
         return null;
     }
@@ -101,25 +78,21 @@ public class BlockTower extends Block implements IAvoided {
         return tower == null ? null : tower.getRenderHandler();
     }
 
+    public ITower getTower(String identifier) {
+        if (identifier == null) {
+            throw new IllegalArgumentException("identifier");
+        }
+        return this.towerMapping.get(identifier);
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
     @Override
     public int getRenderType() {
         return this.renderId;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister register) {
-        this.base = register.registerIcon(Assets.DOMAIN + ":tower-base");
-
-        for (ITower tower : this.towerTypes) {
-            tower.registerIcons(register);
-        }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public Icon getIcon(int side, int meta) {
-        return this.base;
     }
 
     @Override
@@ -139,22 +112,38 @@ public class BlockTower extends Block implements IAvoided {
         return super.getBlockTexture(world, x, y, z, side);
     }
 
-    @Override
-    public boolean canPlaceBlockAt(World world, int x, int y, int z) {
-        for (int i = 0; i < 3; i++) {
-            if (!super.canPlaceBlockAt(world, x, y + i, z)) {
-                return false;
-            }
+    public TileEntityTower getTowerTile(IBlockAccess world, int x, int y, int z) {
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
+        if (tile != null && tile instanceof TileEntityTower) {
+            return (TileEntityTower) tile;
         }
-        return true;
+        return null;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-        super.onBlockPlacedBy(world, x, y, z, entity, stack);
+    @SideOnly(Side.CLIENT)
+    public Icon getIcon(int side, int meta) {
+        return this.base;
+    }
 
-        world.setBlock(x, y + 1, z, this.blockID, 1, 3);
-        world.setBlock(x, y + 2, z, this.blockID, 2, 3);
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
+        this.setBlockBoundsBasedOnState(world, x, y, z);
+        if (entity instanceof EntityPlayer) {
+            if (world.getBlockMetadata(x, y, z) != 0) {
+                return;
+            }
+            super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        }
+        if (entity instanceof EntityLiving) {
+            super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+        }
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
     }
 
     @Override
@@ -181,36 +170,6 @@ public class BlockTower extends Block implements IAvoided {
     }
 
     @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
-        this.setBlockBoundsBasedOnState(world, x, y, z);
-        if (entity instanceof EntityPlayer) {
-            if (world.getBlockMetadata(x, y, z) != 0) {
-                return;
-            }
-            super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
-        }
-        if (entity instanceof EntityLiving) {
-            super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
-        }
-    }
-
-    @Override
     public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
         if (world.getBlockMetadata(x, y, z) != 0) {
             return null;
@@ -220,16 +179,13 @@ public class BlockTower extends Block implements IAvoided {
     }
 
     @Override
-    public TileEntity createTileEntity(World world, int metadata) {
-        if (metadata == 0) {
-            return new TileEntityTower();
+    public boolean canPlaceBlockAt(World world, int x, int y, int z) {
+        for (int i = 0; i < 3; i++) {
+            if (!super.canPlaceBlockAt(world, x, y + i, z)) {
+                return false;
+            }
         }
-        return null;
-    }
-
-    @Override
-    public boolean hasTileEntity(int metadata) {
-        return metadata == 0;
+        return true;
     }
 
     @Override
@@ -259,8 +215,44 @@ public class BlockTower extends Block implements IAvoided {
     }
 
     @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
     public void setBlockBoundsForItemRender() {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
+        super.onBlockPlacedBy(world, x, y, z, entity, stack);
+
+        world.setBlock(x, y + 1, z, this.blockID, 1, 3);
+        world.setBlock(x, y + 2, z, this.blockID, 2, 3);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IconRegister register) {
+        this.base = register.registerIcon(Assets.DOMAIN + ":tower-base");
+
+        for (ITower tower : this.towerTypes) {
+            tower.registerIcons(register);
+        }
+    }
+
+    @Override
+    public boolean hasTileEntity(int metadata) {
+        return metadata == 0;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, int metadata) {
+        if (metadata == 0) {
+            return new TileEntityTower();
+        }
+        return null;
     }
 
 }

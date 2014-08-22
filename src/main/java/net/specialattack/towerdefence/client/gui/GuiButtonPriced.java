@@ -1,14 +1,13 @@
-
 package net.specialattack.towerdefence.client.gui;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.specialattack.towerdefence.logic.WaveInfo;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiButtonPriced extends GuiButtonOverlay {
@@ -36,8 +35,7 @@ public class GuiButtonPriced extends GuiButtonOverlay {
         List<String> lines = super.getTooltipLines(minecraft);
         if (this.price > 0) {
             lines.add(1, I18n.getStringParams("container.towerdefence-tower.cost", this.price));
-        }
-        else {
+        } else {
             lines.add(1, I18n.getString("container.towerdefence-tower.nocost"));
         }
 

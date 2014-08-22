@@ -1,6 +1,6 @@
-
 package net.specialattack.towerdefence.client.renderer;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -10,10 +10,7 @@ import net.specialattack.towerdefence.tileentity.TileEntityTower;
 import net.specialattack.towerdefence.towers.ITower;
 import net.specialattack.towerdefence.towers.ITowerRenderHandler;
 import net.specialattack.towerdefence.towers.TowerAoE;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class BlockRendererTower implements ISimpleBlockRenderingHandler {
 
@@ -35,8 +32,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         if (metadata == 0) {
             block.setBlockBoundsForItemRender();
             BlockRendererTower.renderBox(block, x, y, z, renderer);
-        }
-        else if (metadata == 1) {
+        } else if (metadata == 1) {
             TileEntity tile = world.getBlockTileEntity(x, y - 1, z);
 
             if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).towerInstance != null) {
@@ -71,8 +67,7 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
                 }
 
             }
-        }
-        else if (metadata == 2) {
+        } else if (metadata == 2) {
             TileEntity tile = world.getBlockTileEntity(x, y - 2, z);
 
             if (tile != null && tile instanceof TileEntityTower && ((TileEntityTower) tile).towerInstance != null) {
@@ -87,12 +82,16 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
                     }
                 }
             }
-        }
-        else {
+        } else {
             return false;
         }
 
         return true;
+    }
+
+    public static void renderBox(Block block, int x, int y, int z, RenderBlocks renderer) {
+        renderer.setRenderBoundsFromBlock(block);
+        renderer.renderStandardBlock(block, x, y, z);
     }
 
     public static void renderBox(Block block, int x, int y, int z, float startX, float startY, float startZ, float sizeX, float sizeY, float sizeZ, RenderBlocks renderer) {
@@ -102,9 +101,14 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         BlockRendererTower.renderBox(block, x, y, z, renderer);
     }
 
-    public static void renderBox(Block block, int x, int y, int z, RenderBlocks renderer) {
-        renderer.setRenderBoundsFromBlock(block);
-        renderer.renderStandardBlock(block, x, y, z);
+    @Override
+    public boolean shouldRender3DInInventory() {
+        return true;
+    }
+
+    @Override
+    public int getRenderId() {
+        return this.renderId;
     }
 
     public static void renderBox(Block block, int metadata, RenderBlocks renderer) {
@@ -138,16 +142,6 @@ public class BlockRendererTower implements ISimpleBlockRenderingHandler {
         renderer.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, metadata));
         tessellator.draw();
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-    }
-
-    @Override
-    public boolean shouldRender3DInInventory() {
-        return true;
-    }
-
-    @Override
-    public int getRenderId() {
-        return this.renderId;
     }
 
 }

@@ -1,6 +1,11 @@
-
 package net.specialattack.towerdefence.client;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,12 +23,6 @@ import net.specialattack.towerdefence.client.render.tileentity.TileEntityTowerRe
 import net.specialattack.towerdefence.tileentity.TileEntityMultiplayerController;
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -57,19 +56,16 @@ public class ClientProxy extends CommonProxy {
                 if (tile != null && tile instanceof TileEntitySpawner) {
                     return new GuiSpawner((TileEntitySpawner) tile);
                 }
-            }
-            else if (ID == 1) {
+            } else if (ID == 1) {
                 if (tile != null && tile instanceof TileEntityTower) {
                     return new GuiTower((TileEntityTower) tile);
                 }
-            }
-            else if (ID == 2) {
+            } else if (ID == 2) {
                 if (tile != null && tile instanceof TileEntityMultiplayerController) {
                     return new GuiMultiplayerController((TileEntityMultiplayerController) tile);
                 }
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;

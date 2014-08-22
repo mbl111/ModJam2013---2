@@ -1,14 +1,13 @@
-
 package net.specialattack.towerdefence.inventory;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.specialattack.towerdefence.packet.PacketHandler;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
 import net.specialattack.towerdefence.towers.ITower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerTower extends Container {
 
@@ -30,11 +29,6 @@ public class ContainerTower extends Container {
 
     public ContainerTower(TileEntityTower tile) {
         this.tile = tile;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;
     }
 
     @Override
@@ -100,40 +94,6 @@ public class ContainerTower extends Container {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int id, int value) {
-        if (id == 0) {
-            this.activated = (value & 0x1) == 1;
-            this.isMyName = (value & 0x2) == 2;
-        }
-        else if (id == 1) {
-            this.level = value;
-        }
-        else if (id == 2) {
-            this.speed = value;
-        }
-        else if (id == 3) {
-            this.range = value;
-        }
-        else if (id == 4) {
-            this.damage = value;
-        }
-        else if (id == 5) {
-            this.damageLevel = value;
-        }
-        else if (id == 6) {
-            this.speedLevel = value;
-        }
-        else if (id == 7) {
-            this.rangeLevel = value;
-        }
-        else if (id > 7 && id < 12) {
-            this.prices[id - 8] = value;
-        }
-        this.updated = true;
-    }
-
-    @Override
     public boolean enchantItem(EntityPlayer player, int id) {
         if (this.tile.towerInstance == null) {
             ITower tower = this.tile.getTowerBlock().getTower(id);
@@ -145,8 +105,7 @@ public class ContainerTower extends Container {
                     this.tile.onInventoryChanged();
                 }
             }
-        }
-        else {
+        } else {
             if (this.tile.tryBuy(player.username, this.tile.towerInstance.getPriceUpgrade(id))) {
                 this.tile.towerInstance.upgrade(id);
                 PacketHandler.resendTileInfo(this.tile);
@@ -155,6 +114,37 @@ public class ContainerTower extends Container {
             }
         }
 
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void updateProgressBar(int id, int value) {
+        if (id == 0) {
+            this.activated = (value & 0x1) == 1;
+            this.isMyName = (value & 0x2) == 2;
+        } else if (id == 1) {
+            this.level = value;
+        } else if (id == 2) {
+            this.speed = value;
+        } else if (id == 3) {
+            this.range = value;
+        } else if (id == 4) {
+            this.damage = value;
+        } else if (id == 5) {
+            this.damageLevel = value;
+        } else if (id == 6) {
+            this.speedLevel = value;
+        } else if (id == 7) {
+            this.rangeLevel = value;
+        } else if (id > 7 && id < 12) {
+            this.prices[id - 8] = value;
+        }
+        this.updated = true;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
         return true;
     }
 

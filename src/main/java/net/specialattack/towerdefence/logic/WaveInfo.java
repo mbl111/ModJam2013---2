@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.logic;
 
 import java.util.ArrayList;

@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.creativetab;
 
 import net.minecraft.creativetab.CreativeTabs;

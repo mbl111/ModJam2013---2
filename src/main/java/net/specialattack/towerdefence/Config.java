@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence;
 
 import net.minecraftforge.common.Configuration;

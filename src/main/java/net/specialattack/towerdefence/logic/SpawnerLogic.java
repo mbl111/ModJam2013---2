@@ -1,23 +1,17 @@
-
 package net.specialattack.towerdefence.logic;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntitySnowman;
-import net.minecraft.entity.monster.EntityWitch;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public final class SpawnerLogic {
 
@@ -49,6 +43,7 @@ public final class SpawnerLogic {
         SpawnerLogic.monsters.add(monster);
 
         monster = new MonsterBaby(7, EntityZombie.class, 50, true) {
+
             @Override
             public void makeBaby(EntityLiving entity) {
                 ((EntityZombie) entity).setChild(true);
@@ -162,8 +157,7 @@ public final class SpawnerLogic {
                         if (booster.conflicts(other) || other.conflicts(booster)) {
                             if (rand.nextInt(level) < level / 2) {
                                 break loop;
-                            }
-                            else {
+                            } else {
                                 break main;
                             }
                         }
@@ -173,8 +167,7 @@ public final class SpawnerLogic {
 
                     if (rand.nextInt(level) < level / 2) {
                         continue;
-                    }
-                    else {
+                    } else {
                         break;
                     }
                 }

@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence;
 
 import net.minecraft.util.DamageSource;

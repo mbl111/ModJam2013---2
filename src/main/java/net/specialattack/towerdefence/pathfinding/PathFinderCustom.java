@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.pathfinding;
 
 import net.minecraft.block.Block;
@@ -26,6 +25,22 @@ public class PathFinderCustom extends PathFinder {
         this.isPathingInWater = isPathingInWater;
     }
 
+    public static PathEntity getEntityPathToXYZ(Entity entity, World world, int posX, int posY, int posZ, float range, boolean canPassOpenWoodenDoors, boolean canPassClosedWoodenDoors, boolean avoidsWater, boolean canSwim) {
+        int l = MathHelper.floor_double(entity.posX);
+        int i1 = MathHelper.floor_double(entity.posY);
+        int j1 = MathHelper.floor_double(entity.posZ);
+        int k1 = (int) (range + 8.0F);
+        int l1 = l - k1;
+        int i2 = i1 - k1;
+        int j2 = j1 - k1;
+        int k2 = l + k1;
+        int l2 = i1 + k1;
+        int i3 = j1 + k1;
+        ChunkCache chunkcache = new ChunkCache(world, l1, i2, j2, k2, l2, i3, 0);
+        PathEntity pathentity = (new PathFinderCustom(chunkcache, canPassOpenWoodenDoors, canPassClosedWoodenDoors, avoidsWater, canSwim)).createEntityPathTo(entity, posX, posY, posZ, range);
+        return pathentity;
+    }
+
     @Override
     public int getVerticalOffset(Entity entity, int posX, int posY, int posZ, PathPoint point) {
         return PathFinderCustom.calulateVerticalOffset(entity, posX, posY, posZ, point, this.isPathingInWater, this.isMovementBlockAllowed, this.isWoodenDoorAllowed);
@@ -42,13 +57,11 @@ public class PathFinderCustom extends PathFinder {
                     if (blockId > 0) {
                         if (blockId == Block.trapdoor.blockID) {
                             offset = true;
-                        }
-                        else if (blockId != Block.waterMoving.blockID && blockId != Block.waterStill.blockID) {
+                        } else if (blockId != Block.waterMoving.blockID && blockId != Block.waterStill.blockID) {
                             if (!isWoodenDoorAllowed && blockId == Block.doorWood.blockID) {
                                 return 0;
                             }
-                        }
-                        else {
+                        } else {
                             if (isPathingInWater) {
                                 return -1;
                             }
@@ -67,11 +80,9 @@ public class PathFinderCustom extends PathFinder {
                             if (entity.worldObj.blockGetRenderType(i2, j2, k2) != 9 && entity.worldObj.blockGetRenderType(i2, j2 - 1, k2) != 9) {
                                 return -3;
                             }
-                        }
-                        else if (block instanceof IAvoided) {
+                        } else if (block instanceof IAvoided) {
                             return -2;
-                        }
-                        else if (!block.getBlocksMovement(entity.worldObj, x, y, z) && (!isMovementBlockAllowed || blockId != Block.doorWood.blockID)) {
+                        } else if (!block.getBlocksMovement(entity.worldObj, x, y, z) && (!isMovementBlockAllowed || blockId != Block.doorWood.blockID)) {
                             if (renderType == 11 || blockId == Block.fenceGate.blockID || renderType == 32) {
                                 return -3;
                             }
@@ -90,8 +101,7 @@ public class PathFinderCustom extends PathFinder {
                                 return -2;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         blockId = entity.worldObj.getBlockId(x, y - 1, z);
 
                         if (blockId > 0) {
@@ -106,22 +116,6 @@ public class PathFinderCustom extends PathFinder {
         }
 
         return offset ? 2 : 1;
-    }
-
-    public static PathEntity getEntityPathToXYZ(Entity entity, World world, int posX, int posY, int posZ, float range, boolean canPassOpenWoodenDoors, boolean canPassClosedWoodenDoors, boolean avoidsWater, boolean canSwim) {
-        int l = MathHelper.floor_double(entity.posX);
-        int i1 = MathHelper.floor_double(entity.posY);
-        int j1 = MathHelper.floor_double(entity.posZ);
-        int k1 = (int) (range + 8.0F);
-        int l1 = l - k1;
-        int i2 = i1 - k1;
-        int j2 = j1 - k1;
-        int k2 = l + k1;
-        int l2 = i1 + k1;
-        int i3 = j1 + k1;
-        ChunkCache chunkcache = new ChunkCache(world, l1, i2, j2, k2, l2, i3, 0);
-        PathEntity pathentity = (new PathFinderCustom(chunkcache, canPassOpenWoodenDoors, canPassClosedWoodenDoors, avoidsWater, canSwim)).createEntityPathTo(entity, posX, posY, posZ, range);
-        return pathentity;
     }
 
 }

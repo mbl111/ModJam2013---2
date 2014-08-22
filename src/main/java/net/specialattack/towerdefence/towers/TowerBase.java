@@ -1,8 +1,7 @@
-
 package net.specialattack.towerdefence.towers;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.EntityLiving;
@@ -12,8 +11,8 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.specialattack.towerdefence.Assets;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public abstract class TowerBase implements ITower {
 
@@ -22,6 +21,8 @@ public abstract class TowerBase implements ITower {
     private String identifier;
     private int id;
     private int cost;
+    private Icon[] iconsTop;
+    private Icon[] iconsBottom;
 
     public TowerBase(String identifier, int id, int cost, int u, int v) {
         this.u = u;
@@ -32,22 +33,14 @@ public abstract class TowerBase implements ITower {
     }
 
     @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
     public int getId() {
         return this.id;
     }
 
     @Override
-    public int getBuyPrice() {
-        return this.cost;
+    public String getIdentifier() {
+        return this.identifier;
     }
-
-    private Icon[] iconsTop;
-    private Icon[] iconsBottom;
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -86,6 +79,11 @@ public abstract class TowerBase implements ITower {
         return this.v;
     }
 
+    @Override
+    public int getBuyPrice() {
+        return this.cost;
+    }
+
     public abstract static class Instance implements ITowerInstance {
 
         public TileEntityTower tower;
@@ -102,44 +100,6 @@ public abstract class TowerBase implements ITower {
             this.speed = 1;
             this.range = 1;
             this.damage = 1;
-        }
-
-        @Override
-        public void upgrade(int id) {
-            switch (id) {
-            case 0:
-                this.level++;
-            break;
-            case 1:
-                this.damage++;
-            break;
-            case 2:
-                this.speed++;
-            break;
-            case 3:
-                this.range++;
-            break;
-            }
-        }
-
-        @Override
-        public int getLevel() {
-            return this.level;
-        }
-
-        @Override
-        public int getSpeedLevel() {
-            return this.speed;
-        }
-
-        @Override
-        public int getRangeLevel() {
-            return this.range;
-        }
-
-        @Override
-        public int getDamageLevel() {
-            return this.damage;
         }
 
         @SuppressWarnings("unchecked")
@@ -169,6 +129,44 @@ public abstract class TowerBase implements ITower {
         @Override
         public ITower getTowerType() {
             return this.type;
+        }
+
+        @Override
+        public int getLevel() {
+            return this.level;
+        }
+
+        @Override
+        public int getSpeedLevel() {
+            return this.speed;
+        }
+
+        @Override
+        public int getRangeLevel() {
+            return this.range;
+        }
+
+        @Override
+        public int getDamageLevel() {
+            return this.damage;
+        }
+
+        @Override
+        public void upgrade(int id) {
+            switch (id) {
+                case 0:
+                    this.level++;
+                    break;
+                case 1:
+                    this.damage++;
+                    break;
+                case 2:
+                    this.speed++;
+                    break;
+                case 3:
+                    this.range++;
+                    break;
+            }
         }
 
     }

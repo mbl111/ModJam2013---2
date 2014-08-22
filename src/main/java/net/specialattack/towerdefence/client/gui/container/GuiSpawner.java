@@ -1,17 +1,14 @@
-
 package net.specialattack.towerdefence.client.gui.container;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.specialattack.towerdefence.Assets;
 import net.specialattack.towerdefence.inventory.ContainerSpawner;
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
-
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiSpawner extends GuiContainer {
@@ -29,47 +26,6 @@ public class GuiSpawner extends GuiContainer {
         this.tile = tile;
     }
 
-    private void setupButtons() {
-        if (!this.container.canWork) {
-            this.activate.enabled = false;
-            this.activate.displayString = I18n.getString("container.towerdefence-spawner.nowork");
-
-            this.startnow.enabled = false;
-            this.revoke.enabled = false;
-        }
-        else {
-            this.revoke.enabled = this.container.isOp;
-            if (!this.container.active) {
-                if (this.container.canIJoin) {
-                    this.activate.enabled = true;
-                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.bind");
-
-                    this.startnow.enabled = false;
-                }
-                else {
-                    this.activate.enabled = true;
-                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.alreadybound");
-
-                    this.startnow.enabled = false;
-                }
-            }
-            else {
-                if (this.container.isMyName) {
-                    this.activate.enabled = true;
-                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.unbind");
-
-                    this.startnow.enabled = !this.container.isMultiplayer;
-                }
-                else {
-                    this.activate.enabled = false;
-                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.nobind");
-
-                    this.startnow.enabled = false;
-                }
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void initGui() {
@@ -84,20 +40,40 @@ public class GuiSpawner extends GuiContainer {
         this.setupButtons();
     }
 
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        if (button.drawButton && button.enabled) {
-            this.mc.playerController.sendEnchantPacket(this.container.windowId, button.id);
-        }
-    }
+    private void setupButtons() {
+        if (!this.container.canWork) {
+            this.activate.enabled = false;
+            this.activate.displayString = I18n.getString("container.towerdefence-spawner.nowork");
 
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
+            this.startnow.enabled = false;
+            this.revoke.enabled = false;
+        } else {
+            this.revoke.enabled = this.container.isOp;
+            if (!this.container.active) {
+                if (this.container.canIJoin) {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.bind");
 
-        if (this.container.updated) {
-            this.setupButtons();
-            this.container.updated = false;
+                    this.startnow.enabled = false;
+                } else {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.alreadybound");
+
+                    this.startnow.enabled = false;
+                }
+            } else {
+                if (this.container.isMyName) {
+                    this.activate.enabled = true;
+                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.unbind");
+
+                    this.startnow.enabled = !this.container.isMultiplayer;
+                } else {
+                    this.activate.enabled = false;
+                    this.activate.displayString = I18n.getString("container.towerdefence-spawner.nobind");
+
+                    this.startnow.enabled = false;
+                }
+            }
         }
     }
 
@@ -115,6 +91,23 @@ public class GuiSpawner extends GuiContainer {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+
+        if (this.container.updated) {
+            this.setupButtons();
+            this.container.updated = false;
+        }
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.drawButton && button.enabled) {
+            this.mc.playerController.sendEnchantPacket(this.container.windowId, button.id);
+        }
     }
 
 }

@@ -1,9 +1,8 @@
-
 package net.specialattack.towerdefence.towers;
 
-import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.nbt.NBTTagCompound;
 
 public interface ITowerInstance {
 

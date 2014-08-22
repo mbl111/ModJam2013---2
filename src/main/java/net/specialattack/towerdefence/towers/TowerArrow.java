@@ -1,9 +1,7 @@
-
 package net.specialattack.towerdefence.towers;
 
-import java.util.List;
-import java.util.Random;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -13,10 +11,14 @@ import net.minecraft.world.IBlockAccess;
 import net.specialattack.towerdefence.CommonProxy;
 import net.specialattack.towerdefence.packet.PacketHandler;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.Random;
 
 public class TowerArrow extends TowerBase {
+
+    @SideOnly(Side.CLIENT)
+    private ITowerRenderHandler renderHandler;
 
     public TowerArrow(String identifier, int id, int cost, int u, int v) {
         super(identifier, id, cost, u, v);
@@ -26,9 +28,6 @@ public class TowerArrow extends TowerBase {
     public ITowerInstance createNewInstance(TileEntityTower tile) {
         return new Instance(tile, this);
     }
-
-    @SideOnly(Side.CLIENT)
-    private ITowerRenderHandler renderHandler;
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -45,33 +44,6 @@ public class TowerArrow extends TowerBase {
 
         public Instance(TileEntityTower tower, ITower type) {
             super(tower, type);
-        }
-
-        @Override
-        public int getPriceUpgrade(int id) {
-            switch (id) {
-            case 0:
-                if (this.level >= 10) {
-                    return -1;
-                }
-                return 60 + 20 * this.level;
-            case 1:
-                if (this.level <= this.damage || this.damage >= 10) {
-                    return -1;
-                }
-                return 60 + 70 * this.damage * this.damage - 20 * (this.level - this.damage);
-            case 2:
-                if (this.level <= this.speed || this.speed >= 7) {
-                    return -1;
-                }
-                return 50 + 50 * this.speed * this.speed - 10 * (this.level - this.speed);
-            case 3:
-                if (this.level <= this.range || this.range >= 5) {
-                    return -1;
-                }
-                return 45 + 50 * this.range * this.range - 20 * (this.level - this.range);
-            }
-            return -1;
         }
 
         @Override
@@ -115,8 +87,7 @@ public class TowerArrow extends TowerBase {
                         distance = currentDistance;
                         this.target = living;
                         first = false;
-                    }
-                    else {
+                    } else {
                         if (currentDistance < distance) {
                             distance = currentDistance;
                             this.target = living;
@@ -164,6 +135,33 @@ public class TowerArrow extends TowerBase {
             }
         }
 
+        @Override
+        public int getPriceUpgrade(int id) {
+            switch (id) {
+                case 0:
+                    if (this.level >= 10) {
+                        return -1;
+                    }
+                    return 60 + 20 * this.level;
+                case 1:
+                    if (this.level <= this.damage || this.damage >= 10) {
+                        return -1;
+                    }
+                    return 60 + 70 * this.damage * this.damage - 20 * (this.level - this.damage);
+                case 2:
+                    if (this.level <= this.speed || this.speed >= 7) {
+                        return -1;
+                    }
+                    return 50 + 50 * this.speed * this.speed - 10 * (this.level - this.speed);
+                case 3:
+                    if (this.level <= this.range || this.range >= 5) {
+                        return -1;
+                    }
+                    return 45 + 50 * this.range * this.range - 20 * (this.level - this.range);
+            }
+            return -1;
+        }
+
     }
 
     @SideOnly(Side.CLIENT)
@@ -180,8 +178,7 @@ public class TowerArrow extends TowerBase {
         public boolean renderStatic(TileEntity tile, boolean isTop, IBlockAccess world, int x, int y, int z, RenderBlocks renderer) {
             if (isTop) {
                 // Render top block
-            }
-            else {
+            } else {
                 // Render bottom block
             }
             return true;

@@ -1,16 +1,15 @@
-
 package net.specialattack.towerdefence.inventory;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.server.MinecraftServer;
 import net.specialattack.towerdefence.tileentity.TileEntityMultiplayerController;
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ContainerMultiplayerController extends Container {
 
@@ -29,11 +28,6 @@ public class ContainerMultiplayerController extends Container {
 
     public ContainerMultiplayerController(TileEntityMultiplayerController tile) {
         this.tile = tile;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;
     }
 
     @Override
@@ -80,6 +74,27 @@ public class ContainerMultiplayerController extends Container {
     }
 
     @Override
+    public boolean enchantItem(EntityPlayer player, int id) {
+        if (id == 0) {
+            if (this.tile.active) {
+                this.tile.tryStop();
+            } else {
+                if (this.tile.getActiveSpawnersCount() >= 1) {
+                    this.tile.tryStart();
+                }
+            }
+        } else if (id == 1) {
+            if (MinecraftServer.getServer().getConfigurationManager().isPlayerOpped(player.username)) {
+                List<TileEntitySpawner> spawners = this.tile.getAllSpawners();
+                for (TileEntitySpawner spawner : spawners) {
+                    spawner.setActiveUser(null);
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int id, int value) {
         if (id == 0) {
@@ -98,25 +113,7 @@ public class ContainerMultiplayerController extends Container {
     }
 
     @Override
-    public boolean enchantItem(EntityPlayer player, int id) {
-        if (id == 0) {
-            if (this.tile.active) {
-                this.tile.tryStop();
-            }
-            else {
-                if (this.tile.getActiveSpawnersCount() >= 1) {
-                    this.tile.tryStart();
-                }
-            }
-        }
-        else if (id == 1) {
-            if (MinecraftServer.getServer().getConfigurationManager().isPlayerOpped(player.username)) {
-                List<TileEntitySpawner> spawners = this.tile.getAllSpawners();
-                for (TileEntitySpawner spawner : spawners) {
-                    spawner.setActiveUser(null);
-                }
-            }
-        }
+    public boolean canInteractWith(EntityPlayer entityplayer) {
         return true;
     }
 }

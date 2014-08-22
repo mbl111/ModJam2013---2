@@ -1,8 +1,7 @@
-
 package net.specialattack.towerdefence.items;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,8 +19,8 @@ import net.minecraft.world.World;
 import net.specialattack.towerdefence.tileentity.TileEntityMultiplayerController;
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
 import net.specialattack.towerdefence.tileentity.TileEntityTarget;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ItemGameLogic extends Item implements IPassClick {
 
@@ -32,6 +31,12 @@ public class ItemGameLogic extends Item implements IPassClick {
         super(itemId);
         this.setHasSubtypes(true);
         this.setMaxStackSize(1);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public Icon getIconFromDamage(int meta) {
+        return this.icons[meta % this.icons.length];
     }
 
     @Override
@@ -51,8 +56,7 @@ public class ItemGameLogic extends Item implements IPassClick {
 
                     if (stack.stackTagCompound == null) {
                         player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".no-target")));
-                    }
-                    else {
+                    } else {
                         int blockX = stack.stackTagCompound.getInteger("blockX");
                         int blockY = stack.stackTagCompound.getInteger("blockY");
                         int blockZ = stack.stackTagCompound.getInteger("blockZ");
@@ -65,15 +69,13 @@ public class ItemGameLogic extends Item implements IPassClick {
                             spawner.setTarget(target);
 
                             player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".linked")));
-                        }
-                        else {
+                        } else {
                             player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".target-gone")));
                         }
 
                         stack.stackTagCompound = null;
                     }
-                }
-                else if (tile instanceof TileEntityTarget) {
+                } else if (tile instanceof TileEntityTarget) {
                     stack.stackTagCompound = new NBTTagCompound("tag");
                     stack.stackTagCompound.setInteger("blockX", x);
                     stack.stackTagCompound.setInteger("blockY", y);
@@ -81,15 +83,13 @@ public class ItemGameLogic extends Item implements IPassClick {
 
                     player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".target-set")));
                 }
-            }
-            else if (meta == 1) {
+            } else if (meta == 1) {
                 if (tile instanceof TileEntityMultiplayerController) {
                     TileEntityMultiplayerController controller = (TileEntityMultiplayerController) tile;
 
                     if (stack.stackTagCompound == null) {
                         player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".no-spawners")));
-                    }
-                    else {
+                    } else {
                         NBTTagList locations = stack.stackTagCompound.getTagList("locations");
 
                         int success = 0;
@@ -109,8 +109,7 @@ public class ItemGameLogic extends Item implements IPassClick {
                                 controller.addSpawner(spawner);
 
                                 success++;
-                            }
-                            else {
+                            } else {
                                 fail++;
                             }
                         }
@@ -119,8 +118,7 @@ public class ItemGameLogic extends Item implements IPassClick {
 
                         stack.stackTagCompound = null;
                     }
-                }
-                else if (tile instanceof TileEntitySpawner) {
+                } else if (tile instanceof TileEntitySpawner) {
                     if (stack.stackTagCompound == null) {
                         stack.stackTagCompound = new NBTTagCompound("tag");
                     }
@@ -141,18 +139,27 @@ public class ItemGameLogic extends Item implements IPassClick {
     }
 
     @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        return super.getUnlocalizedName() + stack.getItemDamage();
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
     @SideOnly(Side.CLIENT)
-    public Icon getIconFromDamage(int meta) {
-        return this.icons[meta % this.icons.length];
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extra) {
+        if (stack.stackTagCompound != null) {
+            NBTTagList locations = stack.stackTagCompound.getTagList("locations");
+            list.add(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".linked", locations.tagCount()));
+        } else {
+            list.add(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".unlinked"));
+        }
+        list.addAll(Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".description"), 200));
     }
 
     @Override
-    public void registerIcons(IconRegister register) {
-        this.icons = new Icon[2];
-
-        for (int i = 0; i < this.icons.length; ++i) {
-            this.icons[i] = register.registerIcon(this.getIconString() + i);
-        }
+    @SideOnly(Side.CLIENT)
+    public EnumRarity getRarity(ItemStack stack) {
+        return stack.stackTagCompound == null ? EnumRarity.common : EnumRarity.uncommon;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -165,28 +172,12 @@ public class ItemGameLogic extends Item implements IPassClick {
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return super.getUnlocalizedName() + stack.getItemDamage();
-    }
+    public void registerIcons(IconRegister register) {
+        this.icons = new Icon[2];
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean extra) {
-        if (stack.stackTagCompound != null) {
-            NBTTagList locations = stack.stackTagCompound.getTagList("locations");
-            list.add(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".linked", locations.tagCount()));
+        for (int i = 0; i < this.icons.length; ++i) {
+            this.icons[i] = register.registerIcon(this.getIconString() + i);
         }
-        else {
-            list.add(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".unlinked"));
-        }
-        list.addAll(Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".description"), 200));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public EnumRarity getRarity(ItemStack stack) {
-        return stack.stackTagCompound == null ? EnumRarity.common : EnumRarity.uncommon;
     }
 
 }

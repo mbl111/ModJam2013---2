@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.logic;
 
 import net.minecraft.entity.EntityLiving;
@@ -16,8 +15,7 @@ public abstract class MonsterBaby extends Monster {
             EntityLiving entity = this.constructor.newInstance(world);
             this.makeBaby(entity);
             return entity;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;

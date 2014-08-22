@@ -1,14 +1,13 @@
-
 package net.specialattack.towerdefence.inventory;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.server.MinecraftServer;
 import net.specialattack.towerdefence.CommonProxy;
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerSpawner extends Container {
 
@@ -29,11 +28,6 @@ public class ContainerSpawner extends Container {
 
     public ContainerSpawner(TileEntitySpawner tile) {
         this.tile = tile;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return true;
     }
 
     @Override
@@ -88,52 +82,49 @@ public class ContainerSpawner extends Container {
     }
 
     @Override
+    public boolean enchantItem(EntityPlayer player, int id) {
+        if (id == 0) {
+            if (this.tile.getActiveUser() == null) {
+                this.tile.setActiveUser(player.username);
+            } else {
+                if (this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
+                    this.tile.setActiveUser(null);
+                }
+            }
+        } else if (id == 1) {
+            if (this.tile.getActiveUser() != null && this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
+                //Start the game now
+                this.tile.timer = 600 - 20 * 3;
+            }
+        } else if (id == 2) {
+            if (MinecraftServer.getServer().getConfigurationManager().isPlayerOpped(player.username)) {
+                this.tile.setActiveUser(null);
+            }
+        }
+        return true;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int id, int value) {
         if (id == 0) {
             this.active = value == 1;
-        }
-        else if (id == 1) {
+        } else if (id == 1) {
             this.isMyName = value == 1;
-        }
-        else if (id == 2) {
+        } else if (id == 2) {
             this.canWork = value == 1;
-        }
-        else if (id == 3) {
+        } else if (id == 3) {
             this.isMultiplayer = value == 1;
-        }
-        else if (id == 4) {
+        } else if (id == 4) {
             this.isOp = value == 1;
-        }
-        else if (id == 5) {
+        } else if (id == 5) {
             this.canIJoin = value == 1;
         }
         this.updated = true;
     }
 
     @Override
-    public boolean enchantItem(EntityPlayer player, int id) {
-        if (id == 0) {
-            if (this.tile.getActiveUser() == null) {
-                this.tile.setActiveUser(player.username);
-            }
-            else {
-                if (this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
-                    this.tile.setActiveUser(null);
-                }
-            }
-        }
-        else if (id == 1) {
-            if (this.tile.getActiveUser() != null && this.tile.getActiveUser().equalsIgnoreCase(player.username)) {
-                //Start the game now
-                this.tile.timer = 600 - 20 * 3;
-            }
-        }
-        else if (id == 2) {
-            if (MinecraftServer.getServer().getConfigurationManager().isPlayerOpped(player.username)) {
-                this.tile.setActiveUser(null);
-            }
-        }
+    public boolean canInteractWith(EntityPlayer entityplayer) {
         return true;
     }
 

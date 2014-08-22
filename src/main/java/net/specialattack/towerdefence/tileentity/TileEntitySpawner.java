@@ -1,12 +1,4 @@
-
 package net.specialattack.towerdefence.tileentity;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -29,6 +21,8 @@ import net.specialattack.towerdefence.logic.Booster;
 import net.specialattack.towerdefence.logic.Monster;
 import net.specialattack.towerdefence.logic.SpawnerLogic;
 import net.specialattack.towerdefence.packet.PacketHandler;
+
+import java.util.*;
 
 @SuppressWarnings("rawtypes")
 public class TileEntitySpawner extends TileEntity {
@@ -135,8 +129,7 @@ public class TileEntitySpawner extends TileEntity {
             TileEntity tile = this.worldObj.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
             if (tile != null && tile instanceof TileEntityTower) {
                 ((TileEntityTower) tile).reset();
-            }
-            else {
+            } else {
                 i.remove();
             }
         }
@@ -150,48 +143,6 @@ public class TileEntitySpawner extends TileEntity {
             controller.updateActiveSpawners();
         }
 
-        this.markDirty();
-    }
-
-    public void sendChatToPlayer(String message) {
-        EntityPlayer player = CommonProxy.getPlayer(this.playername);
-        if (player != null) {
-            player.sendChatToPlayer(ChatMessageComponent.createFromText(message));
-        }
-    }
-
-    public void markDirty() {
-        if (this.worldObj != null) {
-            this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
-        }
-    }
-
-    @Override
-    public void onChunkUnload() {
-        super.onChunkUnload();
-        CommonProxy.spawners.remove(this.playername);
-    }
-
-    public void updateScore() {
-        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaScore);
-        Iterator iterator = collection.iterator();
-
-        while (iterator.hasNext()) {
-            ScoreObjective scoreobjective = (ScoreObjective) iterator.next();
-            Score score = this.worldObj.getScoreboard().func_96529_a(this.playername, scoreobjective);
-            score.func_96647_c(this.score);
-        }
-
-        this.updateStat(1);
-    }
-
-    public void updateStat(int stat) {
-        EntityPlayer player = CommonProxy.getPlayer(this.playername);
-        if (player != null) {
-            if (player instanceof EntityPlayerMP) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, stat));
-            }
-        }
         this.markDirty();
     }
 
@@ -215,8 +166,7 @@ public class TileEntitySpawner extends TileEntity {
                 entity.worldObj.removeEntity(entity);
             }
             this.spawnedEntities.clear();
-        }
-        else {
+        } else {
             this.sendChatToPlayer(StatCollector.translateToLocalFormatted("towerdefence.wave.health", target.health));
         }
 
@@ -229,7 +179,51 @@ public class TileEntitySpawner extends TileEntity {
         }
     }
 
-    public void setTarget(TileEntityTarget newTarget) {
+    public void updateStat(int stat) {
+        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+        if (player != null) {
+            if (player instanceof EntityPlayerMP) {
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveUpdate(this, stat));
+            }
+        }
+        this.markDirty();
+    }
+
+    public void sendChatToPlayer(String message) {
+        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+        if (player != null) {
+            player.sendChatToPlayer(ChatMessageComponent.createFromText(message));
+        }
+    }
+
+    public void updateScore() {
+        Collection collection = this.worldObj.getScoreboard().func_96520_a(Objects.criteriaScore);
+        Iterator iterator = collection.iterator();
+
+        while (iterator.hasNext()) {
+            ScoreObjective scoreobjective = (ScoreObjective) iterator.next();
+            Score score = this.worldObj.getScoreboard().func_96529_a(this.playername, scoreobjective);
+            score.func_96647_c(this.score);
+        }
+
+        this.updateStat(1);
+    }
+
+    public void markDirty() {
+        if (this.worldObj != null) {
+            this.worldObj.markTileEntityChunkModified(this.xCoord, this.yCoord, this.zCoord, this);
+        }
+    }
+
+    public void addTower(TileEntityTower tile) {
+        this.towers.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
+        this.markDirty();
+    }
+
+    public void removeTower(TileEntityTower tile) {
+        this.towers.remove(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
+        this.markDirty();
+    }    public void setTarget(TileEntityTarget newTarget) {
         TileEntityTarget target = this.getTarget();
         if (target != null) {
             target.spawner = null;
@@ -248,45 +242,6 @@ public class TileEntitySpawner extends TileEntity {
         this.setActiveUser(null);
     }
 
-    public TileEntityTarget getTarget() {
-        if (this.target != null) {
-            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
-            if (tile instanceof TileEntityTarget) {
-                return ((TileEntityTarget) tile);
-            }
-        }
-        return null;
-    }
-
-    public void setController(TileEntityMultiplayerController newController) {
-        if (newController != null) {
-            this.multiplayerController = new ChunkCoordinates(newController.xCoord, newController.yCoord, newController.zCoord);
-        }
-        else {
-            this.multiplayerController = null;
-        }
-    }
-
-    public TileEntityMultiplayerController getController() {
-        if (this.multiplayerController != null) {
-            TileEntity tile = this.worldObj.getBlockTileEntity(this.multiplayerController.posX, this.multiplayerController.posY, this.multiplayerController.posZ);
-            if (tile instanceof TileEntityMultiplayerController) {
-                return ((TileEntityMultiplayerController) tile);
-            }
-        }
-        return null;
-    }
-
-    public void addTower(TileEntityTower tile) {
-        this.towers.add(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
-        this.markDirty();
-    }
-
-    public void removeTower(TileEntityTower tile) {
-        this.towers.remove(new ChunkCoordinates(tile.xCoord, tile.yCoord, tile.zCoord));
-        this.markDirty();
-    }
-
     public List<TileEntityTower> getAllTowers() {
         List<TileEntityTower> towers = new ArrayList<TileEntityTower>();
 
@@ -296,18 +251,20 @@ public class TileEntitySpawner extends TileEntity {
             TileEntity tile = this.worldObj.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
             if (tile != null && tile instanceof TileEntityTower) {
                 towers.add((TileEntityTower) tile);
-            }
-            else {
+            } else {
                 i.remove();
             }
         }
 
         return towers;
-    }
-
-    public void addCoins(int amount) {
-        this.coins += amount;
-        this.updateStat(4);
+    }    public TileEntityTarget getTarget() {
+        if (this.target != null) {
+            TileEntity tile = this.worldObj.getBlockTileEntity(this.target.posX, this.target.posY, this.target.posZ);
+            if (tile instanceof TileEntityTarget) {
+                return ((TileEntityTarget) tile);
+            }
+        }
+        return null;
     }
 
     public boolean removeCoins(int amount) {
@@ -317,206 +274,81 @@ public class TileEntitySpawner extends TileEntity {
         this.coins -= amount;
         this.updateStat(4);
         return true;
+    }    public void setController(TileEntityMultiplayerController newController) {
+        if (newController != null) {
+            this.multiplayerController = new ChunkCoordinates(newController.xCoord, newController.yCoord, newController.zCoord);
+        } else {
+            this.multiplayerController = null;
+        }
     }
 
     public boolean canWork() {
         return this.target != null;
+    }    public TileEntityMultiplayerController getController() {
+        if (this.multiplayerController != null) {
+            TileEntity tile = this.worldObj.getBlockTileEntity(this.multiplayerController.posX, this.multiplayerController.posY, this.multiplayerController.posZ);
+            if (tile instanceof TileEntityMultiplayerController) {
+                return ((TileEntityMultiplayerController) tile);
+            }
+        }
+        return null;
     }
 
     public boolean hasController() {
         return this.multiplayerController != null;
     }
 
-    private void prepareWave() {
-        this.interval = 600;
-        this.wave++;
-        this.boosters = SpawnerLogic.getRandomBoosters(CommonProxy.rand, this.worldObj, this.wave);
-        if (CommonProxy.rand.nextInt(2) == 1) {
-            this.monsterCount += 5;
-        }
-
-        this.addCoins(this.monsterCount * 10);
-
-        this.spawnQueue = this.monsterCount;
-
-        this.currentMonster = SpawnerLogic.getRandomMonster(CommonProxy.rand);
-
-        if (this.wave % 5 == 0) {
-            this.currentBoss = SpawnerLogic.getRandomBoss(CommonProxy.rand);
-            this.addCoins(this.wave * 10);
-        }
-        else {
-            this.currentBoss = null;
-        }
-
-        EntityPlayer player = CommonProxy.getPlayer(this.playername);
-
-        if (player instanceof EntityPlayerMP) {
-            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveInfo(this));
-        }
-    }
-
     @Override
-    public void updateEntity() {
-        if (this.worldObj == null || this.worldObj.isRemote) {
-            return;
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        this.playername = compound.getString("playername");
+        if (this.playername.isEmpty()) {
+            this.playername = null;
+        }
+        this.waveActive = compound.getBoolean("waveActive");
+        this.waveStarted = compound.getBoolean("waveStarted");
+        this.active = compound.getBoolean("active");
+        this.spawning = compound.getBoolean("spawning");
+        this.gameOver = compound.getBoolean("gameOver");
+        this.timer = compound.getInteger("timer");
+        this.interval = compound.getInteger("interval");
+        this.spawnQueue = compound.getInteger("spawnQueue");
+        this.score = compound.getInteger("score");
+        this.coins = compound.getInteger("coins");
+        this.monsterCount = compound.getInteger("monsterCount");
+        this.wave = compound.getInteger("wave");
+
+        if (compound.hasKey("target")) {
+            NBTTagCompound target = compound.getCompoundTag("target");
+            this.target = new ChunkCoordinates(target.getInteger("posX"), target.getInteger("posY"), target.getInteger("posZ"));
         }
 
-        if (this.playername != null) {
-            if (this.active && (this.multiplayerController != null || CommonProxy.isPlayerLoggedIn(this.playername))) {
-                this.timer++;
-                this.markDirty();
-            }
-
-            if (this.waveActive) {
-                if (this.spawning && this.timer >= this.interval) {
-                    this.timer = 0;
-                    if (this.spawnQueue > 0) {
-                        TileEntityTarget target = this.getTarget();
-
-                        if (target != null) {
-                            EntityLiving entity = this.currentMonster.createNew(this.worldObj);
-                            entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
-
-                            if (this.currentMonster.supportsHat) {
-                                entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(CommonProxy.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
-                                entity.setEquipmentDropChance(4, 0.0F);
-                            }
-                            entity.func_110163_bv();
-
-                            entity.targetTasks.taskEntries.clear();
-                            entity.tasks.taskEntries.clear();
-                            Vec3 targetPos = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
-                            entity.tasks.addTask(0, new EntityTargetLocation(entity, targetPos, target, 1.0D));
-
-                            for (Booster booster : this.boosters) {
-                                booster.applyBooster(entity);
-                            }
-
-                            this.worldObj.spawnEntityInWorld(entity);
-                            this.spawnedEntities.add(entity);
-                        }
-                        else {
-                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
-                            // this.setActiveUser(null);
-                            this.active = false;
-
-                            for (Entity entity : this.spawnedEntities) {
-                                entity.worldObj.removeEntity(entity);
-                            }
-                            this.spawnedEntities.clear();
-                        }
-                        this.spawnQueue--;
-                        this.markDirty();
-                    }
-                    else {
-                        if (this.currentBoss != null) {
-                            TileEntityTarget target = this.getTarget();
-
-                            if (target != null) {
-                                EntityLiving entity = this.currentBoss.createNew(this.worldObj);
-                                entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
-
-                                if (this.currentBoss.supportsHat) {
-                                    entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(CommonProxy.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
-                                    entity.setEquipmentDropChance(4, 0.0F);
-                                }
-                                entity.func_110163_bv();
-
-                                entity.targetTasks.taskEntries.clear();
-                                entity.tasks.taskEntries.clear();
-                                Vec3 targetPos = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
-                                entity.tasks.addTask(0, new EntityTargetLocation(entity, targetPos, target, 1.0D));
-
-                                this.worldObj.spawnEntityInWorld(entity);
-                                this.spawnedEntities.add(entity);
-                            }
-                            else {
-                                this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
-                                // this.setActiveUser(null);
-                                this.active = false;
-
-                                for (Entity entity : this.spawnedEntities) {
-                                    entity.worldObj.removeEntity(entity);
-                                }
-                                this.spawnedEntities.clear();
-                            }
-                        }
-                        this.spawning = false;
-                        this.markDirty();
-                    }
-                }
-
-                if (this.spawnedEntities.isEmpty() && !this.spawning) {
-                    this.waveActive = false;
-
-                    this.updateStat(2);
-
-                    this.timer = 0;
-                    this.spawnQueue = 0;
-
-                    if (this.multiplayerController == null) {
-                        this.prepareWave();
-                        this.waveStarted = false;
-                    }
-
-                    this.markDirty();
-
-                    this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.finished"));
-                }
-                else {
-                    Iterator<Entity> i = this.spawnedEntities.iterator();
-                    boolean removed = false;
-                    while (i.hasNext()) {
-                        Entity entity = i.next();
-                        if (entity.isDead) {
-                            i.remove();
-
-                            this.score++;
-                            this.updateScore();
-
-                            removed = true;
-                        }
-                    }
-                    if (removed) {
-                        this.updateStat(0);
-                        this.markDirty();
-                    }
-                }
-            }
-            else {
-                if ((this.interval - this.timer) % 20 == 0) {
-                    this.updateStat(2);
-                }
-                if (this.multiplayerController == null) {
-                    if (this.timer >= this.interval) {
-                        this.waveActive = true;
-                        this.waveStarted = true;
-                        this.timer = 0;
-                        this.interval = 30;
-
-                        this.updateStat(2);
-
-                        if (this.getTarget() != null) {
-                            this.spawning = true;
-
-                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.start"));
-                        }
-                        else {
-                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
-                            //this.setActiveUser(null);
-                            this.active = false;
-
-                            for (Entity entity : this.spawnedEntities) {
-                                entity.worldObj.removeEntity(entity);
-                            }
-                            this.spawnedEntities.clear();
-                        }
-                        this.markDirty();
-                    }
-                }
-            }
+        if (compound.hasKey("multiplayerController")) {
+            NBTTagCompound controller = compound.getCompoundTag("multiplayerController");
+            this.multiplayerController = new ChunkCoordinates(controller.getInteger("posX"), controller.getInteger("posY"), controller.getInteger("posZ"));
         }
+
+        NBTTagList boosters = compound.getTagList("boosters");
+        for (int i = 0; i < boosters.tagCount(); i++) {
+            NBTTagInt booster = (NBTTagInt) boosters.tagAt(i);
+            this.boosters.add(SpawnerLogic.getBooster(booster.data));
+        }
+
+        if (compound.hasKey("currentMonster")) {
+            this.currentMonster = SpawnerLogic.getMonster(compound.getInteger("currentMonster"));
+        }
+
+        if (compound.hasKey("currentBoss")) {
+            this.currentBoss = SpawnerLogic.getMonster(compound.getInteger("currentBoss"));
+        }
+
+        NBTTagList towers = compound.getTagList("towers");
+        for (int i = 0; i < towers.tagCount(); i++) {
+            NBTTagCompound tower = (NBTTagCompound) towers.tagAt(i);
+            this.towers.add(new ChunkCoordinates(tower.getInteger("posX"), tower.getInteger("posY"), tower.getInteger("posZ")));
+        }
+
+        CommonProxy.spawners.put(playername, this);
     }
 
     @Override
@@ -580,56 +412,207 @@ public class TileEntitySpawner extends TileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        this.playername = compound.getString("playername");
-        if (this.playername.isEmpty()) {
-            this.playername = null;
-        }
-        this.waveActive = compound.getBoolean("waveActive");
-        this.waveStarted = compound.getBoolean("waveStarted");
-        this.active = compound.getBoolean("active");
-        this.spawning = compound.getBoolean("spawning");
-        this.gameOver = compound.getBoolean("gameOver");
-        this.timer = compound.getInteger("timer");
-        this.interval = compound.getInteger("interval");
-        this.spawnQueue = compound.getInteger("spawnQueue");
-        this.score = compound.getInteger("score");
-        this.coins = compound.getInteger("coins");
-        this.monsterCount = compound.getInteger("monsterCount");
-        this.wave = compound.getInteger("wave");
-
-        if (compound.hasKey("target")) {
-            NBTTagCompound target = compound.getCompoundTag("target");
-            this.target = new ChunkCoordinates(target.getInteger("posX"), target.getInteger("posY"), target.getInteger("posZ"));
+    public void updateEntity() {
+        if (this.worldObj == null || this.worldObj.isRemote) {
+            return;
         }
 
-        if (compound.hasKey("multiplayerController")) {
-            NBTTagCompound controller = compound.getCompoundTag("multiplayerController");
-            this.multiplayerController = new ChunkCoordinates(controller.getInteger("posX"), controller.getInteger("posY"), controller.getInteger("posZ"));
-        }
+        if (this.playername != null) {
+            if (this.active && (this.multiplayerController != null || CommonProxy.isPlayerLoggedIn(this.playername))) {
+                this.timer++;
+                this.markDirty();
+            }
 
-        NBTTagList boosters = compound.getTagList("boosters");
-        for (int i = 0; i < boosters.tagCount(); i++) {
-            NBTTagInt booster = (NBTTagInt) boosters.tagAt(i);
-            this.boosters.add(SpawnerLogic.getBooster(booster.data));
-        }
+            if (this.waveActive) {
+                if (this.spawning && this.timer >= this.interval) {
+                    this.timer = 0;
+                    if (this.spawnQueue > 0) {
+                        TileEntityTarget target = this.getTarget();
 
-        if (compound.hasKey("currentMonster")) {
-            this.currentMonster = SpawnerLogic.getMonster(compound.getInteger("currentMonster"));
-        }
+                        if (target != null) {
+                            EntityLiving entity = this.currentMonster.createNew(this.worldObj);
+                            entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
 
-        if (compound.hasKey("currentBoss")) {
-            this.currentBoss = SpawnerLogic.getMonster(compound.getInteger("currentBoss"));
-        }
+                            if (this.currentMonster.supportsHat) {
+                                entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(CommonProxy.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
+                                entity.setEquipmentDropChance(4, 0.0F);
+                            }
+                            entity.func_110163_bv();
 
-        NBTTagList towers = compound.getTagList("towers");
-        for (int i = 0; i < towers.tagCount(); i++) {
-            NBTTagCompound tower = (NBTTagCompound) towers.tagAt(i);
-            this.towers.add(new ChunkCoordinates(tower.getInteger("posX"), tower.getInteger("posY"), tower.getInteger("posZ")));
-        }
+                            entity.targetTasks.taskEntries.clear();
+                            entity.tasks.taskEntries.clear();
+                            Vec3 targetPos = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
+                            entity.tasks.addTask(0, new EntityTargetLocation(entity, targetPos, target, 1.0D));
 
-        CommonProxy.spawners.put(playername, this);
+                            for (Booster booster : this.boosters) {
+                                booster.applyBooster(entity);
+                            }
+
+                            this.worldObj.spawnEntityInWorld(entity);
+                            this.spawnedEntities.add(entity);
+                        } else {
+                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
+                            // this.setActiveUser(null);
+                            this.active = false;
+
+                            for (Entity entity : this.spawnedEntities) {
+                                entity.worldObj.removeEntity(entity);
+                            }
+                            this.spawnedEntities.clear();
+                        }
+                        this.spawnQueue--;
+                        this.markDirty();
+                    } else {
+                        if (this.currentBoss != null) {
+                            TileEntityTarget target = this.getTarget();
+
+                            if (target != null) {
+                                EntityLiving entity = this.currentBoss.createNew(this.worldObj);
+                                entity.setLocationAndAngles(this.xCoord + 0.5D, this.yCoord + 1.0D, this.zCoord + 0.5D, 0.0F, 0.0F);
+
+                                if (this.currentBoss.supportsHat) {
+                                    entity.setCurrentItemOrArmor(4, SpawnerLogic.monsterAccessoires.get(CommonProxy.rand.nextInt(SpawnerLogic.monsterAccessoires.size())).copy());
+                                    entity.setEquipmentDropChance(4, 0.0F);
+                                }
+                                entity.func_110163_bv();
+
+                                entity.targetTasks.taskEntries.clear();
+                                entity.tasks.taskEntries.clear();
+                                Vec3 targetPos = Vec3.createVectorHelper(this.target.posX, this.target.posY, this.target.posZ);
+                                entity.tasks.addTask(0, new EntityTargetLocation(entity, targetPos, target, 1.0D));
+
+                                this.worldObj.spawnEntityInWorld(entity);
+                                this.spawnedEntities.add(entity);
+                            } else {
+                                this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
+                                // this.setActiveUser(null);
+                                this.active = false;
+
+                                for (Entity entity : this.spawnedEntities) {
+                                    entity.worldObj.removeEntity(entity);
+                                }
+                                this.spawnedEntities.clear();
+                            }
+                        }
+                        this.spawning = false;
+                        this.markDirty();
+                    }
+                }
+
+                if (this.spawnedEntities.isEmpty() && !this.spawning) {
+                    this.waveActive = false;
+
+                    this.updateStat(2);
+
+                    this.timer = 0;
+                    this.spawnQueue = 0;
+
+                    if (this.multiplayerController == null) {
+                        this.prepareWave();
+                        this.waveStarted = false;
+                    }
+
+                    this.markDirty();
+
+                    this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.finished"));
+                } else {
+                    Iterator<Entity> i = this.spawnedEntities.iterator();
+                    boolean removed = false;
+                    while (i.hasNext()) {
+                        Entity entity = i.next();
+                        if (entity.isDead) {
+                            i.remove();
+
+                            this.score++;
+                            this.updateScore();
+
+                            removed = true;
+                        }
+                    }
+                    if (removed) {
+                        this.updateStat(0);
+                        this.markDirty();
+                    }
+                }
+            } else {
+                if ((this.interval - this.timer) % 20 == 0) {
+                    this.updateStat(2);
+                }
+                if (this.multiplayerController == null) {
+                    if (this.timer >= this.interval) {
+                        this.waveActive = true;
+                        this.waveStarted = true;
+                        this.timer = 0;
+                        this.interval = 30;
+
+                        this.updateStat(2);
+
+                        if (this.getTarget() != null) {
+                            this.spawning = true;
+
+                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.wave.start"));
+                        } else {
+                            this.sendChatToPlayer(StatCollector.translateToLocal("towerdefence.error"));
+                            //this.setActiveUser(null);
+                            this.active = false;
+
+                            for (Entity entity : this.spawnedEntities) {
+                                entity.worldObj.removeEntity(entity);
+                            }
+                            this.spawnedEntities.clear();
+                        }
+                        this.markDirty();
+                    }
+                }
+            }
+        }
+    }    public void addCoins(int amount) {
+        this.coins += amount;
+        this.updateStat(4);
     }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+        CommonProxy.spawners.remove(this.playername);
+    }
+
+
+
+
+
+    private void prepareWave() {
+        this.interval = 600;
+        this.wave++;
+        this.boosters = SpawnerLogic.getRandomBoosters(CommonProxy.rand, this.worldObj, this.wave);
+        if (CommonProxy.rand.nextInt(2) == 1) {
+            this.monsterCount += 5;
+        }
+
+        this.addCoins(this.monsterCount * 10);
+
+        this.spawnQueue = this.monsterCount;
+
+        this.currentMonster = SpawnerLogic.getRandomMonster(CommonProxy.rand);
+
+        if (this.wave % 5 == 0) {
+            this.currentBoss = SpawnerLogic.getRandomBoss(CommonProxy.rand);
+            this.addCoins(this.wave * 10);
+        } else {
+            this.currentBoss = null;
+        }
+
+        EntityPlayer player = CommonProxy.getPlayer(this.playername);
+
+        if (player instanceof EntityPlayerMP) {
+            ((EntityPlayerMP) player).playerNetServerHandler.sendPacketToPlayer(PacketHandler.createPacketWaveInfo(this));
+        }
+    }
+
+
+
+
+
+
 
 }

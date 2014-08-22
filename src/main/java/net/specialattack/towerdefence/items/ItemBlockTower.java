@@ -1,8 +1,7 @@
-
 package net.specialattack.towerdefence.items;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,8 +16,8 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ItemBlockTower extends ItemBlock implements IPassClick {
 
@@ -57,8 +56,7 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
             }
 
             return false;
-        }
-        else if (!world.isRemote) {
+        } else if (!world.isRemote) {
             blockX = stack.stackTagCompound.getInteger("blockX");
             blockY = stack.stackTagCompound.getInteger("blockY");
             blockZ = stack.stackTagCompound.getInteger("blockZ");
@@ -80,8 +78,7 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
 
         if (blockId == Block.snow.blockID && (world.getBlockMetadata(x, y, z) & 7) < 1) {
             side = 1;
-        }
-        else if (blockId != Block.vine.blockID && blockId != Block.tallGrass.blockID && blockId != Block.deadBush.blockID && (Block.blocksList[blockId] == null || !Block.blocksList[blockId].isBlockReplaceable(world, x, y, z))) {
+        } else if (blockId != Block.vine.blockID && blockId != Block.tallGrass.blockID && blockId != Block.deadBush.blockID && (Block.blocksList[blockId] == null || !Block.blocksList[blockId].isBlockReplaceable(world, x, y, z))) {
             if (side == 0) {
                 --y;
             }
@@ -133,8 +130,7 @@ public class ItemBlockTower extends ItemBlock implements IPassClick {
             int y = stack.stackTagCompound.getInteger("blockY");
             int z = stack.stackTagCompound.getInteger("blockZ");
             list.add(StatCollector.translateToLocalFormatted(this.getUnlocalizedName(stack) + ".linked", x, y, z));
-        }
-        else {
+        } else {
             list.add(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".unlinked"));
         }
         list.addAll(Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(StatCollector.translateToLocal(this.getUnlocalizedName(stack) + ".description"), 200));

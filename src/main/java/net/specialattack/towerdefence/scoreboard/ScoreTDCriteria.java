@@ -1,9 +1,8 @@
-
 package net.specialattack.towerdefence.scoreboard;
 
-import java.util.List;
-
 import net.minecraft.scoreboard.ScoreObjectiveCriteria;
+
+import java.util.List;
 
 public class ScoreTDCriteria implements ScoreObjectiveCriteria {
 

@@ -1,8 +1,7 @@
-
 package net.specialattack.towerdefence.items;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,8 +9,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.util.StatCollector;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ItemBlockGameLogic extends ItemBlock implements IPassClick {
 
@@ -31,13 +30,13 @@ public class ItemBlockGameLogic extends ItemBlock implements IPassClick {
     }
 
     @Override
-    public int getMetadata(int meta) {
-        return meta;
+    public String getUnlocalizedName(ItemStack stack) {
+        return super.getUnlocalizedName() + stack.getItemDamage();
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        return super.getUnlocalizedName() + stack.getItemDamage();
+    public int getMetadata(int meta) {
+        return meta;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

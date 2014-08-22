@@ -1,13 +1,12 @@
-
 package net.specialattack.towerdefence.logic;
-
-import java.lang.reflect.Constructor;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
 import net.specialattack.towerdefence.Assets;
+
+import java.lang.reflect.Constructor;
 
 public class Monster extends WeightedRandomItem {
 
@@ -31,8 +30,7 @@ public class Monster extends WeightedRandomItem {
         this.supportsHat = supportsHat;
         try {
             this.constructor = this.clazz.getConstructor(World.class);
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             throw new RuntimeException(this.clazz.getSimpleName() + " can't be instantiated with a World object only", e);
         }
     }
@@ -53,8 +51,7 @@ public class Monster extends WeightedRandomItem {
     public EntityLiving createNew(World world) {
         try {
             return this.constructor.newInstance(world);
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;

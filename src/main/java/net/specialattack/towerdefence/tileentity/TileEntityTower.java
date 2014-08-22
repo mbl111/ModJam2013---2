@@ -1,6 +1,7 @@
-
 package net.specialattack.towerdefence.tileentity;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet;
@@ -10,21 +11,12 @@ import net.minecraft.util.ChunkCoordinates;
 import net.specialattack.towerdefence.blocks.BlockTower;
 import net.specialattack.towerdefence.packet.PacketHandler;
 import net.specialattack.towerdefence.towers.ITowerInstance;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityTower extends TileEntity {
 
     public ITowerInstance towerInstance;
     private ChunkCoordinates spawner;
     private int cooldown;
-
-    public BlockTower getTowerBlock() {
-        if (this.getBlockType() instanceof BlockTower) {
-            return (BlockTower) this.blockType;
-        }
-        return null;
-    }
 
     public void setSpawnerCoords(ChunkCoordinates coords) {
         TileEntity tile = this.worldObj.getBlockTileEntity(coords.posX, coords.posY, coords.posZ);
@@ -91,21 +83,31 @@ public class TileEntityTower extends TileEntity {
     }
 
     @Override
-    public void updateEntity() {
-        if (this.worldObj.isRemote) {
-            return;
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+
+        this.blockMetadata = compound.getInteger("metadata");
+        this.setBlockType(compound.getInteger("blockID"));
+
+        if (compound.hasKey("towerType")) {
+            String towerType = compound.getString("towerType");
+            this.towerInstance = this.getTowerBlock().getTower(towerType).createNewInstance(this);
+
+            NBTTagCompound tower = compound.getCompoundTag("tower");
+            this.towerInstance.readFromNBT(tower);
         }
 
-        if (this.towerInstance != null) {
-            if (this.cooldown > 0) {
-                this.cooldown--;
-            }
-            else {
-                if (this.towerInstance.tick()) {
-                    this.cooldown = this.towerInstance.getSpeed();
-                }
-            }
+        if (compound.hasKey("spawner")) {
+            NBTTagCompound spawner = compound.getCompoundTag("spawner");
+            this.spawner = new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ"));
         }
+    }
+
+    public BlockTower getTowerBlock() {
+        if (this.getBlockType() instanceof BlockTower) {
+            return (BlockTower) this.blockType;
+        }
+        return null;
     }
 
     @Override
@@ -133,23 +135,19 @@ public class TileEntityTower extends TileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-
-        this.blockMetadata = compound.getInteger("metadata");
-        this.setBlockType(compound.getInteger("blockID"));
-
-        if (compound.hasKey("towerType")) {
-            String towerType = compound.getString("towerType");
-            this.towerInstance = this.getTowerBlock().getTower(towerType).createNewInstance(this);
-
-            NBTTagCompound tower = compound.getCompoundTag("tower");
-            this.towerInstance.readFromNBT(tower);
+    public void updateEntity() {
+        if (this.worldObj.isRemote) {
+            return;
         }
 
-        if (compound.hasKey("spawner")) {
-            NBTTagCompound spawner = compound.getCompoundTag("spawner");
-            this.spawner = new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ"));
+        if (this.towerInstance != null) {
+            if (this.cooldown > 0) {
+                this.cooldown--;
+            } else {
+                if (this.towerInstance.tick()) {
+                    this.cooldown = this.towerInstance.getSpeed();
+                }
+            }
         }
     }
 
@@ -166,14 +164,14 @@ public class TileEntityTower extends TileEntity {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getRenderBoundingBox() {
-        return super.getRenderBoundingBox().offset(0.0D, 1.0D, 0.0D).expand(0.5D, 1.5D, 0.5D);
+    public Packet getDescriptionPacket() {
+        return PacketHandler.createPacketTowerInfo(this);
     }
 
     @Override
-    public Packet getDescriptionPacket() {
-        return PacketHandler.createPacketTowerInfo(this);
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return super.getRenderBoundingBox().offset(0.0D, 1.0D, 0.0D).expand(0.5D, 1.5D, 0.5D);
     }
 
 }

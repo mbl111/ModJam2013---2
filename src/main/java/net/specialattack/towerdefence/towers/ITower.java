@@ -1,12 +1,11 @@
-
 package net.specialattack.towerdefence.towers;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public interface ITower {
 

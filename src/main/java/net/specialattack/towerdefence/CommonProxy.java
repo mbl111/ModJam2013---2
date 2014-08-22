@@ -1,11 +1,14 @@
-
 package net.specialattack.towerdefence;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.IConnectionHandler;
+import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,19 +37,43 @@ import net.specialattack.towerdefence.tileentity.TileEntityTower;
 import net.specialattack.towerdefence.towers.TowerAoE;
 import net.specialattack.towerdefence.towers.TowerArrow;
 import net.specialattack.towerdefence.util.CustomDamageSource;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.IConnectionHandler;
-import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.common.registry.GameRegistry;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
     public static final Random rand = new Random();
+    public static HashMap<INetworkManager, String> players = new HashMap<INetworkManager, String>();
+    public static ArrayList<String> playernames = new ArrayList<String>();
+    public static HashMap<String, TileEntitySpawner> spawners = new HashMap<String, TileEntitySpawner>();
+
+    public static boolean isPlayerLoggedIn(String playername) {
+        return CommonProxy.playernames.contains(playername);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static EntityPlayer getPlayer(String playername) {
+        if (playername == null) {
+            return null;
+        }
+        List players = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList;
+        for (Object obj : players) {
+            if (obj instanceof EntityPlayer) {
+                if (((EntityPlayer) obj).username.equalsIgnoreCase(playername)) {
+                    return (EntityPlayer) obj;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean isPlayerInGame(String playername) {
+        return spawners.containsKey(playername);
+    }
 
     public void preInit(FMLPreInitializationEvent event) {
         //Register Blocks
@@ -99,10 +126,10 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
 
         //Barrels of different types for different attack types...
         //Generic - Shoots projectiles at a steady pace - Iron
-        //Spread - Shoots a spread of projectiles - 
+        //Spread - Shoots a spread of projectiles -
         //HighSpeed - Rapid fire projectiles - Gold
         //Explosive - Creates an explosion on impact only damaging entities - TNT
-        //High Damage - Slow fire rate, high damage - 
+        //High Damage - Slow fire rate, high damage -
 
         //Barrel
         //AIR	SPECIAL	SPECIAL
@@ -115,43 +142,17 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         //Perhaps two redstone inputs if there is a servo and the value from 0-15 controls the towers rotation
 
         //A Smart Circuit would have features where the tower would shoot the nearest entity. The tower would require a
-        //redstone signal to be activated. Can be configured to either shoot hostile mobs, friendly mobs, players or any 
+        //redstone signal to be activated. Can be configured to either shoot hostile mobs, friendly mobs, players or any
         //combo of those
 
         //A base would just be a generic block, made using iron and stone possibly.
 
-        //Spinning turrets have a servo in the middle. Static turrets would just have another base block, the tower would stay pointed where you place it. 
+        //Spinning turrets have a servo in the middle. Static turrets would just have another base block, the tower would stay pointed where you place it.
         //Players could orient the tower using some device (Such as in DiscoTek).
 
-        //Spinning towers could perhaps have an origin point, that could be set using the orienter. 
+        //Spinning towers could perhaps have an origin point, that could be set using the orienter.
         //The redstone signal (if a basic curcuit is used) would have that rotation as the origin.
 
-    }
-
-    public static HashMap<INetworkManager, String> players = new HashMap<INetworkManager, String>();
-    public static ArrayList<String> playernames = new ArrayList<String>();
-
-    public static HashMap<String, TileEntitySpawner> spawners = new HashMap<String, TileEntitySpawner>();
-
-    public static boolean isPlayerLoggedIn(String playername) {
-        return CommonProxy.playernames.contains(playername);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static EntityPlayer getPlayer(String playername) {
-        if (playername == null) {
-            return null;
-        }
-        List players = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList;
-        for (Object obj : players) {
-            if (obj instanceof EntityPlayer) {
-                if (((EntityPlayer) obj).username.equalsIgnoreCase(playername)) {
-                    return (EntityPlayer) obj;
-                }
-            }
-        }
-
-        return null;
     }
 
     @Override
@@ -163,20 +164,18 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
         }
     }
 
-    public static boolean isPlayerInGame(String playername) {
-        return spawners.containsKey(playername);
-    }
-
     @Override
     public String connectionReceived(NetLoginHandler netHandler, INetworkManager manager) {
         return null;
     }
 
     @Override
-    public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {}
+    public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
+    }
 
     @Override
-    public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {}
+    public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {
+    }
 
     @Override
     public void connectionClosed(INetworkManager manager) {
@@ -188,7 +187,8 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
     }
 
     @Override
-    public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {}
+    public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {
+    }
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -199,19 +199,16 @@ public class CommonProxy implements IConnectionHandler, IGuiHandler {
                 if (tile != null && tile instanceof TileEntitySpawner) {
                     return new ContainerSpawner((TileEntitySpawner) tile);
                 }
-            }
-            else if (ID == 1) {
+            } else if (ID == 1) {
                 if (tile != null && tile instanceof TileEntityTower) {
                     return new ContainerTower((TileEntityTower) tile);
                 }
-            }
-            else if (ID == 2) {
+            } else if (ID == 2) {
                 if (tile != null && tile instanceof TileEntityMultiplayerController) {
                     return new ContainerMultiplayerController((TileEntityMultiplayerController) tile);
                 }
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;

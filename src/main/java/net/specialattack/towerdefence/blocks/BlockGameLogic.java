@@ -1,8 +1,7 @@
-
 package net.specialattack.towerdefence.blocks;
 
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -21,8 +20,8 @@ import net.specialattack.towerdefence.tileentity.TileEntityMultiplayerController
 import net.specialattack.towerdefence.tileentity.TileEntitySpawner;
 import net.specialattack.towerdefence.tileentity.TileEntityTarget;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class BlockGameLogic extends Block {
 
@@ -33,29 +32,10 @@ public class BlockGameLogic extends Block {
         super(blockId, Material.piston);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubBlocks(int itemId, CreativeTabs creativeTab, List list) {
-        for (int j = 0; j < this.icons.length; ++j) {
-            list.add(new ItemStack(itemId, 1, j));
-        }
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public Icon getIcon(int side, int meta) {
         return this.icons[meta % this.icons.length];
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister register) {
-        this.icons = new Icon[3];
-
-        for (int i = 0; i < this.icons.length; ++i) {
-            this.icons[i] = register.registerIcon(this.getTextureName() + i);
-        }
     }
 
     @Override
@@ -72,8 +52,7 @@ public class BlockGameLogic extends Block {
                 for (TileEntityTower tower : towers) {
                     world.setBlockToAir(tower.xCoord, tower.yCoord, tower.zCoord);
                 }
-            }
-            else if (tile instanceof TileEntityTarget) {
+            } else if (tile instanceof TileEntityTarget) {
                 ChunkCoordinates target = ((TileEntityTarget) tile).spawner;
                 if (target != null) {
                     TileEntity otherTile = world.getBlockTileEntity(target.posX, target.posY, target.posZ);
@@ -82,8 +61,7 @@ public class BlockGameLogic extends Block {
                         spawner.setTarget(null);
                     }
                 }
-            }
-            else if (tile instanceof TileEntityMultiplayerController) {
+            } else if (tile instanceof TileEntityMultiplayerController) {
                 TileEntityMultiplayerController controller = (TileEntityMultiplayerController) tile;
                 List<TileEntitySpawner> spawners = controller.getAllSpawners();
 
@@ -93,25 +71,6 @@ public class BlockGameLogic extends Block {
             }
         }
         super.breakBlock(world, x, y, z, blockId, meta);
-    }
-
-    @Override
-    public boolean hasTileEntity(int metadata) {
-        return metadata < 3;
-    }
-
-    @Override
-    public TileEntity createTileEntity(World world, int metadata) {
-        if (metadata == 0) {
-            return new TileEntitySpawner();
-        }
-        else if (metadata == 1) {
-            return new TileEntityTarget();
-        }
-        else if (metadata == 2) {
-            return new TileEntityMultiplayerController();
-        }
-        return null;
     }
 
     @Override
@@ -130,19 +89,52 @@ public class BlockGameLogic extends Block {
 
             if (tile instanceof TileEntitySpawner) {
                 player.openGui(ModTowerDefence.instance, 0, world, x, y, z);
-            }
-            else if (tile instanceof TileEntityTarget) {
+            } else if (tile instanceof TileEntityTarget) {
                 player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName() + "1.use")));
-            }
-            else if (tile instanceof TileEntityMultiplayerController) {
+            } else if (tile instanceof TileEntityMultiplayerController) {
                 player.openGui(ModTowerDefence.instance, 2, world, x, y, z);
             }
-        }
-        else {
+        } else {
             player.sendChatToPlayer(ChatMessageComponent.createFromText(StatCollector.translateToLocal(this.getUnlocalizedName() + "2.broken")));
         }
 
         return true;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(int itemId, CreativeTabs creativeTab, List list) {
+        for (int j = 0; j < this.icons.length; ++j) {
+            list.add(new ItemStack(itemId, 1, j));
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IconRegister register) {
+        this.icons = new Icon[3];
+
+        for (int i = 0; i < this.icons.length; ++i) {
+            this.icons[i] = register.registerIcon(this.getTextureName() + i);
+        }
+    }
+
+    @Override
+    public boolean hasTileEntity(int metadata) {
+        return metadata < 3;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, int metadata) {
+        if (metadata == 0) {
+            return new TileEntitySpawner();
+        } else if (metadata == 1) {
+            return new TileEntityTarget();
+        } else if (metadata == 2) {
+            return new TileEntityMultiplayerController();
+        }
+        return null;
     }
 
 }

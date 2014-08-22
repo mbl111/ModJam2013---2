@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.logic;
 
 import net.minecraft.entity.EntityLiving;
@@ -10,7 +9,8 @@ public class BoosterEmpty extends Booster {
     }
 
     @Override
-    public void applyBooster(EntityLiving entity) {}
+    public void applyBooster(EntityLiving entity) {
+    }
 
     @Override
     public boolean conflicts(Booster other) {

@@ -1,9 +1,7 @@
-
 package net.specialattack.towerdefence.towers;
 
-import java.util.List;
-import java.util.Random;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.EntityLiving;
@@ -14,10 +12,14 @@ import net.specialattack.towerdefence.Objects;
 import net.specialattack.towerdefence.client.renderer.BlockRendererTower;
 import net.specialattack.towerdefence.packet.PacketHandler;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.Random;
 
 public class TowerAoE extends TowerBase {
+
+    @SideOnly(Side.CLIENT)
+    private ITowerRenderHandler renderHandler;
 
     public TowerAoE(String identifier, int id, int cost, int u, int v) {
         super(identifier, id, cost, u, v);
@@ -27,9 +29,6 @@ public class TowerAoE extends TowerBase {
     public ITowerInstance createNewInstance(TileEntityTower tile) {
         return new Instance(tile, this);
     }
-
-    @SideOnly(Side.CLIENT)
-    private ITowerRenderHandler renderHandler;
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -44,30 +43,6 @@ public class TowerAoE extends TowerBase {
 
         public Instance(TileEntityTower tower, ITower type) {
             super(tower, type);
-        }
-
-        @Override
-        public int getPriceUpgrade(int id) {
-            switch (id) {
-            case 0:
-                if (this.level >= 5) {
-                    return -1;
-                }
-                return 50 + 30 * this.level;
-            case 1:
-                if (this.level <= this.damage || this.damage >= 5) {
-                    return -1;
-                }
-                return 70 + 70 * this.damage * this.damage - 20 * (this.level - this.damage);
-            case 2:
-                if (this.level <= this.speed || this.speed >= 3) {
-                    return -1;
-                }
-                return 60 + 60 * this.speed * this.speed - 20 * (this.level - this.speed);
-            case 3:
-                return -1;
-            }
-            return -1;
         }
 
         @Override
@@ -125,6 +100,30 @@ public class TowerAoE extends TowerBase {
             }
         }
 
+        @Override
+        public int getPriceUpgrade(int id) {
+            switch (id) {
+                case 0:
+                    if (this.level >= 5) {
+                        return -1;
+                    }
+                    return 50 + 30 * this.level;
+                case 1:
+                    if (this.level <= this.damage || this.damage >= 5) {
+                        return -1;
+                    }
+                    return 70 + 70 * this.damage * this.damage - 20 * (this.level - this.damage);
+                case 2:
+                    if (this.level <= this.speed || this.speed >= 3) {
+                        return -1;
+                    }
+                    return 60 + 60 * this.speed * this.speed - 20 * (this.level - this.speed);
+                case 3:
+                    return -1;
+            }
+            return -1;
+        }
+
     }
 
     @SideOnly(Side.CLIENT)
@@ -132,7 +131,8 @@ public class TowerAoE extends TowerBase {
 
         @Override
         @SideOnly(Side.CLIENT)
-        public void renderDynamic(TileEntity tile, double x, double y, double z, float partialTicks) {}
+        public void renderDynamic(TileEntity tile, double x, double y, double z, float partialTicks) {
+        }
 
         @Override
         @SideOnly(Side.CLIENT)

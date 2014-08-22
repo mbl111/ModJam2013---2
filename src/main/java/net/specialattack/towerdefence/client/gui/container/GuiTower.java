@@ -1,9 +1,7 @@
-
 package net.specialattack.towerdefence.client.gui.container;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -15,11 +13,10 @@ import net.specialattack.towerdefence.client.gui.GuiButtonPriced;
 import net.specialattack.towerdefence.inventory.ContainerTower;
 import net.specialattack.towerdefence.tileentity.TileEntityTower;
 import net.specialattack.towerdefence.towers.ITower;
-
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiTower extends GuiContainer {
@@ -46,7 +43,12 @@ public class GuiTower extends GuiContainer {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.drawButton && button.enabled) {
+            this.mc.playerController.sendEnchantPacket(this.container.windowId, button.id);
+        }
+    }    @SuppressWarnings("unchecked")
     @Override
     public void initGui() {
         super.initGui();
@@ -63,8 +65,7 @@ public class GuiTower extends GuiContainer {
             }
 
             this.buttonList.addAll(this.buyButtons);
-        }
-        else {
+        } else {
             GuiButtonPriced[] buttons = new GuiButtonPriced[4];
             buttons[0] = new GuiButtonPriced(0, this.guiLeft + 8, this.guiTop + 90, "container.towerdefence-tower.upgrade.level", this.container.prices[0], Assets.SHEET_TOWERS, 60, 20);
             buttons[1] = new GuiButtonPriced(1, this.guiLeft + 31, this.guiTop + 90, "container.towerdefence-tower.upgrade.damage", this.container.prices[1], Assets.SHEET_TOWERS, 40, 20);
@@ -78,12 +79,7 @@ public class GuiTower extends GuiContainer {
         }
     }
 
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        if (button.drawButton && button.enabled) {
-            this.mc.playerController.sendEnchantPacket(this.container.windowId, button.id);
-        }
-    }
+
 
     @Override
     public void updateScreen() {
@@ -115,8 +111,7 @@ public class GuiTower extends GuiContainer {
 
         if (!this.container.activated) {
             this.fontRenderer.drawString(I18n.getString("container.towerdefence-tower.purchase"), 8, 20, 0x404040);
-        }
-        else {
+        } else {
             this.fontRenderer.drawString(I18n.getStringParams("container.towerdefence-tower.level", this.container.level), 8, 20, 0x404040);
             this.fontRenderer.drawString(I18n.getStringParams("container.towerdefence-tower.damage", this.container.damage, this.container.damageLevel), 8, 30, 0x404040);
             this.fontRenderer.drawString(I18n.getStringParams("container.towerdefence-tower.speed", this.container.speed / 20.0F, this.container.speedLevel), 8, 40, 0x404040);

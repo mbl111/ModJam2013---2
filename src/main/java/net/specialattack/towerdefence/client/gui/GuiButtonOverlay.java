@@ -1,10 +1,7 @@
-
 package net.specialattack.towerdefence.client.gui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -12,12 +9,12 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiButtonOverlay extends GuiButton {
@@ -43,23 +40,13 @@ public class GuiButtonOverlay extends GuiButton {
             GL11.glEnable(GL11.GL_BLEND);
             if (this.enabled) {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            }
-            else {
+            } else {
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
             }
 
             this.drawTexturedModalRect(this.xPosition, this.yPosition, this.texU, this.texV, this.width, this.height);
             GL11.glDisable(GL11.GL_BLEND);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<String> getTooltipLines(Minecraft minecraft) {
-        List<String> lines = new ArrayList<String>();
-        lines.add(I18n.getString(this.identifier + ".name"));
-        lines.addAll(minecraft.fontRenderer.listFormattedStringToWidth(I18n.getString(this.identifier + ".description"), 150));
-
-        return lines;
     }
 
     public void drawTooltips(Minecraft minecraft, int mouseX, int mouseY) {
@@ -71,6 +58,15 @@ public class GuiButtonOverlay extends GuiButton {
                 GL11.glColor3f(1.0F, 1.0F, 1.0F);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getTooltipLines(Minecraft minecraft) {
+        List<String> lines = new ArrayList<String>();
+        lines.add(I18n.getString(this.identifier + ".name"));
+        lines.addAll(minecraft.fontRenderer.listFormattedStringToWidth(I18n.getString(this.identifier + ".description"), 150));
+
+        return lines;
     }
 
     public void drawHoveringText(List<String> lines, int mouseX, int mouseY, FontRenderer font) {

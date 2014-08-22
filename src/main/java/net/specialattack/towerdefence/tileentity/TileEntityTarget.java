@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.tileentity;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,10 +23,20 @@ public class TileEntityTarget extends TileEntity {
             TileEntity tile = this.worldObj.getBlockTileEntity(this.spawner.posX, this.spawner.posY, this.spawner.posZ);
             if (tile != null && tile instanceof TileEntitySpawner) {
                 ((TileEntitySpawner) tile).onTargetDamaged(this);
-            }
-            else {
+            } else {
                 this.spawner = null;
             }
+        }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        this.health = compound.getInteger("health");
+
+        if (compound.hasKey("spawner")) {
+            NBTTagCompound spawner = compound.getCompoundTag("spawner");
+            this.spawner = new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ"));
         }
     }
 
@@ -42,17 +51,6 @@ public class TileEntityTarget extends TileEntity {
             spawner.setInteger("posY", this.spawner.posY);
             spawner.setInteger("posZ", this.spawner.posZ);
             compound.setCompoundTag("spawner", spawner);
-        }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        this.health = compound.getInteger("health");
-
-        if (compound.hasKey("spawner")) {
-            NBTTagCompound spawner = compound.getCompoundTag("spawner");
-            this.spawner = new ChunkCoordinates(spawner.getInteger("posX"), spawner.getInteger("posY"), spawner.getInteger("posZ"));
         }
     }
 

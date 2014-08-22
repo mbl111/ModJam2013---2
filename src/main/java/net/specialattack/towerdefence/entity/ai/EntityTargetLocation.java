@@ -1,4 +1,3 @@
-
 package net.specialattack.towerdefence.entity.ai;
 
 import net.minecraft.entity.EntityLiving;
@@ -33,17 +32,22 @@ public class EntityTargetLocation extends EntityAIBase {
     }
 
     @Override
-    public boolean continueExecuting() {
-        return !this.entity.getNavigator().noPath();
-    }
-
-    @Override
     public boolean shouldExecute() {
         if (!this.running && this.entity.onGround) {
             this.running = true;
             return true;
         }
 
+        return false;
+    }
+
+    @Override
+    public boolean continueExecuting() {
+        return !this.entity.getNavigator().noPath();
+    }
+
+    @Override
+    public boolean isInterruptible() {
         return false;
     }
 
@@ -70,22 +74,15 @@ public class EntityTargetLocation extends EntityAIBase {
                 this.entity.worldObj.removeEntity(this.entity);
                 this.entity = null;
                 this.tile = null;
-            }
-            else {
+            } else {
                 this.tile.damage(1);
                 this.entity.worldObj.removeEntity(this.entity);
                 this.entity = null;
                 this.tile = null;
             }
-        }
-        else {
+        } else {
             this.running = false;
         }
-    }
-
-    @Override
-    public boolean isInterruptible() {
-        return false;
     }
 
 }
